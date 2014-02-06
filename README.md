@@ -28,4 +28,4 @@ and paste the contents in line-by-line. sorry, this is a bug with cycript :(
 
 ## License
 
-[GNU GPL](https://www.gnu.org/copyleft/gpl.html), unless otherwise stated in the files themselves.
+[GNU GPL](https://github.com/rweichler/cylinder/blob/master/LICENSE), unless otherwise stated in the files themselves.
