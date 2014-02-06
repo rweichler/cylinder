@@ -17,9 +17,7 @@ Because I don't want to pay $2 for something that takes a few hours to make
 * Add more example Barrel thingies
 * Release!
 
-## How to use
-
-### Building
+###Building
 
 If you have Xcode installed on your computer (or some other way to compile for iOS), cd into substrate and make. SCP it to the phone and boom you're done.
 
