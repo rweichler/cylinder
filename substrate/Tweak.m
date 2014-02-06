@@ -16,7 +16,7 @@ static CATransform3DRotate_ Rotate;
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
     float offset = scrollView.contentOffset.x;
-    if(IOS_VERSION < 7) offset -= SCREEN_SIZE.width;
+    if(IOS_VERSION < 7) i++; //on iOS 6-, the spotlight is a page to the left, so we gotta bump the pageno. up a notch
     offset -= i*SCREEN_SIZE.width;
 
     if(fabs(offset) > SCREEN_SIZE.width)
