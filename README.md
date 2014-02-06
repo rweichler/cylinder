@@ -2,7 +2,7 @@
 
 The free software alternative to Barrel
 
-![LOL](http://i.imgur.com/JhSytf7l.png)
+![LOL](http://i.imgur.com/JhSytf7m.png)
 
 ## Why?
 
