@@ -19,7 +19,7 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
     if(IOS_VERSION < 7) offset -= SCREEN_SIZE.width;
     offset -= i*SCREEN_SIZE.width;
 
-    if(offset < -SCREEN_SIZE.width || offset > SCREEN_SIZE.width)
+    if(fabs(offset) > SCREEN_SIZE.width)
     {
         view.layer.transform = _transform;
         return;
