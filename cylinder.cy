@@ -4,7 +4,6 @@ var ios = [UIDevice currentDevice].systemVersion.intValue
 genscrol = function(scrollView, n, view)
 {
     var offset = scrollView.contentOffset.x;
-    view.layer.transform = def;
     if(ios < 7) //spotlight
     {
         offset = offset - 320;
