@@ -6,6 +6,7 @@ ARC=-fobjc-arc
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore
 FLAGS= -dynamiclib #-undefined suppress -flat_namespace
 DYLIB=$(NAME).dylib
+LIBLUA=lua/liblua.a
 
 all: $(DYLIB)
 
@@ -15,6 +16,10 @@ copy: $(DYLIB)
 
 clean:
 	rm $(DYLIB)
+	cd lua && $(MAKE) clean
 
-$(DYLIB): substrate/libsubstrate.dylib Tweak.m
+$(DYLIB): substrate/libsubstrate.dylib Tweak.m $(LIBLUA)
 	$(CC) $^ $(ARCH) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $@
+
+$(LIBLUA): lua
+	cd lua && $(MAKE) ios
