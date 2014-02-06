@@ -9,9 +9,10 @@ Because I don't want to pay $2 for something that takes a few hours to make
 ### Todo list
 
 * ~~Make proof-of-concept cycript 'script'~~
-* ~~Make Mobilesubstrate tweak~~
+* ~~Port it to a Mobilesubstrate tweak~~
 * Add Lua bindings
 * Add preferences bundle
+* Add more example Barrel thingies
 * Release!
 
 ### I don't care, how do I use this shit?
