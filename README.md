@@ -1,6 +1,6 @@
 # Cylinder
 
-### The free software alternative to Barrel
+The free software alternative to Barrel
 
 ## Why?
 
