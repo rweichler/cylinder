@@ -22,4 +22,4 @@ $(DYLIB): substrate/libsubstrate.dylib Tweak.m $(LIBLUA)
 	$(CC) $^ $(ARCH) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $@
 
 $(LIBLUA): lua
-	cd lua && $(MAKE) ios
+	cd lua && $(MAKE)
