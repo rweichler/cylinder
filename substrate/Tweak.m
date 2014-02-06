@@ -75,8 +75,11 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
 static void initialize() {
-    Rotate = (CATransform3DRotate_)(dlsym(RTLD_DEFAULT, "CATransform3DRotate"));
+    Rotate = (CATransform3DRotate_)(dlsym(RTLD_DEFAULT, "CATransform3DRotate")); //this is some serious laziness on my part,
+                                                                                 //i should be linking this with QuartzCore
+                                                                                 //or whatever but honestly dlsym seemed like
+                                                                                 //less of a hassle
     Class cls = NSClassFromString(@"SBRootFolderView"); //iOS 7
-    if(cls == nil) cls = NSClassFromString(@"SBIconController");
+    if(cls == nil) cls = NSClassFromString(@"SBIconController"); //iOS 5
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
 }
