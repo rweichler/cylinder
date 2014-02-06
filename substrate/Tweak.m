@@ -1,5 +1,6 @@
 #import "theos/include/substrate.h"
-#include <dlfcn.h>
+#import <QuartzCore/QuartzCore.h>
+#import <UIKit/UIKit.h>
 
 #define IOS_VERSION [NSClassFromString(@"UIDevice") currentDevice].systemVersion.intValue
 #define SCREEN_SIZE [NSClassFromString(@"UIScreen") mainScreen].bounds.size
@@ -9,9 +10,6 @@ static IMP original_SB_scrollViewDidScroll;
 static const CATransform3D _transform = {1,0,0,0,0,1,0,0,0,0,1,-0.002,0,0,0,1};
 static BOOL _setHierarchy = false;
 static NSComparator _comparator;
-
-typedef CATransform3D (*CATransform3DRotate_)(CATransform3D, float, float, float, float);
-static CATransform3DRotate_ Rotate;
 
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
@@ -27,7 +25,7 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
     float percent = -offset/SCREEN_SIZE.width;
     float angle = percent*M_PI/2;
 
-    view.layer.transform = Rotate(_transform, angle, 0, 1, 0);
+    view.layer.transform = CATransform3DRotate(_transform, angle, 0, 1, 0);
 }
 
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
@@ -75,10 +73,6 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
 static void initialize() {
-    Rotate = (CATransform3DRotate_)(dlsym(RTLD_DEFAULT, "CATransform3DRotate")); //this is some serious laziness on my part,
-                                                                                 //i should be linking this with QuartzCore
-                                                                                 //or whatever but honestly dlsym seemed like
-                                                                                 //less of a hassle
     Class cls = NSClassFromString(@"SBRootFolderView"); //iOS 7
     if(cls == nil) cls = NSClassFromString(@"SBIconController"); //iOS 5
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
