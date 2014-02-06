@@ -17,7 +17,7 @@ genscrol = function(scrollView, n, view)
 scroled = function(scrollView)
 {
     var views = [];
-    for each(var view in main.subviews)
+    for each(var view in scrollView.subviews)
     {
         if([view isKindOfClass:SBRootIconListView])
         {
@@ -33,32 +33,6 @@ scroled = function(scrollView)
         genscrol(scrollView, i, view);
     }
 };
-
-var get_main = function(icons)
-{
-    var view;
-    for each(var icon in icons){
-        if(icon.superview)
-        {
-            view = icon.superview;
-            break;
-        }
-    }
-    while(true)
-    {
-        view = view.superview;
-        if([view isKindOfClass:SBIconScrollView]) return view;
-
-        if([[view class] description] == "UIView") break;
-    }
-
-    for each(var subview in view.subviews)
-    {
-        if([subview isKindOfClass:SBIconScrollView]) return subview
-    }
-}
-
-var main = get_main(choose(SBIconView));
 
 @import com.saurik.substrate.MS
 
