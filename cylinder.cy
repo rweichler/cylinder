@@ -3,11 +3,15 @@ genscrol = function(scrollView, n, view)
     var offset = scrollView.contentOffset.x;
     view.layer.transform = def;
     offset = offset - n*320;
-    if(offset < -320 || offset > 320) return;
+    if(offset < -320 || offset > 320)
+    {
+        view.layer.transform = def;
+        return;
+    }
     var pi = 3.14159265;
     var percent = -offset/320;
     var angle = percent*pi/2;
-    view.layer.transform = CATransform3DRotate(view.layer.transform, angle, 0, 1, 0);
+    view.layer.transform = CATransform3DRotate(def, angle, 0, 1, 0);
 };
 
 scroled = function(scrollView)

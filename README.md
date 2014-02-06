@@ -12,7 +12,7 @@ This is eventually going to be a MobileSubtrate tweak with Lua bindings, but for
 
 ### I don't care, how do I use this shit?
 
-You'll need cycript 0.9.5+ installed. Just copy these files to your device and
+You'll need [cycript](http://cycript.org) 0.9.5+ installed. Just copy these files to your device and
 
 ```
 ./runme.sh
