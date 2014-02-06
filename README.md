@@ -19,7 +19,12 @@ Because I don't want to pay $2 for something that takes a few hours to make
 
 ##Building
 
-If you have Xcode installed on your computer (or some other way to compile for iOS), cd into substrate and make. SCP it to the phone and boom you're done.
+```
+make
+export MOBSUB=/Library/MobileSubstrate/DynamicLibraries/
+scp Cylinder.dylib iphone:$MOBSUB
+scp Cylinder.plist iphone:$MOBSUB
+```
 
 ## License
 
