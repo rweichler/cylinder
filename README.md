@@ -26,6 +26,8 @@ scp Cylinder.dylib iphone:$MOBSUB
 scp Cylinder.plist iphone:$MOBSUB
 ```
 
+"iphone" is root@192.168.1.x or whatever your iphone's IP address is.
+
 ## License
 
 [GNU GPL](https://github.com/rweichler/cylinder/blob/master/LICENSE), unless otherwise stated in the files themselves.
