@@ -1,14 +1,20 @@
-include theos/makefiles/common.mk
+NAME=Cylinder
 
-TWEAK_NAME = Cylinder
-Cylinder_FILES = Tweak.m
-Cylinder_FRAMEWORKS = QuartzCore UIKit Foundation
+CC=xcrun -sdk iphoneos clang
+ARCH=-arch armv7 -mios-version-min=3.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk
+ARC=-fobjc-arc
+FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore
+FLAGS= -dynamiclib #-undefined suppress -flat_namespace
+DYLIB=$(NAME).dylib
 
-include $(THEOS_MAKE_PATH)/tweak.mk
+all: $(DYLIB)
 
-after-install::
-	install.exec "killall -9 SpringBoard"
+copy: $(DYLIB)
+	scp $(DYLIB) iphone:ms
+	scp $(NAME).plist iphone:ms
 
-scp:
-	scp Cylinder.plist iphone:ms
-	scp obj/Cylinder.dylib iphone:ms
+clean:
+	rm $(DYLIB)
+
+$(DYLIB): substrate/libsubstrate.dylib Tweak.m
+	$(CC) $^ $(ARCH) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $@

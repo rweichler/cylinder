@@ -1,9 +1,0 @@
-Package: com.r333d.cylinder
-Name: Cylinder
-Depends: mobilesubstrate
-Version: 0.0.1
-Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
-Maintainer: Reed Weichler
-Author: Reed Weichler
-Section: Tweaks

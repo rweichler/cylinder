@@ -1,9 +1,9 @@
-#import "theos/include/substrate.h"
+#import "substrate/substrate.h"
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
-#define IOS_VERSION [NSClassFromString(@"UIDevice") currentDevice].systemVersion.intValue
-#define SCREEN_SIZE [NSClassFromString(@"UIScreen") mainScreen].bounds.size
+#define IOS_VERSION UIDevice.currentDevice.systemVersion.intValue
+#define SCREEN_SIZE UIScreen.mainScreen.bounds.size
 
 static IMP original_SB_scrollViewDidScroll;
 
