@@ -1,8 +1,11 @@
+var set_hierarchy = false;
+var ios = [UIDevice currentDevice].systemVersion.intValue
+
 genscrol = function(scrollView, n, view)
 {
     var offset = scrollView.contentOffset.x;
     view.layer.transform = def;
-    if([UIDevice currentDevice].systemVersion.intValue < 7) //spotlight
+    if(ios < 7) //spotlight
     {
         offset = offset - 320;
     }
@@ -20,6 +23,12 @@ genscrol = function(scrollView, n, view)
 
 scroled = function(scrollView)
 {
+    if(!set_hierarchy && ios < 7)
+    {
+        [scrollView.superview sendSubviewToBack:scrollView];
+        set_hierarchy = true;
+    }
+
     var views = [];
     for each(var view in scrollView.subviews)
     {
