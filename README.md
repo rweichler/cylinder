@@ -17,7 +17,7 @@ Because I don't want to pay $2 for something that takes a few hours to make
 * Add more example Barrel thingies
 * Release!
 
-## I don't care, how do I use this shit?
+## I don't care, how do I use this?
 
 ### Theos
 
@@ -38,10 +38,6 @@ cycript -p SpringBoard
 ```
 
 and paste the contents in line-by-line. sorry, this is a bug with cycript :(
-
-### WTF I just want to use this, what is this "theos" and script or whatever!??!/1!!1
-
-idk lol
 
 ## License
 
