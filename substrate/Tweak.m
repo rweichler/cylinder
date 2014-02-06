@@ -74,7 +74,6 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
 static void initialize() {
-    NSLog(@"Cylinder: Loaded");
     Rotate = (CATransform3DRotate_)(dlsym(RTLD_DEFAULT, "CATransform3DRotate"));
     Class cls = NSClassFromString(@"SBRootFolderView"); //iOS 7
     if(cls == nil) cls = NSClassFromString(@"SBIconController");
