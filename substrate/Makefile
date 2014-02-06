@@ -21,5 +21,5 @@ clean:
 $(DYLIB): substrate/libsubstrate.dylib Tweak.m $(LIBLUA)
 	$(CC) $^ $(ARCH) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $@
 
-$(LIBLUA): lua
+$(LIBLUA): lua/Makefile
 	cd lua && $(MAKE)
