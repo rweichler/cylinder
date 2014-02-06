@@ -2,6 +2,8 @@
 
 The free software alternative to Barrel
 
+~[LOL](http://i.imgur.com/JhSytf7l.png)
+
 ## Why?
 
 Because I don't want to pay $2 for something that takes a few hours to make
