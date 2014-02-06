@@ -17,7 +17,7 @@ Because I don't want to pay $2 for something that takes a few hours to make
 * Add more example Barrel thingies
 * Release!
 
-## I don't care, how do I use this?
+## How to use
 
 ### Theos
 
