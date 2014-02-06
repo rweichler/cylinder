@@ -2,6 +2,10 @@ genscrol = function(scrollView, n, view)
 {
     var offset = scrollView.contentOffset.x;
     view.layer.transform = def;
+    if([UIDevice currentDevice].systemVersion.intValue < 7) //spotlight
+    {
+        offset = offset - 320;
+    }
     offset = offset - n*320;
     if(offset < -320 || offset > 320)
     {
@@ -19,7 +23,7 @@ scroled = function(scrollView)
     var views = [];
     for each(var view in scrollView.subviews)
     {
-        if([view isKindOfClass:SBRootIconListView])
+        if([view isKindOfClass:SBIconListView])
         {
             views.push(view);
         }
@@ -36,10 +40,12 @@ scroled = function(scrollView)
 
 @import com.saurik.substrate.MS
 
-var yeha = @selector(scrollViewDidScroll:);
 def = {m11:1,m12:0,m13:0,m14:0,m21:0,m22:1,m23:0,m24:0,m31:0,m32:0,m33:1,m34:-0.002,m41:0,m42:0,m43:0,m44:1}
 var oldm = {};
-MS.hookMessage(SBRootFolderView, yeha, function(sv){
+var cls = objc_getClass("SBRootFolderView");
+cls = ([cls class] ? cls : SBIconController)
+
+MS.hookMessage(cls, @selector(scrollViewDidScroll:), function(sv){
     scroled(sv);
     return oldm->call(this, sv);
 }, oldm);
