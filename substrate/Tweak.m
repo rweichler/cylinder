@@ -2,6 +2,7 @@
 #include <dlfcn.h>
 
 #define IOS_VERSION [NSClassFromString(@"UIDevice") currentDevice].systemVersion.intValue
+#define SCREEN_SIZE [NSClassFromString(@"UIScreen") mainScreen].bounds.size
 
 static IMP original_SB_scrollViewDidScroll;
 
@@ -15,15 +16,15 @@ static CATransform3DRotate_ Rotate;
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
     float offset = scrollView.contentOffset.x;
-    if(IOS_VERSION < 7) offset -= 320;
-    offset -= i*320;
+    if(IOS_VERSION < 7) offset -= SCREEN_SIZE.width;
+    offset -= i*SCREEN_SIZE.width;
 
-    if(offset < -320 || offset > 320)
+    if(offset < -SCREEN_SIZE.width || offset > SCREEN_SIZE.width)
     {
         view.layer.transform = _transform;
         return;
     }
-    float percent = -offset/320;
+    float percent = -offset/SCREEN_SIZE.width;
     float angle = percent*M_PI/2;
 
     view.layer.transform = Rotate(_transform, angle, 0, 1, 0);
