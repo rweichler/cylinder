@@ -2,7 +2,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
-#include "luashit.m"
+#include "luashit.m" //this is HORRIBLE PRACTICE! but I fucking suck with linking binaries.
 #import "macros.h"
 
 static IMP original_SB_scrollViewDidScroll;
