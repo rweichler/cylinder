@@ -4,13 +4,17 @@
 --width is the width of the screen
 --offset is the offset of the page from the screen's center.
 
---when manipulating the view, call rotate/translate/scale with BASE as the first argument
+--when manipulating the view's transform, call rotate/translate/scale with BASE as the first argument
 --BASE is the original transform for that object
 --with each subsequent manipulation to the view, omit BASE from the first argument
 
 --view:rotate([transform], angle, pitch, yaw, roll)
 --view:translate([transform], x, y, z)
 --view:scale([transform], x, y, z)
+
+--view.alpha = 0 --completely transparent
+--view.alpha = 0.5 --set alpha to half
+--view.alpha = 1 --completely opaque
 
 --more will be added later
 
@@ -34,6 +38,9 @@ local function cube(view, percent, is_inside)
     local angle = percent*M_PI/2
     if not is_inside then angle = -angle end
     view:rotate(BASE, angle, 0, 1, 0)
+
+    if percent < 0 then percent = -percent end
+    view.alpha = 1 - percent
 end
 
 return function(page, width, offset)

@@ -9,6 +9,7 @@ static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
 static int l_transform_scale(lua_State *L);
 static int l_uiview_index(lua_State *L);
+static int l_uiview_setindex(lua_State *L);
 
 NSString *THE_ERROR_LOL = nil;
 
@@ -33,6 +34,9 @@ void init_lua()
         luaL_newmetatable(L, "UIView");
         lua_pushcfunction(L, l_uiview_index);
         lua_setfield(L, -2, "__index");
+
+        lua_pushcfunction(L, l_uiview_setindex);
+        lua_setfield(L, -2, "__newindex");
         
 
     }
@@ -105,6 +109,22 @@ int get_transform(UIView *self, lua_State *L, CATransform3D *transform)
         return 0;
     }
 }
+static int l_uiview_setindex(lua_State *L)
+{
+    UIView *self = (UIView *)lua_touserdata(L, 1);
+    if(lua_isstring(L, 2))
+    {
+        const char *key = lua_tostring(L, 2);
+        if(!strcmp(key, "alpha"))
+        {
+            if(lua_isnumber(L, 3))
+            {
+                self.alpha = lua_tonumber(L, 3);
+            }
+        }
+    }
+    return 0;
+}
 
 static int l_uiview_index(lua_State *L)
 {
@@ -131,6 +151,11 @@ static int l_uiview_index(lua_State *L)
                 push_view(self.subviews[i]);
                 lua_settable(L, -3);
             }
+            return 1;
+        }
+        else if(!strcmp(key, "alpha"))
+        {
+            lua_pushnumber(L, self.alpha);
             return 1;
         }
         else if(!strcmp(key, "rotate"))
