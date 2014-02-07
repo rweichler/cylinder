@@ -16,8 +16,7 @@ However that doesn't mean that all of Barrel's animations
 are here. The only ones I have coded so far are the cube
 inside, cube outside, and the icon roll. It's really
 easy to add your own effects, though. Check out
-[EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua),
-it's really easy to customize your own effects.
+[EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua).
 
 ## Todo list
 
