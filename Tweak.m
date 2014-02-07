@@ -7,7 +7,6 @@
 static IMP original_SB_scrollViewDidScroll;
 
 static BOOL _setHierarchy = false;
-static NSComparator _comparator;
 
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
@@ -44,18 +43,15 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
     {
         if([view isKindOfClass:NSClassFromString(@"SBIconListView")])
         {
-            if(_comparator == nil)
-            _comparator = ^NSComparisonResult(UIView *obj1, UIView *obj2)
-            {
-                NSNumber *n1 = [NSNumber numberWithFloat:obj1.frame.origin.x];
-                NSNumber *n2 = [NSNumber numberWithFloat:obj2.frame.origin.x];
-                return [n1 compare:n2];
-            };
-
             NSUInteger sortedIndex = [views indexOfObject:view
                     inSortedRange:(NSRange){0, views.count}
                     options:NSBinarySearchingInsertionIndex
-                    usingComparator:_comparator];
+                    usingComparator:^NSComparisonResult(UIView *obj1, UIView *obj2)
+                    {
+                        NSNumber *n1 = [NSNumber numberWithFloat:obj1.frame.origin.x];
+                        NSNumber *n2 = [NSNumber numberWithFloat:obj2.frame.origin.x];
+                        return [n1 compare:n2];
+                    }];
 
             [views insertObject:view atIndex:sortedIndex];
 
