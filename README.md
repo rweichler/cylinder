@@ -21,8 +21,6 @@ inside, cube outside, and the icon roll.
 There is no preference menu where you can set this yet,
 but you can just edit the Lua file and change it yourself.
 
-There are some performance problems with manipulating the icons (just manipulating the page is fine). I'm going to investigate that soon.
-
 ## Todo list
 
 * ~~Make proof-of-concept cycript 'script'~~

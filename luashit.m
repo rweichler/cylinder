@@ -109,7 +109,7 @@ static int l_uiview_index(lua_State *L)
     if(lua_isnumber(L, 2)) //if it's a number, return the subview
     {
         int index = lua_tonumber(L, 2) - 1;
-        if(index <= self.subviews.count)
+        if(index < self.subviews.count)
         {
             push_view(self.subviews[index]);
             return 1;

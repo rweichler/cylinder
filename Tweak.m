@@ -6,6 +6,8 @@
 
 static IMP original_SB_scrollViewDidScroll;
 
+static const CATransform3D DEFAULT_TRANSFORM = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
+
 static BOOL _setHierarchy = false;
 
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
@@ -16,7 +18,9 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
 
     if(fabs(offset) > SCREEN_SIZE.width)
     {
-        view.layer.transform = *default_transform();
+        view.layer.transform = DEFAULT_TRANSFORM;
+        for(UIView *v in view.subviews)
+            v.layer.transform = DEFAULT_TRANSFORM;
         return;
     }
 

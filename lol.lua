@@ -1,5 +1,6 @@
 --page is the icon page you will be manipulating (aka a view)
 --view.subviews returns a table containing view's subviews (which conveniently are the individual icons)
+--you can also do view[i] to get the subview at an index
 --keep in mind, with lua, arrays start with index 1, not 0
 --width is the width of the screen
 --offset is the offset of the page from the screen's center.
@@ -23,12 +24,10 @@ local M_PI = 3.14159265
 local function spin(view, percent)
     local angle = percent*M_PI*2
 
-    local subviews = view.subviews
-
     local i = 0
     while true do
         i = i + 1
-        local v = subviews[i]
+        local v = view[i]
         if v == nil then break end
         v:rotate(BASE, angle, 0, 0, 1)
     end
@@ -49,6 +48,6 @@ end
 return function(page, width, offset)
 
     local percent = offset/width
-    --spin(page, percent)
-    cube(page, percent, true)
+    spin(page, percent)
+    --cube(page, percent, true)
 end
