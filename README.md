@@ -16,6 +16,7 @@ Because I don't want to pay $2 for something that takes a few hours to make
 * Add more Lua bindings
 * Add preferences bundle
 * Add more example Barrel thingies
+* Code cleanup
 * Release!
 
 ##Building
