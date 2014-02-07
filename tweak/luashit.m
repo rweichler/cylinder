@@ -12,18 +12,19 @@ static int l_uiview_index(lua_State *L);
 static int l_uiview_setindex(lua_State *L);
 static int l_include(lua_State *L);
 
-NSString *THE_ERROR_LOL = nil;
+void write_error(const char *error);
 
-void init_lua(const char *script)
+void close_lua()
 {
+    if(L != NULL) lua_close(L);
+    L = NULL;
+}
+BOOL init_lua(const char *script)
+{
+    BOOL success = true;
+
     //if we are reloading, close the state
     if(L != NULL) lua_close(L);
-
-    if(script != NULL && strlen(script) == 0)
-    {
-        L = NULL;
-        return;
-    }
 
     //create state
     L = luaL_newstate();
@@ -53,27 +54,64 @@ void init_lua(const char *script)
     strcat(path, ".lua");
 
     //load our file and save the function we want to call
-    luaL_loadfile(L, path);
-    lua_pcall(L, 0, 1, 0);
-    func = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(L, 1);
+    if(luaL_loadfile(L, path) != LUA_OK || lua_pcall(L, 0, 1, 0) != 0)
+    {
+        write_error(lua_tostring(L, -1));
+        lua_close(L);
+        L = NULL;
+        success = false;
+    }
+    else
+    {
+        func = luaL_ref(L, LUA_REGISTRYINDEX);
+        lua_pop(L, 1);
+    }
 
     free(path);
 
+    return success;
 }
 
 static int l_include(lua_State *L)
 {
-    if(!lua_isstring(L, 1)) return 0;
+    if(!lua_isstring(L, 1))
+    {
+        lua_pushstring(L, "argument must be a string");
+        return lua_error(L);
+    }
+    const char *filename = lua_tostring(L, 1);
+    const char *path = [@CYLINDER_DIR stringByAppendingPathComponent:[NSString stringWithUTF8String:filename]].UTF8String;
 
-    NSString *path = [@CYLINDER_DIR stringByAppendingPathComponent:[NSString stringWithUTF8String:lua_tostring(L, 1)]];
+    if(luaL_loadfile(L, path) != LUA_OK || lua_pcall(L, 0, 1, 0) != 0)
+    {
+        return luaL_error(L, "%s", lua_tostring(L, -1));
+    }
 
-    BOOL isDir;
-    if(![NSFileManager.defaultManager fileExistsAtPath:path isDirectory:&isDir] || isDir) return 0;
-
-    luaL_loadfile(L, path.UTF8String);
-    lua_pcall(L, 0, 1, 0);
     return 1;
+}
+
+#define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
+#define LOG_PATH LOG_DIR"errors.log"
+
+void write_error(const char *error)
+{
+    if(![NSFileManager.defaultManager fileExistsAtPath:LOG_PATH isDirectory:nil])
+    {
+        if(![NSFileManager.defaultManager fileExistsAtPath:LOG_DIR isDirectory:nil])
+            [NSFileManager.defaultManager createDirectoryAtPath:LOG_DIR withIntermediateDirectories:false attributes:nil error:nil];
+        [[NSFileManager defaultManager] createFileAtPath:LOG_PATH contents:nil attributes:nil];
+    }
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:LOG_PATH];
+    [fileHandle seekToEndOfFile];
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"[yyyy-MM-dd HH:mm:ss] "];
+    NSString *dateStr = [dateFormatter stringFromDate:NSDate.date];
+
+    [fileHandle writeData:[dateStr dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileHandle writeData:[NSData dataWithBytes:error length:(strlen(error) + 1)]];
+    [fileHandle writeData:[NSData dataWithBytes:"\n" length:2]];
+    [fileHandle closeFile];
 }
 
 CATransform3D *default_transform()
@@ -98,12 +136,9 @@ void manipulate(UIView *view, float width, float offset)
     lua_pushnumber(L, width);
     lua_pushnumber(L, offset);
 
-    lua_pcall(L, 3, 1, 0);
-
-    if(lua_isstring(L, -1))
+    if(lua_pcall(L, 3, 1, 0) != 0)
     {
-        [THE_ERROR_LOL release];
-        THE_ERROR_LOL = [[NSString stringWithUTF8String:lua_tostring(L, -1)] retain];
+        write_error(lua_tostring(L, -1));
     }
     lua_pop(L, 1);
 
@@ -191,9 +226,17 @@ static int l_uiview_index(lua_State *L)
     return 0;
 }
 
+#define CHECK_UIVIEW(STATE, INDEX) \
+    if(!lua_isuserdata(STATE, INDEX)) \
+    { \
+        lua_pushstring(STATE, "first argument must be a view"); \
+        return lua_error(STATE); \
+    }
+
+
 static int l_transform_rotate(lua_State *L)
 {
-    if(!lua_isuserdata(L, 1)) return 0;
+    CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
 
@@ -206,7 +249,7 @@ static int l_transform_rotate(lua_State *L)
 }
 static int l_transform_translate(lua_State *L)
 {
-    if(!lua_isuserdata(L, 1)) return 0;
+    CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
 
@@ -218,7 +261,7 @@ static int l_transform_translate(lua_State *L)
 }
 static int l_transform_scale(lua_State *L)
 {
-    if(!lua_isuserdata(L, 1)) return 0;
+    CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
 

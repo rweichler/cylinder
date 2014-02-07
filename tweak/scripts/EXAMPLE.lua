@@ -32,3 +32,5 @@ return function(view, width, offset)
 
     view:rotate(BASE, percent*3.14159265/4, 1, 0, 0) --this will tilt all icons slightly backward
 end
+
+--errors are stored in /var/mobile/Library/Logs/Cylinder/errors.log

@@ -94,16 +94,14 @@ void load_that_shit()
 
     if(settings[@"enabled"] != nil && ![settings[@"enabled"] boolValue])
     {
-        init_lua("");
+        close_lua();
         _enabled = false;
-        return;
     }
-
-    _enabled = true;
-
-    NSString *key = settings[PrefsEffectKey];
-
-    init_lua(key.UTF8String);
+    else
+    {
+        NSString *key = settings[PrefsEffectKey];
+        _enabled = init_lua(key.UTF8String);
+    }
 }
 
 static inline void setSettingsNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
