@@ -45,8 +45,8 @@ scp Cylinder.plist iphone:$MOBSUB
 scp lol.lua iphone:/Library/Cylinder/
 ```
 
-"iphone" is root@192.168.1.x or whatever your iphone's IP address is.
-/Library/Cylinder must be a folder on the phone.
+* "iphone" is root@192.168.1.x or whatever your iphone's IP address is.
+* /Library/Cylinder must be a folder on the phone.
 
 ## License
 
