@@ -84,6 +84,14 @@ void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
 
+    for(UIView *view in _scrollView.subviews)
+    {
+        if([view isKindOfClass:NSClassFromString(@"SBIconListView")])
+        {
+            reset_everything(view);
+        }
+    }
+
     if(settings[@"enabled"] != nil && ![settings[@"enabled"] boolValue])
     {
         init_lua("");
@@ -94,14 +102,6 @@ void load_that_shit()
     _enabled = true;
 
     NSString *key = settings[PrefsEffectKey];
-
-    for(UIView *view in _scrollView.subviews)
-    {
-        if([view isKindOfClass:NSClassFromString(@"SBIconListView")])
-        {
-            reset_everything(view);
-        }
-    }
 
     init_lua(key.UTF8String);
 }
