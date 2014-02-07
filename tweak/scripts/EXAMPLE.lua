@@ -25,6 +25,7 @@
 return function(page, width, offset)
 
     local percent = offset/width
+    if percent < 0 then percent = -percent end
 
-    view:rotate(DEFAULT, 3.14159265/4, 1, 0, 0) --this will tilt all icons slightly backward
+    view:rotate(BASE, percent*3.14159265/4, 1, 0, 0) --this will tilt all icons slightly backward
 end
