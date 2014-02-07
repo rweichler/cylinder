@@ -5,10 +5,22 @@
 #import "macros.h"
 
 static IMP original_SB_scrollViewDidScroll;
-
-static const CATransform3D DEFAULT_TRANSFORM = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
+static UIScrollView *_scrollView = nil;
 
 static BOOL _setHierarchy = false;
+
+static BOOL _enabled;
+
+void reset_everything(UIView *view)
+{
+    view.layer.transform = DEFAULT_TRANSFORM;
+    view.alpha = 1;
+    for(UIView *v in view.subviews)
+    {
+        v.layer.transform = DEFAULT_TRANSFORM;
+        v.alpha = 1;
+    }
+}
 
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
@@ -18,9 +30,7 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
 
     if(fabs(offset) > SCREEN_SIZE.width)
     {
-        view.layer.transform = DEFAULT_TRANSFORM;
-        for(UIView *v in view.subviews)
-            v.layer.transform = DEFAULT_TRANSFORM;
+        reset_everything(view);
         return;
     }
 
@@ -29,6 +39,11 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
 
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
+    original_SB_scrollViewDidScroll(self, _cmd, scrollView);
+    if(!_scrollView) _scrollView = scrollView;
+
+    if(!_enabled) return;
+
     if(!_setHierarchy)
     {
         if(IOS_VERSION < 7)
@@ -63,15 +78,50 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
         genscrol(scrollView, i, views[i]);
     }
 
-    original_SB_scrollViewDidScroll(self, _cmd, scrollView);
+}
+
+void load_that_shit()
+{
+    NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
+
+    if(settings[@"enabled"] != nil && ![settings[@"enabled"] boolValue])
+    {
+        init_lua("");
+        _enabled = false;
+        return;
+    }
+
+    _enabled = true;
+
+    NSString *key = settings[PrefsEffectKey];
+
+    for(UIView *view in _scrollView.subviews)
+    {
+        if([view isKindOfClass:NSClassFromString(@"SBIconListView")])
+        {
+            reset_everything(view);
+        }
+    }
+
+    init_lua(key.UTF8String);
+}
+
+static inline void setSettingsNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+    load_that_shit();
 }
 
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
 static void initialize() {
-    init_lua();
+    load_that_shit();
 
+    //hook scroll
     Class cls = NSClassFromString(@"SBRootFolderView"); //iOS 7
     if(cls == nil) cls = NSClassFromString(@"SBIconController"); //iOS 5
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
+
+    //listen to notification center (for settings change)
+    CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
+    CFNotificationCenterAddObserver(r, NULL, &setSettingsNotification, (CFStringRef)kCylinderSettingsChanged, NULL, 0);
 }

@@ -20,7 +20,7 @@ all: $(DYLIB)
 copy: $(DYLIB)
 	scp $(DYLIB) $(IPHONE_IP):$(MS_DIR)
 	scp $(NAME).plist $(IPHONE_IP):$(MS_DIR)
-	scp lol.lua $(IPHONE_IP):$(CYLINDER_DIR)
+	scp -r scripts/* $(IPHONE_IP):$(CYLINDER_DIR)
 
 clean:
 	rm $(DYLIB)

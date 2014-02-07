@@ -10,38 +10,72 @@ static int l_transform_translate(lua_State *L);
 static int l_transform_scale(lua_State *L);
 static int l_uiview_index(lua_State *L);
 static int l_uiview_setindex(lua_State *L);
+static int l_include(lua_State *L);
 
 NSString *THE_ERROR_LOL = nil;
 
-void init_lua()
+void init_lua(const char *script)
 {
-    if(L == NULL)
+    //if we are reloading, close the state
+    if(L != NULL) lua_close(L);
+
+    if(script != NULL && strlen(script) == 0)
     {
-        //create state
-        L = luaL_newstate();
-
-        //set globals
-        lua_pushlightuserdata(L, &_transform);
-        lua_setglobal(L, "BASE");
-
-        //set UIView metatable
-        luaL_newmetatable(L, "UIView");
-
-        lua_pushcfunction(L, l_uiview_index);
-        lua_setfield(L, -2, "__index");
-
-        lua_pushcfunction(L, l_uiview_setindex);
-        lua_setfield(L, -2, "__newindex");
+        L = NULL;
+        return;
     }
 
+    //create state
+    L = luaL_newstate();
+
+    //set globals
+    lua_pushlightuserdata(L, &_transform);
+    lua_setglobal(L, "BASE");
+
+    lua_pushcfunction(L, l_include);
+    lua_setglobal(L, "include");
+
+    //set UIView metatable
+    luaL_newmetatable(L, "UIView");
+
+    lua_pushcfunction(L, l_uiview_index);
+    lua_setfield(L, -2, "__index");
+
+    lua_pushcfunction(L, l_uiview_setindex);
+    lua_setfield(L, -2, "__newindex");
+
+    if(script == NULL) script = "Cube (inside)";
+
+    char *path = (char *)malloc(sizeof(char)*(strlen(script) + 1 + strlen(CYLINDER_DIR) + 1 + 5));
+    path[0] = '\0';
+    strcat(path, CYLINDER_DIR);
+    strcat(path, script);
+    strcat(path, ".lua");
+
     //load our file and save the function we want to call
-    luaL_loadfile(L, "/Library/Cylinder/lol.lua");
+    luaL_loadfile(L, path);
     lua_pcall(L, 0, 1, 0);
     func = luaL_ref(L, LUA_REGISTRYINDEX);
     lua_pop(L, 1);
 
+    free(path);
 
 }
+
+static int l_include(lua_State *L)
+{
+    if(!lua_isstring(L, 1)) return 0;
+
+    NSString *path = [@CYLINDER_DIR stringByAppendingPathComponent:[NSString stringWithUTF8String:lua_tostring(L, 1)]];
+
+    BOOL isDir;
+    if(![NSFileManager.defaultManager fileExistsAtPath:path isDirectory:&isDir] || isDir) return 0;
+
+    luaL_loadfile(L, path.UTF8String);
+    lua_pcall(L, 0, 1, 0);
+    return 1;
+}
+
 CATransform3D *default_transform()
 {
     return &_transform;
@@ -56,6 +90,8 @@ void push_view(UIView *view)
 
 void manipulate(UIView *view, float width, float offset)
 {
+    if(L == NULL) return;
+
     lua_rawgeti(L, LUA_REGISTRYINDEX, func);
 
     push_view(view);

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+scp -r .theos/obj/CylinderSettings.bundle iphone:/Library/PreferenceBundles/
+scp entry.plist iphone:/Library/PreferenceLoader/Preferences/CylinderSettings.plist

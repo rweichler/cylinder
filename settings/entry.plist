@@ -1,0 +1,10 @@
+{
+    entry = {
+	bundle = CylinderSettings;
+	cell = PSLinkCell;
+	detail = CylinderSettingsListController;
+	icon = Icon.png;
+	isController = 1;
+	label = Cylinder;
+    };
+}

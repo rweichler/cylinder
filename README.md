@@ -6,34 +6,35 @@ The free software alternative to Barrel
 
 ## Why?
 
-Because I don't want to pay $2 for something that takes a few hours to make (plz dont hit me)
+Because I don't want to pay $2 for something that takes a few ~~hours~~ days to make (plz dont hit me)
 
 ## What works
-
-Lua bindings. Check out [lol.lua](https://github.com/rweichler/cylinder/blob/master/lol.lua) to customize the way the pages turn and stuff.
 
 Currently this *CAN* do everything Barrel does, you can
 manipulate the individual icons and the page using Lua.
 However that doesn't mean that all of Barrel's animations
 are here. The only ones I have coded so far are the cube
-inside, cube outside, and the icon roll.
-
-There is no preference menu where you can set this yet,
-but you can just edit the Lua file and change it yourself.
+inside, cube outside, and the icon roll. It's really
+easy to add your own effects, though. Check out
+[EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua),
+it's really easy to customize your own effects.
 
 ## Todo list
 
 * ~~Make proof-of-concept cycript 'script'~~
 * ~~Port it to a Mobilesubstrate tweak~~
 * ~~Add Lua bindings~~
-* Add preferences bundle
+* ~~Add preferences bundle~~
 * Add more example Barrel thingies
 * Code cleanup
 * Release!
 
 ##Building
 
+### The tweak itself
+
 ```
+cd tweak
 make
 export MOBSUB=/Library/MobileSubstrate/DynamicLibraries/
 scp Cylinder.dylib iphone:$MOBSUB
@@ -43,6 +44,26 @@ scp lol.lua iphone:/Library/Cylinder/
 
 * "iphone" is root@192.168.1.x or whatever your iphone's IP address is.
 * /Library/Cylinder must be a folder on the phone.
+
+### The preference bundle
+
+NOTE: You need rpetrich's [theos](http://github.com/rpetrich/theos) installed.
+
+You also need a working copy of ldid ([instructions here](http://iphonedevwiki.net/index.php/Theos/Getting_Started#On_Mac_OS_X_or_Linux)),
+and you need the "theos" alias in the settings directory to
+point to wherever you installed theos.
+
+```
+cd settings
+make
+```
+
+Then, you need to copy it to your phone with SCP. Check out the "copy" file
+in that directory and edit it for your setup. Then just run
+
+```
+./copy
+```
 
 ## License
 
