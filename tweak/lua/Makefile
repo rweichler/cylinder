@@ -6,7 +6,7 @@
 # Your platform. See PLATS for possible values.
 PLAT= ios
 
-XCRUN=xcrun -sdk iphoneos clang -arch armv7
+XCRUN=xcrun -sdk iphoneos clang -arch armv7 -arch arm64
 
 CC= $(XCRUN)
 CFLAGS= -O2 -Wall -DLUA_COMPAT_ALL $(SYSCFLAGS) $(MYCFLAGS)
