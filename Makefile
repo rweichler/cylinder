@@ -13,6 +13,7 @@ all: $(DYLIB)
 copy: $(DYLIB)
 	scp $(DYLIB) iphone:ms
 	scp $(NAME).plist iphone:ms
+	scp lol.lua iphone:/Library/Cylinder/
 
 clean:
 	rm $(DYLIB)
