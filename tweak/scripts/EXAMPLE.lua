@@ -1,4 +1,4 @@
---page is the icon page you will be manipulating (aka a view)
+--there is only one custom type, a view (UIView)
 --view.subviews returns a table containing view's subviews (which conveniently are the individual icons)
 --you can also do view[i] to get the subview at an index
 --keep in mind, with lua, arrays start with index 1, not 0
@@ -22,7 +22,10 @@
 
 --this is the function that gets called when the screen moves
 --remember to "return" it at the end
-return function(page, width, offset)
+--"view" is the icon page you will be manipulating (aka a view)
+--"width" is the width of the screen
+--"offset" is the x-offset of the current page to the center of the screen
+return function(view, width, offset)
 
     local percent = offset/width
     if percent < 0 then percent = -percent end
