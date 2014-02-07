@@ -21,26 +21,20 @@ void init_lua()
         L = luaL_newstate();
 
         //set globals
-        /*lua_pushcfunction(L, l_transform_rotate);
-        lua_setglobal(L, "ROTATE");
-        lua_pushcfunction(L, l_transform_translate);
-        lua_setglobal(L, "TRANSLATE");
-        lua_pushcfunction(L, l_transform_scale);
-        lua_setglobal(L, "SCALE");*/
         lua_pushlightuserdata(L, &_transform);
         lua_setglobal(L, "BASE");
 
         //set UIView metatable
         luaL_newmetatable(L, "UIView");
+
         lua_pushcfunction(L, l_uiview_index);
         lua_setfield(L, -2, "__index");
 
         lua_pushcfunction(L, l_uiview_setindex);
         lua_setfield(L, -2, "__newindex");
-        
-
     }
 
+    //load our file and save the function we want to call
     luaL_loadfile(L, "/Library/Cylinder/lol.lua");
     lua_pcall(L, 0, 1, 0);
     func = luaL_ref(L, LUA_REGISTRYINDEX);
@@ -77,23 +71,6 @@ void manipulate(UIView *view, float width, float offset)
     }
     lua_pop(L, 1);
 
-
-}
-
-CATransform3D *transform_me(float width, float offset)
-{
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func);
-    lua_pushnumber(L, width);
-    lua_pushnumber(L, offset);
-    lua_pcall(L, 2, 1, 0);
-    if(!lua_isuserdata(L, -1))
-    {
-        lua_pop(L, 1);
-        return NULL;
-    }
-    CATransform3D *transform = (CATransform3D *)lua_touserdata(L, -1);
-    lua_pop(L, 1);
-    return transform;
 }
 
 int get_transform(UIView *self, lua_State *L, CATransform3D *transform)

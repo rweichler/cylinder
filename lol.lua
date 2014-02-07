@@ -20,7 +20,7 @@
 
 local M_PI = 3.14159265
 
-local function spin_icons(view, percent)
+local function spin(view, percent)
     local angle = percent*M_PI*2
 
     local subviews = view.subviews
@@ -43,9 +43,12 @@ local function cube(view, percent, is_inside)
     view.alpha = 1 - percent
 end
 
+
+--this is the function that gets called when the screen moves
+--remember to "return" it at the end
 return function(page, width, offset)
 
     local percent = offset/width
-    --spin_icons(page, percent)
+    --spin(page, percent)
     cube(page, percent, true)
 end
