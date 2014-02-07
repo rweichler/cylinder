@@ -20,11 +20,7 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
         return;
     }
 
-    view.layer.transform = *transform_me(SCREEN_SIZE.width, offset);
-    //float percent = -offset/SCREEN_SIZE.width;
-    //float angle = percent*M_PI/2;
-
-    //view.layer.transform = CATransform3DRotate(_transform, angle, 0, 1, 0);
+    manipulate(view, SCREEN_SIZE.width, offset);
 }
 
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
