@@ -18,6 +18,16 @@ inside, cube outside, and the icon roll. It's really
 easy to add your own effects, though. Check out
 [EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua).
 
+
+## Supported devices / iOS versions
+
+* iPod touch 4
+* iOS 5.1.1
+* iPhone 4S
+* iOS 7.0.4
+
+I have this compiled for arm64, so this *should* work on a 5S. But idk. Someone let me know!
+
 ## Todo list
 
 * ~~Make proof-of-concept cycript 'script'~~
