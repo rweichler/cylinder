@@ -12,16 +12,21 @@ Because I don't want to pay $2 for something that takes a few hours to make (plz
 
 Lua bindings. Check out [lol.lua](https://github.com/rweichler/cylinder/blob/master/lol.lua) to customize the way the pages turn and stuff.
 
-Currently the only thing you can manipulate is the page itself,
-but soon you can manipulate the icons themselves too. I just need to
-figure out how to implement that in a decent way.
+Currently this *CAN* do everything Barrel does, you can
+manipulate the individual icons and the page using Lua.
+However that doesn't mean that all of Barrel's animations
+are here. The only ones I have coded so far are the cube
+inside, cube outside, and the icon roll.
+
+Currently there isn't a binding to set the alpha of the icons, but I'm working on that.
+
+There are some performance problems with manipulating the icons (just manipulating the page is fine). I'm going to investigate that soon.
 
 ## Todo list
 
 * ~~Make proof-of-concept cycript 'script'~~
 * ~~Port it to a Mobilesubstrate tweak~~
 * ~~Add Lua bindings~~
-* Add more Lua bindings
 * Add preferences bundle
 * Add more example Barrel thingies
 * Code cleanup
