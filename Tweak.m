@@ -1,5 +1,4 @@
 #import "substrate/substrate.h"
-#import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
 #include "luashit.m" //this is HORRIBLE PRACTICE! but I fucking suck with linking binaries.
@@ -7,7 +6,6 @@
 
 static IMP original_SB_scrollViewDidScroll;
 
-static const CATransform3D __transform = {1,0,0,0,0,1,0,0,0,0,1,-0.002,0,0,0,1};
 static BOOL _setHierarchy = false;
 static NSComparator _comparator;
 
@@ -19,7 +17,7 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
 
     if(fabs(offset) > SCREEN_SIZE.width)
     {
-        view.layer.transform = __transform;
+        view.layer.transform = *default_transform();
         return;
     }
 

@@ -29,6 +29,10 @@ void init_lua()
 
     //view.layer.transform = CATransform3DRotate(_transform, angle, 0, 1, 0);
 }
+CATransform3D *default_transform()
+{
+    return &_transform;
+}
 
 CATransform3D *transform_me(float width, float offset)
 {
