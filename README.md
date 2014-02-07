@@ -8,6 +8,14 @@ The free software alternative to Barrel
 
 Because I don't want to pay $2 for something that takes a few hours to make
 
+## What works
+
+Lua bindings. Check out lol.lua to customize the way the pages turn and stuff.
+
+Currently the only thing you can manipulate is the page itself,
+but soon you can manipulate the icons themselves too. I just need to
+figure out how to implement that in a decent way.
+
 ## Todo list
 
 * ~~Make proof-of-concept cycript 'script'~~
