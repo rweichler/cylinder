@@ -49,3 +49,7 @@ scp lol.lua iphone:/Library/Cylinder/
 ## License
 
 [GNU GPL](https://github.com/rweichler/cylinder/blob/master/LICENSE), unless otherwise stated in the files themselves.
+
+________
+
+Also it's kind of funny, I wanted to pick a name that was like Barrel, and I landed on Cylinder. I didn't even realize the significance of the 'Cy' prefix. hehehehehhehehehe. Sorry saurik.
