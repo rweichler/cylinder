@@ -38,7 +38,7 @@ make
 export MOBSUB=/Library/MobileSubstrate/DynamicLibraries/
 scp Cylinder.dylib iphone:$MOBSUB
 scp Cylinder.plist iphone:$MOBSUB
-scp lol.lua iphone:/Library/Cylinder/
+scp -r scripts/* iphone:/Library/Cylinder/
 ```
 
 * "iphone" is root@192.168.1.x or whatever your iphone's IP address is.
