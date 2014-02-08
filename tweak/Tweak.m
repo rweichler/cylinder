@@ -34,7 +34,7 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
         return;
     }
 
-    manipulate(view, SCREEN_SIZE.width, offset);
+    _enabled = manipulate(view, SCREEN_SIZE.width, offset);
 }
 
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
@@ -76,6 +76,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
     for(int i = 0; i < views.count; i++)
     {
         genscrol(scrollView, i, views[i]);
+        if(!_enabled) break;
     }
 
 }

@@ -126,9 +126,9 @@ void push_view(UIView *view)
     lua_setmetatable(L, -2);
 }
 
-void manipulate(UIView *view, float width, float offset)
+BOOL manipulate(UIView *view, float width, float offset)
 {
-    if(L == NULL) return;
+    if(L == NULL) return false;
 
     lua_rawgeti(L, LUA_REGISTRYINDEX, func);
 
@@ -139,9 +139,11 @@ void manipulate(UIView *view, float width, float offset)
     if(lua_pcall(L, 3, 1, 0) != 0)
     {
         write_error(lua_tostring(L, -1));
+        close_lua();
+        return false;
     }
     lua_pop(L, 1);
-
+    return true;
 }
 
 int get_transform(UIView *self, lua_State *L, CATransform3D *transform)
@@ -226,12 +228,10 @@ static int l_uiview_index(lua_State *L)
     return 0;
 }
 
+//TODO see issue #5
 #define CHECK_UIVIEW(STATE, INDEX) \
     if(!lua_isuserdata(STATE, INDEX)) \
-    { \
-        lua_pushstring(STATE, "first argument must be a view"); \
-        return lua_error(STATE); \
-    }
+        return luaL_error(STATE, "first argument must be a view")
 
 
 static int l_transform_rotate(lua_State *L)
