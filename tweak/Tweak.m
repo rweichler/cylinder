@@ -67,34 +67,16 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
         _setHierarchy = true;
     }
 
-    NSMutableArray *views = [NSMutableArray arrayWithCapacity:scrollView.subviews.count];
+    int i = 0;
     for(UIView *view in scrollView.subviews)
     {
         if([view isKindOfClass:NSClassFromString(@"SBIconListView")])
         {
-            /*NSUInteger sortedIndex = [views indexOfObject:view
-                    inSortedRange:(NSRange){0, views.count}
-                    options:NSBinarySearchingInsertionIndex
-                    usingComparator:^NSComparisonResult(UIView *obj1, UIView *obj2)
-                    {
-                        NSNumber *n1 = [NSNumber numberWithFloat:obj1.frame.origin.x];
-                        NSNumber *n2 = [NSNumber numberWithFloat:obj2.frame.origin.x];
-                        return [n1 compare:n2];
-                    }];
-
-            [views insertObject:view atIndex:sortedIndex];*/
-
-            [views addObject:view];
-
+            genscrol(scrollView, i, view);
+            if(!_enabled) break;
+            i++;
         }
     }
-
-    for(int i = 0; i < views.count; i++)
-    {
-        genscrol(scrollView, i, views[i]);
-        if(!_enabled) break;
-    }
-
 }
 
 void load_that_shit()
