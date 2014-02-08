@@ -4,7 +4,8 @@
 #import "macros.h"
 
 static IMP original_SB_scrollViewDidScroll;
-static UIScrollView *_scrollView = nil;
+static IMP original_SB_dealloc;
+static NSMutableArray *_scrollViews = nil;
 
 static BOOL _setHierarchy = false;
 
@@ -23,23 +24,37 @@ void reset_everything(UIView *view)
 
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
+    float width = scrollView.frame.size.width;
     float offset = scrollView.contentOffset.x;
     if(IOS_VERSION < 7) i++; //on iOS 6-, the spotlight is a page to the left, so we gotta bump the pageno. up a notch
-    offset -= i*SCREEN_SIZE.width;
+    offset -= i*width;
 
-    if(fabs(offset) > SCREEN_SIZE.width)
+    if(fabs(offset) > width)
     {
         reset_everything(view);
         return;
     }
 
-    _enabled = manipulate(view, SCREEN_SIZE.width, offset);
+    _enabled = manipulate(view, width, offset);
+}
+
+void SB_dealloc(id self, SEL _cmd)
+{
+    [_scrollViews removeObject:self];
+    original_SB_dealloc(self, _cmd);
 }
 
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
-    if(!_scrollView) _scrollView = scrollView;
+
+    if(!_scrollViews) _scrollViews = [[NSMutableArray alloc] init];
+
+    if(![_scrollViews containsObject:scrollView])
+    {
+        [_scrollViews addObject:scrollView];
+        [scrollView release];
+    }
 
     if(!_enabled) return;
 
@@ -85,12 +100,14 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
-
-    for(UIView *view in _scrollView.subviews)
+    for(UIScrollView *scrollView in _scrollViews)
     {
-        if([view isKindOfClass:NSClassFromString(@"SBIconListView")])
+        for(UIView *view in scrollView.subviews)
         {
-            reset_everything(view);
+            if([view isKindOfClass:NSClassFromString(@"SBIconListView")])
+            {
+                reset_everything(view);
+            }
         }
     }
 
@@ -117,9 +134,10 @@ static void initialize() {
     load_that_shit();
 
     //hook scroll
-    Class cls = NSClassFromString(@"SBRootFolderView"); //iOS 7
+    Class cls = NSClassFromString(@"SBFolderView"); //iOS 7
     if(cls == nil) cls = NSClassFromString(@"SBIconController"); //iOS 5
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
+    MSHookMessageEx(UIScrollView.class, @selector(dealloc), (IMP)SB_dealloc, (IMP *)&original_SB_dealloc);
 
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
