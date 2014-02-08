@@ -38,6 +38,12 @@ I have this compiled for arm64, so this *should* work on a 5S. But idk. Someone 
 * Code cleanup
 * Release!
 
+I'd really appreciate it if nobody posted this on reddit,
+or jailbreakqa or anything like that until I get to the
+Release step. This tweak is unstable, and a lot of bindings
+are temporary, and if this gets publicized before I finish
+it will be hard to update. Thanks!
+
 ##Building
 
 ### The tweak itself
