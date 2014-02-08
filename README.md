@@ -6,7 +6,7 @@ The free software alternative to Barrel
 
 ## Why?
 
-Because I don't want to pay $2 for something that takes a few ~~hours~~ days to make (plz dont hit me)
+Because.
 
 ## What works
 
