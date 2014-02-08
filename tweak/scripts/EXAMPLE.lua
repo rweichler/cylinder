@@ -5,18 +5,25 @@
 --width is the width of the screen
 --offset is the offset of the page from the screen's center.
 
---when manipulating the view's transform, call rotate/translate/scale with BASE as the first argument
---BASE is the original transform for that object
---BASE3D is the transform that allows for the 3D effect while rotating.
---**ONLY** use BASE3D when you are doing 3D rotation (i.e. pitch and yaw)
---      the icons will blur if you use the BASE3D transform on the
---      page and its icons simultaneously.
+--view:rotate(angle, pitch, yaw, roll)
+--view:rotate(angle) --> equivalent of view:rotate(angle, 0, 0, 1)
+--  angle is in radians, and typically pitch/yaw/roll are 1 or 0
+--
+--  *****WARNING*******
+--  DO NOT rotate the pitch or yaw of the page AND its icons. (roll only is fine)
+--  this will make them blur and will cause drastic performance
+--  loss. this is not a bug. it is just how Apple designed
+--  Quartz. you shouldn't even have to rotate the pitch
+--  and yaw of the page and its icons under any circumstances
+--  anyway, but i thought i should mention it.
 
---with each subsequent manipulation to the view, omit the transform from the first argument
+--view:translate(x, y, z) --same warning applies here, do not translate
+                          --across the Z axis for the page and its
+                          --icons simultaneously, the same blurring
+                          --effect will occur if you do.
 
---view:rotate([transform], angle, pitch, yaw, roll)
---view:translate([transform], x, y, z)
---view:scale([transform], x, y, z)
+--there is no scale function. the same effect can be achieved
+--using view:translate on the Z axis.
 
 --view.alpha = 0 --completely transparent
 --view.alpha = 0.5 --semitransparent
@@ -35,7 +42,7 @@ return function(view, width, offset)
     local percent = offset/width
     if percent < 0 then percent = -percent end
 
-    view:rotate(BASE3D, percent*3.14159265/4, 1, 0, 0) --this will tilt all icons slightly backward
+    view:rotate(percent*3.14159265/4, 1, 0, 0) --this will tilt all icons slightly backward
 end
 
 --errors are stored in /var/mobile/Library/Logs/Cylinder/errors.log

@@ -14,7 +14,7 @@ local function chomp(view, percent, width)
 
         local mult = 1
         if i <= 8 then mult = -1 end
-        v:translate(BASE, 0, mult*percent*width/2, -percent*50)
+        v:translate(0, mult*percent*width/2, -percent*50)
     end
 end
 

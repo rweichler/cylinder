@@ -1,17 +1,12 @@
 #import "luashit.h"
 #import "lua/lauxlib.h"
 #import "macros.h"
-#import "PointerContainer.h"
+#import "UIView+Cylinder.h"
 
 static lua_State *L = NULL;
-static CATransform3D _transform = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
-static CATransform3D _transform3D = {1,0,0,0,0,1,0,0,0,0,1,-0.002,0,0,0,1};
-static PointerContainer *_transformContainer = nil;
-static PointerContainer *_transform3DContainer = nil;
 static int func;
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
-static int l_transform_scale(lua_State *L);
 static int l_uiview_index(lua_State *L);
 static int l_uiview_setindex(lua_State *L);
 static int l_include(lua_State *L);
@@ -25,19 +20,6 @@ void close_lua()
 }
 BOOL init_lua(const char *script)
 {
-    if(_transformContainer == nil)
-    {
-        _transformContainer = [[PointerContainer alloc] init];
-        _transformContainer.description = @"CATransform3D";
-        _transformContainer.pointer = &_transform;
-    }
-    if(_transform3DContainer == nil)
-    {
-        _transform3DContainer = [[PointerContainer alloc] init];
-        _transform3DContainer.description = @"CATransform3D";
-        _transform3DContainer.pointer = &_transform3D;
-    }
-
     BOOL success = true;
 
     //if we are reloading, close the state
@@ -47,12 +29,6 @@ BOOL init_lua(const char *script)
     L = luaL_newstate();
 
     //set globals
-    lua_pushlightuserdata(L, _transformContainer);
-    lua_setglobal(L, "BASE");
-
-    lua_pushlightuserdata(L, _transform3DContainer);
-    lua_setglobal(L, "BASE3D");
-
     lua_pushcfunction(L, l_include);
     lua_setglobal(L, "include");
 
@@ -134,11 +110,6 @@ void write_error(const char *error)
     [fileHandle closeFile];
 }
 
-CATransform3D *default_transform()
-{
-    return &_transform;
-}
-
 void push_view(UIView *view)
 {
     lua_pushlightuserdata(L, view);
@@ -156,6 +127,10 @@ BOOL manipulate(UIView *view, float width, float offset)
     lua_pushnumber(L, width);
     lua_pushnumber(L, offset);
 
+    view.transformed = false;
+    for(UIView *v in view.subviews)
+        v.transformed = false;
+
     if(lua_pcall(L, 3, 1, 0) != 0)
     {
         write_error(lua_tostring(L, -1));
@@ -166,20 +141,7 @@ BOOL manipulate(UIView *view, float width, float offset)
     return true;
 }
 
-int get_transform(UIView *self, lua_State *L, CATransform3D *transform)
-{
-    if(lua_isuserdata(L, 2))
-    {
-        PointerContainer *ptr = (PointerContainer *)lua_touserdata(L, 2);
-        *transform = *(CATransform3D *)ptr.pointer;
-        return 1;
-    }
-    else
-    {
-        *transform = self.layer.transform;
-        return 0;
-    }
-}
+
 static int l_uiview_setindex(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
@@ -239,16 +201,12 @@ static int l_uiview_index(lua_State *L)
             lua_pushcfunction(L, l_transform_translate);
             return 1;
         }
-        else if(!strcmp(key, "scale"))
-        {
-            lua_pushcfunction(L, l_transform_scale);
-            return 1;
-        }
     }
 
     return 0;
 }
 
+#define GET_TRANSFORM(self) (self.transformed ? self.layer.transform : DEFAULT_TRANSFORM)
 #define CHECK_UIVIEW(STATE, INDEX) \
     if(!lua_isuserdata(STATE, INDEX) || ![(NSObject *)lua_touserdata(STATE, INDEX) isKindOfClass:UIView.class]) \
         return luaL_error(STATE, "first argument must be a view")
@@ -260,12 +218,24 @@ static int l_transform_rotate(lua_State *L)
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
 
-    CATransform3D transform;
-    int first = 2 + get_transform(self, L, &transform);
+    CATransform3D transform = GET_TRANSFORM(self);
+    self.transformed = true;
+    int first = 2;
+
+    float pitch = 0, yaw = 0, roll = 0;
     if(!lua_isnumber(L, first+1))
-        transform = CATransform3DRotate(transform, lua_tonumber(L, first), 0, 0, 1);
+        roll = 1;
     else
-        transform = CATransform3DRotate(transform, lua_tonumber(L, first), lua_tonumber(L, first+1), lua_tonumber(L, first+2), lua_tonumber(L, first+3));
+    {
+        pitch = lua_tonumber(L, first+1);
+        yaw = lua_tonumber(L, first+2);
+        roll = lua_tonumber(L, first+3);
+    }
+
+    if(fabs(pitch) > 0.01 || fabs(yaw) > 0.01)
+        transform.m34 = -0.002;
+
+    transform = CATransform3DRotate(transform, lua_tonumber(L, first), pitch, yaw, roll);
     self.layer.transform = transform;
 
     return 0;
@@ -276,23 +246,11 @@ static int l_transform_translate(lua_State *L)
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
 
-    CATransform3D transform;
-    int first = 2 + get_transform(self, L, &transform);
-    transform = CATransform3DTranslate(transform, lua_tonumber(L, first), lua_tonumber(L, first+1), lua_tonumber(L, first+2));
-    self.layer.transform = transform;
-
-    return 0;
-}
-static int l_transform_scale(lua_State *L)
-{
-    CHECK_UIVIEW(L, 1);
-
-    UIView *self = (UIView *)lua_touserdata(L, 1);
-
-    CATransform3D transform;
-    int first = 2 + get_transform(self, L, &transform);
-
-    transform = CATransform3DScale(transform, lua_tonumber(L, first), lua_tonumber(L, first+1), lua_tonumber(L, first+2));
+    CATransform3D transform = GET_TRANSFORM(self);
+    self.transformed = true;
+    int first = 2;
+    float x = lua_tonumber(L, first), y = lua_tonumber(L, first+1), z = lua_tonumber(L, first+2);
+    transform = CATransform3DTranslate(transform, x, y, z);
     self.layer.transform = transform;
 
     return 0;

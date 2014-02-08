@@ -1,4 +1,4 @@
-#include "lua/lua.h"
+#import "lua/lua.h"
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 

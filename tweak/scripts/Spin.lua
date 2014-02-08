@@ -8,7 +8,7 @@ local function spin(view, percent)
         i = i + 1
         local v = view[i]
         if v == nil then break end
-        v:rotate(BASE, angle)
+        v:rotate(angle)
     end
 end
 
