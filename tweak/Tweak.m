@@ -1,7 +1,7 @@
 #import "substrate/substrate.h"
 #import <UIKit/UIKit.h>
 
-#include "luashit.m" //this is HORRIBLE PRACTICE! but I fucking suck with linking binaries.
+#include "luashit.h"
 #import "macros.h"
 
 static IMP original_SB_scrollViewDidScroll;

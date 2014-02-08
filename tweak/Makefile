@@ -13,8 +13,8 @@ LIBLUA=lua/liblua.a
 MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
 CYLINDER_DIR=/Library/Cylinder/
 
-COMP=substrate/libsubstrate.dylib Tweak.m $(LIBLUA)
-REQ=$(COMP) luashit.h luashit.m macros.h Makefile
+COMP=substrate/libsubstrate.dylib CompileMe.m $(LIBLUA)
+REQ=$(COMP) Tweak.m PointerContainer.h PointerContainer.m luashit.h luashit.m macros.h Makefile
 
 all: $(DYLIB)
 

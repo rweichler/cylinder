@@ -2,7 +2,7 @@
 #include "lua/lauxlib.h"
 #import "macros.h"
 
-#import "PointerContainer.m" //this is horrible practice, see issue #1
+#import "PointerContainer.h"
 
 
 
