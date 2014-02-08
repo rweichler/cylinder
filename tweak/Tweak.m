@@ -1,7 +1,6 @@
 #import "substrate/substrate.h"
 #import <UIKit/UIKit.h>
-
-#include "luashit.h"
+#import "luashit.h"
 #import "macros.h"
 
 static IMP original_SB_scrollViewDidScroll;

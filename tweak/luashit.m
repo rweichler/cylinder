@@ -1,10 +1,7 @@
-#include "luashit.h"
-#include "lua/lauxlib.h"
+#import "luashit.h"
+#import "lua/lauxlib.h"
 #import "macros.h"
-
 #import "PointerContainer.h"
-
-
 
 static lua_State *L = NULL;
 static CATransform3D _transform = {1,0,0,0,0,1,0,0,0,0,1,-0.002,0,0,0,1};
