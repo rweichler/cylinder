@@ -2,7 +2,7 @@
 
 The free software alternative to Barrel
 
-![LOL](http://i.imgur.com/JhSytf7m.png)
+![](https://raw2.github.com/rweichler/cylinder/master/screenie.gif)
 
 ## Why?
 
