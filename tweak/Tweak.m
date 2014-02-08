@@ -57,7 +57,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
     {
         if([view isKindOfClass:NSClassFromString(@"SBIconListView")])
         {
-            NSUInteger sortedIndex = [views indexOfObject:view
+            /*NSUInteger sortedIndex = [views indexOfObject:view
                     inSortedRange:(NSRange){0, views.count}
                     options:NSBinarySearchingInsertionIndex
                     usingComparator:^NSComparisonResult(UIView *obj1, UIView *obj2)
@@ -67,7 +67,9 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
                         return [n1 compare:n2];
                     }];
 
-            [views insertObject:view atIndex:sortedIndex];
+            [views insertObject:view atIndex:sortedIndex];*/
+
+            [views addObject:view];
 
         }
     }

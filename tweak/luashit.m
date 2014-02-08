@@ -4,8 +4,10 @@
 #import "PointerContainer.h"
 
 static lua_State *L = NULL;
-static CATransform3D _transform = {1,0,0,0,0,1,0,0,0,0,1,-0.002,0,0,0,1};
+static CATransform3D _transform = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
+static CATransform3D _transform3D = {1,0,0,0,0,1,0,0,0,0,1,-0.002,0,0,0,1};
 static PointerContainer *_transformContainer = nil;
+static PointerContainer *_transform3DContainer = nil;
 static int func;
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
@@ -29,6 +31,12 @@ BOOL init_lua(const char *script)
         _transformContainer.description = @"CATransform3D";
         _transformContainer.pointer = &_transform;
     }
+    if(_transform3DContainer == nil)
+    {
+        _transform3DContainer = [[PointerContainer alloc] init];
+        _transform3DContainer.description = @"CATransform3D";
+        _transform3DContainer.pointer = &_transform3D;
+    }
 
     BOOL success = true;
 
@@ -41,6 +49,9 @@ BOOL init_lua(const char *script)
     //set globals
     lua_pushlightuserdata(L, _transformContainer);
     lua_setglobal(L, "BASE");
+
+    lua_pushlightuserdata(L, _transform3DContainer);
+    lua_setglobal(L, "BASE3D");
 
     lua_pushcfunction(L, l_include);
     lua_setglobal(L, "include");
@@ -251,7 +262,10 @@ static int l_transform_rotate(lua_State *L)
 
     CATransform3D transform;
     int first = 2 + get_transform(self, L, &transform);
-    transform = CATransform3DRotate(transform, lua_tonumber(L, first), lua_tonumber(L, first+1), lua_tonumber(L, first+2), lua_tonumber(L, first+3));
+    if(!lua_isnumber(L, first+1))
+        transform = CATransform3DRotate(transform, lua_tonumber(L, first), 0, 0, 1);
+    else
+        transform = CATransform3DRotate(transform, lua_tonumber(L, first), lua_tonumber(L, first+1), lua_tonumber(L, first+2), lua_tonumber(L, first+3));
     self.layer.transform = transform;
 
     return 0;
@@ -265,6 +279,7 @@ static int l_transform_translate(lua_State *L)
     CATransform3D transform;
     int first = 2 + get_transform(self, L, &transform);
     transform = CATransform3DTranslate(transform, lua_tonumber(L, first), lua_tonumber(L, first+1), lua_tonumber(L, first+2));
+    self.layer.transform = transform;
 
     return 0;
 }
