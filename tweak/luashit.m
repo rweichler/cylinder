@@ -2,8 +2,13 @@
 #include "lua/lauxlib.h"
 #import "macros.h"
 
+#import "PointerContainer.m" //this is horrible practice, see issue #1
+
+
+
 static lua_State *L = NULL;
 static CATransform3D _transform = {1,0,0,0,0,1,0,0,0,0,1,-0.002,0,0,0,1};
+static PointerContainer *_transformContainer = nil;
 static int func;
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
@@ -21,6 +26,13 @@ void close_lua()
 }
 BOOL init_lua(const char *script)
 {
+    if(_transformContainer == nil)
+    {
+        _transformContainer = [[PointerContainer alloc] init];
+        _transformContainer.description = @"CATransform3D";
+        _transformContainer.pointer = &_transform;
+    }
+
     BOOL success = true;
 
     //if we are reloading, close the state
@@ -30,7 +42,7 @@ BOOL init_lua(const char *script)
     L = luaL_newstate();
 
     //set globals
-    lua_pushlightuserdata(L, &_transform);
+    lua_pushlightuserdata(L, _transformContainer);
     lua_setglobal(L, "BASE");
 
     lua_pushcfunction(L, l_include);
@@ -150,7 +162,8 @@ int get_transform(UIView *self, lua_State *L, CATransform3D *transform)
 {
     if(lua_isuserdata(L, 2))
     {
-        *transform = *(CATransform3D *)lua_touserdata(L, 2);
+        PointerContainer *ptr = (PointerContainer *)lua_touserdata(L, 2);
+        *transform = *(CATransform3D *)ptr.pointer;
         return 1;
     }
     else
@@ -228,9 +241,8 @@ static int l_uiview_index(lua_State *L)
     return 0;
 }
 
-//TODO see issue #5
 #define CHECK_UIVIEW(STATE, INDEX) \
-    if(!lua_isuserdata(STATE, INDEX)) \
+    if(!lua_isuserdata(STATE, INDEX) || ![(NSObject *)lua_touserdata(STATE, INDEX) isKindOfClass:UIView.class]) \
         return luaL_error(STATE, "first argument must be a view")
 
 
