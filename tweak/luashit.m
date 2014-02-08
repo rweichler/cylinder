@@ -251,6 +251,9 @@ static int l_transform_translate(lua_State *L)
     int first = 2;
     float x = lua_tonumber(L, first), y = lua_tonumber(L, first+1), z = lua_tonumber(L, first+2);
     transform = CATransform3DTranslate(transform, x, y, z);
+    if(fabs(z) > 0.01)
+        transform.m34 = -0.002;
+
     self.layer.transform = transform;
 
     return 0;
