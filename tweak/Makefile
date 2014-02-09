@@ -15,7 +15,7 @@ MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
 CYLINDER_DIR=/Library/Cylinder/
 
 COMP=substrate/libsubstrate.dylib CompileMe.m $(LIBLUA)
-REQ=$(COMP) Tweak.m PointerContainer.h PointerContainer.m luashit.h luashit.m macros.h Makefile
+REQ=$(COMP) Tweak.m luashit.h luashit.m macros.h Makefile
 
 all: $(DYLIB)
 
