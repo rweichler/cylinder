@@ -1,5 +1,6 @@
 NAME=Cylinder
-IPHONE_IP=iphone
+IPHONE_IP=iphone #root@192.168.1.7
+SCP=scp #-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
 CC=xcrun -sdk iphoneos clang
 ARCH=-arch armv7 -arch arm64
@@ -19,9 +20,9 @@ REQ=$(COMP) Tweak.m PointerContainer.h PointerContainer.m luashit.h luashit.m ma
 all: $(DYLIB)
 
 copy: $(DYLIB)
-	scp $(DYLIB) $(IPHONE_IP):$(MS_DIR)
-	scp $(NAME).plist $(IPHONE_IP):$(MS_DIR)
-	scp -r scripts/* $(IPHONE_IP):$(CYLINDER_DIR)
+	$(SCP) $(DYLIB) $(IPHONE_IP):$(MS_DIR)
+	$(SCP) $(NAME).plist $(IPHONE_IP):$(MS_DIR)
+	$(SCP) -r scripts/* $(IPHONE_IP):$(CYLINDER_DIR)
 
 clean:
 	rm $(DYLIB)

@@ -80,6 +80,18 @@ in that directory and edit it for your setup. Then just run
 ./copy
 ```
 
+### Debian package
+
+Remember to fix all of the things mentioned in "The preference bundle".
+Once you got that working, you can just do
+
+```
+make package
+```
+
+in the root directory to make cylinder.deb, which you can use to easily
+install this on your phone using dpkg-deb or iFile or whatever.
+
 ## License
 
 [GNU GPL](https://github.com/rweichler/cylinder/blob/master/LICENSE), unless otherwise stated in the files themselves.
