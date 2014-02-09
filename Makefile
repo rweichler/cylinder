@@ -1,10 +1,12 @@
+IPHONE_IP=iphone
+SSH_FLAGS=
+PACKAGE=cylinder.deb
+BUNDLE_IDENTIFIER=com.r333d.cylinder
 
 MOBSUB=.tmp/Library/MobileSubstrate/DynamicLibraries
 
 
-all:
-	cd tweak && $(MAKE)
-	cd settings && $(MAKE)
+all: tweak settings
 
 package-dirs:
 	mkdir -p .tmp
@@ -16,14 +18,34 @@ package-dirs:
 	mkdir -p .tmp/Library/PreferenceBundles
 	mkdir -p .tmp/Library/PreferenceLoader/Preferences
 
-package:
+tweak:
+	cd tweak && $(MAKE)
+
+settings:
+	cd settings && $(MAKE)
+
+$(PACKAGE): tweak settings
 	$(MAKE) all
 	$(MAKE) package-dirs
 	cp tweak/Cylinder.dylib $(MOBSUB)
 	cp tweak/Cylinder.plist $(MOBSUB)
+	cp -r tweak/scripts/* .tmp/Library/Cylinder/
 	cp -r settings/.theos/obj/CylinderSettings.bundle .tmp/Library/PreferenceBundles
 	cp settings/entry.plist .tmp/Library/PreferenceLoader/Preferences
 	cp control .tmp/DEBIAN/
 	dpkg-deb -b .tmp
-	mv .tmp.deb cylinder.deb
+	mv .tmp.deb $(PACKAGE)
 	rm -rf .tmp
+
+package: $(PACKAGE)
+
+install: $(PACKAGE)
+	scp $(SSH_FLAGS) $(PACKAGE) $(IPHONE_IP):.
+	ssh $(SSH_FLAGS) $(IPHONE_IP) "dpkg -i $(PACKAGE)"
+
+uninstall:
+	ssh $(SSH_FLAGS) $(IPHONE_IP) "apt-get remove $(BUNDLE_IDENTIFIER)"
+	$(MAKE) respring
+
+respring:
+	ssh $(SSH_FLAGS) $(IPHONE_IP) "respring"
