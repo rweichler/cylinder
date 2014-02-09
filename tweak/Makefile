@@ -25,7 +25,7 @@ copy: $(DYLIB)
 	$(SCP) -r scripts/* $(IPHONE_IP):$(CYLINDER_DIR)
 
 clean:
-	rm $(DYLIB)
+	rm -f $(DYLIB)
 	cd lua && $(MAKE) clean
 
 $(DYLIB): $(REQ)

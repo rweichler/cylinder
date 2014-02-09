@@ -1,6 +1,6 @@
-#IPHONE_IP=iphone
-IPHONE_IP=root@192.168.1.7
-SSH_FLAGS=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+IPHONE_IP=iphone
+#IPHONE_IP=root@192.168.1.7
+#SSH_FLAGS=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 PACKAGE=cylinder.deb
 BUNDLE_IDENTIFIER=com.r333d.cylinder
 
@@ -8,6 +8,12 @@ MOBSUB=.tmp/Library/MobileSubstrate/DynamicLibraries
 
 
 all: tweak settings
+	cd tweak && $(MAKE)
+	cd settings && $(MAKE)
+
+clean:
+	cd tweak && $(MAKE) clean
+	cd settings && $(MAKE) clean
 
 package-dirs:
 	mkdir -p .tmp
@@ -25,7 +31,7 @@ tweak:
 settings:
 	cd settings && $(MAKE)
 
-$(PACKAGE): tweak settings
+$(PACKAGE): tweak/* settings/*
 	$(MAKE) all
 	$(MAKE) package-dirs
 	cp tweak/Cylinder.dylib $(MOBSUB)
