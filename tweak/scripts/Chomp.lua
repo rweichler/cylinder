@@ -2,7 +2,7 @@ local cube = include("include/cube.lua")
 
 local M_PI = 3.14159265
 
-local function chomp(view, percent, width)
+local function chomp(view, percent, height)
     local oldp = percent
     if percent < 0 then percent = -percent end
 
@@ -14,12 +14,12 @@ local function chomp(view, percent, width)
 
         local mult = 1
         if i <= 8 then mult = -1 end
-        v:translate(0, mult*percent*width/2, -percent*50)
+        v:translate(0, mult*percent*height/2, 0)
     end
 end
 
-return function(page, width, offset)
+return function(page, offset, width, height)
     local percent = offset/width
-    chomp(page, percent, width)
+    chomp(page, percent, height)
     cube(page, percent, true)
 end

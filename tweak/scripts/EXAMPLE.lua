@@ -35,9 +35,9 @@
 --this is the function that gets called when the screen moves
 --remember to "return" it at the end
 --"view" is the icon page you will be manipulating (aka a view)
---"width" is the width of the screen
 --"offset" is the x-offset of the current page to the center of the screen
-return function(view, width, offset)
+--"width" and "height" are the width and height of the screen
+return function(view, offset, width, height)
 
     local percent = offset/width
     if percent < 0 then percent = -percent end

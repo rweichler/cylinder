@@ -12,7 +12,7 @@ local function spin(view, percent)
     end
 end
 
-return function(page, width, offset)
+return function(page, offset, width, height)
     local percent = offset/width
     spin(page, percent)
 end

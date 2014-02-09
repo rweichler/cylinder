@@ -117,21 +117,22 @@ void push_view(UIView *view)
     lua_setmetatable(L, -2);
 }
 
-BOOL manipulate(UIView *view, float width, float offset)
+BOOL manipulate(UIView *view, float offset, float width, float height)
 {
     if(L == NULL) return false;
 
     lua_rawgeti(L, LUA_REGISTRYINDEX, func);
 
     push_view(view);
-    lua_pushnumber(L, width);
     lua_pushnumber(L, offset);
+    lua_pushnumber(L, width);
+    lua_pushnumber(L, height);
 
     view.transformed = false;
     for(UIView *v in view.subviews)
         v.transformed = false;
 
-    if(lua_pcall(L, 3, 1, 0) != 0)
+    if(lua_pcall(L, 4, 1, 0) != 0)
     {
         write_error(lua_tostring(L, -1));
         close_lua();
@@ -234,7 +235,6 @@ static int l_transform_rotate(lua_State *L)
 
     if(fabs(pitch) > 0.01 || fabs(yaw) > 0.01)
         transform.m34 = -0.002;
-
     transform = CATransform3DRotate(transform, lua_tonumber(L, first), pitch, yaw, roll);
     self.layer.transform = transform;
 
@@ -250,9 +250,9 @@ static int l_transform_translate(lua_State *L)
     self.transformed = true;
     int first = 2;
     float x = lua_tonumber(L, first), y = lua_tonumber(L, first+1), z = lua_tonumber(L, first+2);
-    transform = CATransform3DTranslate(transform, x, y, z);
     if(fabs(z) > 0.01)
         transform.m34 = -0.002;
+    transform = CATransform3DTranslate(transform, x, y, z);
 
     self.layer.transform = transform;
 

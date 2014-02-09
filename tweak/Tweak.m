@@ -24,18 +24,18 @@ void reset_everything(UIView *view)
 
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
-    float width = scrollView.frame.size.width;
+    CGSize size = scrollView.frame.size;
     float offset = scrollView.contentOffset.x;
     if(IOS_VERSION < 7) i++; //on iOS 6-, the spotlight is a page to the left, so we gotta bump the pageno. up a notch
-    offset -= i*width;
+    offset -= i*size.width;
 
-    if(fabs(offset) > width)
+    if(fabs(offset) > size.width)
     {
         reset_everything(view);
         return;
     }
 
-    _enabled = manipulate(view, width, offset);
+    _enabled = manipulate(view, offset, size.width, size.height);
 }
 
 void SB_dealloc(id self, SEL _cmd)
