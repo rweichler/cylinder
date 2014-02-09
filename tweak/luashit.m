@@ -225,7 +225,7 @@ static int l_uiview_index(lua_State *L)
     return 0;
 }
 
-#define GET_TRANSFORM(self) (self.transformed ? self.layer.transform : DEFAULT_TRANSFORM)
+#define GET_TRANSFORM(self) (self.transformed ? self.layer.transform : CATransform3DIdentity)
 #define CHECK_UIVIEW(STATE, INDEX) \
     if(!lua_isuserdata(STATE, INDEX) || ![(NSObject *)lua_touserdata(STATE, INDEX) isKindOfClass:UIView.class]) \
         return luaL_error(STATE, "first argument must be a view")

@@ -13,11 +13,11 @@ static BOOL _enabled;
 
 void reset_everything(UIView *view)
 {
-    view.layer.transform = DEFAULT_TRANSFORM;
+    view.layer.transform = CATransform3DIdentity;
     view.alpha = 1;
     for(UIView *v in view.subviews)
     {
-        v.layer.transform = DEFAULT_TRANSFORM;
+        v.layer.transform = CATransform3DIdentity;
         v.alpha = 1;
     }
 }
