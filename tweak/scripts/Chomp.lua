@@ -21,5 +21,5 @@ end
 return function(page, offset, width, height)
     local percent = offset/width
     chomp(page, percent, height)
-    cube(page, percent, true)
+    cube(page, width, percent, true)
 end
