@@ -1,7 +1,6 @@
 #import "luashit.h"
 #import "lua/lauxlib.h"
 #import "macros.h"
-#import "UIView+Cylinder.h"
 
 #define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
 #define LOG_PATH LOG_DIR"errors.log"
@@ -11,9 +10,13 @@ const char *_script;
 static int func;
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
+static int l_push_base_transform(lua_State *L);
+static int l_set_transform(lua_State *L, UIView *self); //-1 = transform
+static int l_get_transform(lua_State *L, UIView *self); //pushes transform to top of stack
 static int l_uiview_index(lua_State *L);
 static int l_uiview_setindex(lua_State *L);
 static int l_include(lua_State *L);
+
 
 void write_error(const char *error);
 
@@ -49,6 +52,10 @@ BOOL init_lua(const char *script)
     //set globals
     lua_pushcfunction(L, l_include);
     lua_setglobal(L, "include");
+
+    lua_newtable(L);
+    l_push_base_transform(L);
+    lua_setglobal(L, "BASE_TRANSFORM");
 
     //set UIView metatable
     luaL_newmetatable(L, "UIView");
@@ -146,9 +153,9 @@ BOOL manipulate(UIView *view, float offset, float width, float height)
     lua_pushnumber(L, width);
     lua_pushnumber(L, height);
 
-    view.transformed = false;
+    view.layer.transform = CATransform3DIdentity;
     for(UIView *v in view.subviews)
-        v.transformed = false;
+        v.layer.transform = CATransform3DIdentity;
 
     if(lua_pcall(L, 4, 1, 0) != 0)
     {
@@ -169,10 +176,17 @@ static int l_uiview_setindex(lua_State *L)
         const char *key = lua_tostring(L, 2);
         if(!strcmp(key, "alpha"))
         {
-            if(lua_isnumber(L, 3))
-            {
-                self.alpha = lua_tonumber(L, 3);
-            }
+            if(!lua_isnumber(L, 3))
+                return luaL_error(L, "alpha must be a number");
+
+            self.alpha = lua_tonumber(L, 3);
+        }
+        else if(!strcmp(key, "transform"))
+        {
+            lua_pushvalue(L, 3);
+            int result = l_set_transform(L, self);
+            lua_pop(L, 1);
+            return result;
         }
     }
     return 0;
@@ -210,6 +224,10 @@ static int l_uiview_index(lua_State *L)
             lua_pushnumber(L, self.alpha);
             return 1;
         }
+        else if(!strcmp(key, "transform"))
+        {
+            return l_get_transform(L, self);
+        }
         else if(!strcmp(key, "rotate"))
         {
             lua_pushcfunction(L, l_transform_rotate);
@@ -225,7 +243,6 @@ static int l_uiview_index(lua_State *L)
     return 0;
 }
 
-#define GET_TRANSFORM(self) (self.transformed ? self.layer.transform : CATransform3DIdentity)
 #define CHECK_UIVIEW(STATE, INDEX) \
     if(!lua_isuserdata(STATE, INDEX) || ![(NSObject *)lua_touserdata(STATE, INDEX) isKindOfClass:UIView.class]) \
         return luaL_error(STATE, "first argument must be a view")
@@ -237,23 +254,20 @@ static int l_transform_rotate(lua_State *L)
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
 
-    CATransform3D transform = GET_TRANSFORM(self);
-    self.transformed = true;
-    int first = 2;
-
+    CATransform3D transform = self.layer.transform;
     float pitch = 0, yaw = 0, roll = 0;
-    if(!lua_isnumber(L, first+1))
+    if(!lua_isnumber(L, 3))
         roll = 1;
     else
     {
-        pitch = lua_tonumber(L, first+1);
-        yaw = lua_tonumber(L, first+2);
-        roll = lua_tonumber(L, first+3);
+        pitch = lua_tonumber(L, 3);
+        yaw = lua_tonumber(L, 4);
+        roll = lua_tonumber(L, 5);
     }
 
     if(fabs(pitch) > 0.01 || fabs(yaw) > 0.01)
         transform.m34 = -0.002;
-    transform = CATransform3DRotate(transform, lua_tonumber(L, first), pitch, yaw, roll);
+    transform = CATransform3DRotate(transform, lua_tonumber(L, 2), pitch, yaw, roll);
     self.layer.transform = transform;
 
     return 0;
@@ -264,15 +278,95 @@ static int l_transform_translate(lua_State *L)
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
 
-    CATransform3D transform = GET_TRANSFORM(self);
-    self.transformed = true;
-    int first = 2;
-    float x = lua_tonumber(L, first), y = lua_tonumber(L, first+1), z = lua_tonumber(L, first+2);
+    CATransform3D transform = self.layer.transform;
+    float x = lua_tonumber(L, 2), y = lua_tonumber(L, 3), z = lua_tonumber(L, 4);
+    float oldm34 = transform.m34;
     if(fabs(z) > 0.01)
         transform.m34 = -0.002;
     transform = CATransform3DTranslate(transform, x, y, z);
+    transform.m34 = oldm34;
 
     self.layer.transform = transform;
 
     return 0;
+}
+
+float POPA_T(lua_State *L, int index)
+{
+    lua_pushnumber(L, index);
+    lua_gettable(L, -2);
+    if(!lua_isnumber(L, -1))
+        return luaL_error(L, "malformed transformation matrix");
+
+    float result = lua_tonumber(L, -1);
+    lua_pop(L, 1);
+    return result;
+}
+
+#define CALL_TRANSFORM_MACRO(F, ...)\
+    F(m11, ## __VA_ARGS__);\
+    F(m12, ## __VA_ARGS__);\
+    F(m13, ## __VA_ARGS__);\
+    F(m14, ## __VA_ARGS__);\
+    F(m21, ## __VA_ARGS__);\
+    F(m22, ## __VA_ARGS__);\
+    F(m23, ## __VA_ARGS__);\
+    F(m24, ## __VA_ARGS__);\
+    F(m31, ## __VA_ARGS__);\
+    F(m32, ## __VA_ARGS__);\
+    F(m33, ## __VA_ARGS__);\
+    F(m34, ## __VA_ARGS__);\
+    F(m41, ## __VA_ARGS__);\
+    F(m42, ## __VA_ARGS__);\
+    F(m43, ## __VA_ARGS__);\
+    F(m44, ## __VA_ARGS__)
+
+#define BASE_TRANSFORM_STEP(M, LUASTATE, I, TRANSFORM)\
+    lua_pushnumber(LUASTATE, ++I);\
+    lua_pushnumber(LUASTATE, TRANSFORM.M);\
+    lua_settable(LUASTATE, -3)
+
+static int l_push_base_transform(lua_State *L)
+{
+    int i = 0;
+    CALL_TRANSFORM_MACRO(BASE_TRANSFORM_STEP, L, i, CATransform3DIdentity);
+    return 1;
+}
+
+#define FILL_TRANSFORM(M, LUASTATE, I, TRANSFORM)\
+    lua_pushnumber(LUASTATE, ++I);\
+    lua_gettable(LUASTATE, -3);\
+    if(!lua_isnumber(LUASTATE, -1))\
+        return luaL_error(LUASTATE, "malformed transformation matrix");\
+    TRANSFORM.M = lua_tonumber(LUASTATE, -1);\
+    lua_pop(LUASTATE, 1)
+
+static int l_set_transform(lua_State *L, UIView *self) //-1 = transform
+{
+    if(!lua_istable(L, -1))
+        return luaL_error(L, "transform must be a table");
+    lua_len(L, -1);
+    if(lua_tonumber(L, -1) != 16)
+        return luaL_error(L, "malformed transformation matrix");
+    lua_pop(L, 1);
+
+    CATransform3D transform;
+    int i = 0;
+    CALL_TRANSFORM_MACRO(FILL_TRANSFORM, L, i, transform);
+    self.layer.transform = transform;
+
+    return 0;
+}
+
+#define PUSH_TRANSFORM(M, LUASTATE, I, TRANSFORM)\
+    lua_pushnumber(LUASTATE, ++I);\
+    lua_pushnumber(LUASTATE, TRANSFORM.M);\
+    lua_settable(LUASTATE, -3)
+
+static int l_get_transform(lua_State *L, UIView *self) //pushes transform to top of stack
+{
+    lua_newtable(L);
+    int i = 0;
+    CALL_TRANSFORM_MACRO(PUSH_TRANSFORM, L, i, self.layer.transform);
+    return 1;
 }

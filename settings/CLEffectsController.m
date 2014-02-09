@@ -195,35 +195,11 @@ void $PSViewController$hideNavigationBarButtons(PSRootController *self, SEL _cmd
 id $PSViewController$initForContentSize$(PSRootController *self, SEL _cmd, CGRect contentSize) {
     return [self init];
 }
-#define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
-#define LOG_PATH LOG_DIR"errors.log"
-
-void write_error(const char *error)
-{
-    if(![NSFileManager.defaultManager fileExistsAtPath:LOG_PATH isDirectory:nil])
-    {
-        if(![NSFileManager.defaultManager fileExistsAtPath:LOG_DIR isDirectory:nil])
-            [NSFileManager.defaultManager createDirectoryAtPath:LOG_DIR withIntermediateDirectories:false attributes:nil error:nil];
-        [[NSFileManager defaultManager] createFileAtPath:LOG_PATH contents:nil attributes:nil];
-    }
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:LOG_PATH];
-    [fileHandle seekToEndOfFile];
-
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"[yyyy-MM-dd HH:mm:ss] "];
-    NSString *dateStr = [dateFormatter stringFromDate:NSDate.date];
-
-    [fileHandle writeData:[dateStr dataUsingEncoding:NSUTF8StringEncoding]];
-    [fileHandle writeData:[NSData dataWithBytes:error length:(strlen(error) + 1)]];
-    [fileHandle writeData:[NSData dataWithBytes:"\n" length:2]];
-    [fileHandle closeFile];
-}
 
 #define ERROR_DIR @"/var/mobile/Library/Logs/Cylinder/.errornotify"
 
 static inline void luaErrorNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-    write_error("GOT NOTIFICATION");
     CLEffectsController *self = sharedController;
     if(!self) return;
     BOOL isDir;
@@ -232,30 +208,23 @@ static inline void luaErrorNotification(CFNotificationCenterRef center, void *ob
     NSArray *info = [[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease] componentsSeparatedByString:@"\n"];
     if(info.count != 2) return;
 
-    
+
 
     UITableView *tableView = self.view;
+    NSString *key = info[0];
+    BOOL broken = [info[1] boolValue];
 
-    //for(NSString *key in info)
+    for(int i = 0; i < self.currentEffects.count; i++)
     {
-        NSString *key = info[0];
-        write_error("KEY");
-        write_error(key.UTF8String);
-        BOOL broken = [info[1] boolValue];//true;//[info[key] boolValue];
-        for(int i = 0; i < self.currentEffects.count; i++)
+        CLEffect *effect = self.currentEffects[i];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+        if([effect.name isEqualToString:key])
         {
-            CLEffect *effect = self.currentEffects[i];
-            write_error(effect.name.UTF8String);
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
-            if([effect.name isEqualToString:key])
-            {
-                effect.broken = broken;
-                UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-                [self setCellIcon:cell effect:effect];
-            }
+            effect.broken = broken;
+            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+            [self setCellIcon:cell effect:effect];
         }
     }
-    [tableView reloadData];
 }
 
 static __attribute__((constructor)) void __wbsInit() {

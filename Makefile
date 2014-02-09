@@ -49,3 +49,6 @@ uninstall:
 
 respring:
 	ssh $(SSH_FLAGS) $(IPHONE_IP) "respring"
+
+babies:
+	$(MAKE) install && $(MAKE) respring
