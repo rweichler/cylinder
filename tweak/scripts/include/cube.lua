@@ -1,10 +1,18 @@
 local M_PI = 3.14159265
+--this code could use some improving...
+return function (view, width, percent, is_inside)
+    local angle = percent*M_PI
+    local m = is_inside and 1/3 or -5/9
 
-return function (view, percent, is_inside)
-    local angle = percent*M_PI/2
-    if not is_inside then angle = -angle end
-    view:rotate(angle, 0, 1, 0)
-
-    if percent < 0 then percent = -percent end
-    view.alpha = 1 - percent
+    if percent > 0 then
+        local x = width/2
+        view:translate(x, 0, 0)
+        view:rotate(m*angle, 0, 1, 0)
+        view:translate(-x, 0, 0)
+    else
+        local x = -width/2
+        view:translate(x, 0, 0)
+        view:rotate(m*angle, 0, 1, 0)
+        view:translate(-x, 0, 0)
+    end
 end

@@ -13,13 +13,13 @@ DYLIB=CylinderSettings
 COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m
 REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h Defines.h
 
-all: bin
+all: $(DYLIB).bundle
 
 clean:
-	rm -rf bin
+	rm -rf $(DYLIB).bundle
 
-bin: $(REQ)
+$(DYLIB).bundle: $(REQ)
 	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $(DYLIB)
-	mkdir -p CylinderSettings.bundle
-	cp Resources/* CylinderSettings.bundle/
-	mv $(DYLIB) CylinderSettings.bundle
+	mkdir -p $(DYLIB).bundle
+	cp Resources/* $(DYLIB).bundle/
+	mv $(DYLIB) $(DYLIB).bundle

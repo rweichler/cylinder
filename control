@@ -2,9 +2,8 @@ Package: com.r333d.cylinder
 Name: Cylinder
 Version: 0.1
 Architecture: iphoneos-arm
-Description: SEXY ICON POLE DANCING
-Homepage: http://r333d.com
-Maintainer: Reed Weichler <rweichler@gmail.com>
-Author: Reed Weichler (rweichler) <rweichler@gmail.com>
-Sponsor: POOP
+Description: GitHub build
+Homepage: http://github.com/rweichler/cylinder
+Maintainer: Reed Weichler <rweichler+cydia@gmail.com>
+Author: Reed Weichler (rweichler) <rweichler+cydia@gmail.com>
 Section: Tweaks

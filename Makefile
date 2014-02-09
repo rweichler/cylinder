@@ -31,7 +31,7 @@ tweak:
 settings:
 	cd settings && $(MAKE)
 
-$(PACKAGE): tweak/* settings/*
+$(PACKAGE): tweak/* settings/* control
 	$(MAKE) all
 	$(MAKE) package-dirs
 	cp tweak/Cylinder.dylib $(MOBSUB)
