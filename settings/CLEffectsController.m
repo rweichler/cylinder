@@ -20,6 +20,10 @@ static CLEffectsController *sharedController = nil;
 @property(nonatomic) BOOL allowsMultipleSelectionDuringEditing;
 @end
 
+@interface PSViewController(Private)
+-(void)viewWillAppear:(BOOL)animated;
+@end
+
 
 @implementation CLEffectsController
 @synthesize effects = _effects;
@@ -86,6 +90,7 @@ static CLEffectsController *sharedController = nil;
 
 - (void)viewWillAppear:(BOOL)animated {
 	[self refreshList];
+    [super viewWillAppear:animated];
 }
 
 - (NSArray *)currentEffects {

@@ -1,5 +1,6 @@
-IPHONE_IP=iphone
-SSH_FLAGS=
+#IPHONE_IP=iphone
+IPHONE_IP=root@192.168.1.7
+SSH_FLAGS=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 PACKAGE=cylinder.deb
 BUNDLE_IDENTIFIER=com.r333d.cylinder
 
@@ -45,10 +46,12 @@ install: $(PACKAGE)
 
 uninstall:
 	ssh $(SSH_FLAGS) $(IPHONE_IP) "apt-get remove $(BUNDLE_IDENTIFIER)"
-	$(MAKE) respring
 
 respring:
-	ssh $(SSH_FLAGS) $(IPHONE_IP) "respring"
+	ssh $(SSH_FLAGS) $(IPHONE_IP) "killall SpringBoard"
 
 babies:
 	$(MAKE) install && $(MAKE) respring
+
+money:
+	$(MAKE) uninstall && $(MAKE) respring

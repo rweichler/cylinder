@@ -19,14 +19,11 @@ easy to add your own effects, though. Check out
 [EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua).
 
 
-## Supported devices / iOS versions
+## Tested devices / iOS versions
 
-* iPod touch 4
-* iOS 5.1.1
-* iPhone 4S
-* iOS 7.0.4
-
-I have this compiled for arm64, so this *should* work on a 5S. But idk. Someone let me know!
+* iPod touch 4 on 5.1.1 (no preference menu)
+* iPhone 4S on 7.0.4
+* iPhone 5S on 7.0.4 (no preference menu)
 
 ## Todo list
 

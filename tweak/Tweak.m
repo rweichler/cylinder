@@ -93,7 +93,7 @@ void load_that_shit()
         }
     }
 
-    if(settings[@"enabled"] != nil && ![settings[@"enabled"] boolValue])
+    if(settings && ![settings[@"enabled"] boolValue])
     {
         close_lua();
         _enabled = false;
@@ -116,8 +116,8 @@ static void initialize() {
     load_that_shit();
 
     //hook scroll
-    Class cls = NSClassFromString(@"SBFolderView"); //iOS 7
-    if(cls == nil) cls = NSClassFromString(@"SBIconController"); //iOS 5
+    Class cls = NSClassFromString(IOS_VERSION < 7 ? @"SBIconController" : @"SBFolderView");
+
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
     MSHookMessageEx(UIScrollView.class, @selector(dealloc), (IMP)SB_dealloc, (IMP *)&original_SB_dealloc);
 
