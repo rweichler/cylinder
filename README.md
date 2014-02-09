@@ -10,13 +10,23 @@ Because.
 
 ## What works
 
-Currently this *CAN* do everything Barrel does, you can
-manipulate the individual icons and the page using Lua.
-However that doesn't mean that all of Barrel's animations
-are here. The only ones I have coded so far are the cube
-inside, cube outside, and the icon roll. It's really
-easy to add your own effects, though. Check out
+Everything!
+
+## Available Effects
+
+* Cube (inside)
+* Cube (outside)
+* Stairs (down left)
+* Stairs (down right)
+* Spin &lt;---- the one in the screenshot
+* Chomp &lt;---- custom "chomping" effect I made
+
+If you want to make your own effects, check out
 [EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua).
+Once you've made your own effect, just drop it in
+/Library/Cylinder on your phone, and it should
+appear in settings. You don't even have to respring!
+This allows for rapid testing.
 
 
 ## Tested devices / iOS versions
@@ -42,6 +52,8 @@ are temporary, and if this gets publicized before I finish
 it will be hard to update. Thanks!
 
 ##Building
+
+If you don't feel like building this, [here's a .deb](http://r333d.com/cylinder.deb).
 
 First, init the submodules:
 
