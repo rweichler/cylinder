@@ -43,6 +43,14 @@ it will be hard to update. Thanks!
 
 ##Building
 
+First, init the submodules:
+
+```
+git submodule update --init
+```
+
+And then make:
+
 ```
 make package
 ```
