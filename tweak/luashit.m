@@ -3,7 +3,11 @@
 #import "macros.h"
 #import "UIView+Cylinder.h"
 
+#define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
+#define LOG_PATH LOG_DIR"errors.log"
+
 static lua_State *L = NULL;
+const char *_script;
 static int func;
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
@@ -13,14 +17,28 @@ static int l_include(lua_State *L);
 
 void write_error(const char *error);
 
+void post_notification(const char *script, BOOL broken)
+{
+    if(script != NULL)
+    {
+        [[[NSString stringWithFormat:@"%s\n%d", script, broken] dataUsingEncoding:NSUTF8StringEncoding] writeToFile:LOG_DIR".errornotify" atomically:true];
+        CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
+        CFNotificationCenterPostNotification(r, CFSTR("luaERROR"), NULL, NULL, true);
+    }
+}
+
 void close_lua()
 {
     if(L != NULL) lua_close(L);
     L = NULL;
+
+    post_notification(_script, true);
+    
 }
 BOOL init_lua(const char *script)
 {
     BOOL success = true;
+    _script = script;
 
     //if we are reloading, close the state
     if(L != NULL) lua_close(L);
@@ -56,11 +74,13 @@ BOOL init_lua(const char *script)
         lua_close(L);
         L = NULL;
         success = false;
+        post_notification(script, true);
     }
     else
     {
         func = luaL_ref(L, LUA_REGISTRYINDEX);
         lua_pop(L, 1);
+        post_notification(script, false);
     }
 
     free(path);
@@ -86,8 +106,6 @@ static int l_include(lua_State *L)
     return 1;
 }
 
-#define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
-#define LOG_PATH LOG_DIR"errors.log"
 
 void write_error(const char *error)
 {

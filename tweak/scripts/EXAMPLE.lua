@@ -1,36 +1,37 @@
---there is only one custom type, a view (UIView)
---view.subviews returns a table containing view's subviews (which conveniently are the individual icons)
---you can also do view[i] to get the subview at an index
---keep in mind, with lua, arrays start with index 1, not 0
---width is the width of the screen
---offset is the offset of the page from the screen's center.
+--[[
+there is only one custom type, a view (UIView)
+view.subviews returns a table containing view's subviews (which conveniently are the individual icons)
+you can also do view[i] to get the subview at an index
+keep in mind, with lua, arrays start with index 1, not 0
+width is the width of the screen
+offset is the offset of the page from the screen's center.
 
---view:rotate(angle, pitch, yaw, roll)
---view:rotate(angle) --> equivalent of view:rotate(angle, 0, 0, 1)
---  angle is in radians, and typically pitch/yaw/roll are 1 or 0
---
---  *****WARNING*******
---  DO NOT rotate the pitch or yaw of the page AND its icons. (roll only is fine)
---  this will make them blur and will cause drastic performance
---  loss. this is not a bug. it is just how Apple designed
---  Quartz. you shouldn't even have to rotate the pitch
---  and yaw of the page and its icons under any circumstances
---  anyway, but i thought i should mention it.
+view:rotate(angle, pitch, yaw, roll)
+view:rotate(angle) --> equivalent of view:rotate(angle, 0, 0, 1)
+  angle is in radians, and typically pitch/yaw/roll are 1 or 0
 
---view:translate(x, y, z) --same warning applies here, do not translate
-                          --across the Z axis for the page and its
-                          --icons simultaneously, the same blurring
-                          --effect will occur if you do.
+  *****WARNING*******
+  DO NOT rotate the pitch or yaw of the page AND its icons. (roll only is fine)
+  this will make them blur and will cause drastic performance
+  loss. this is not a bug. it is just how Apple designed
+  Quartz. you shouldn't even have to rotate the pitch
+  and yaw of the page and its icons under any circumstances
+  anyway, but i thought i should mention it.
 
---there is no scale function. the same effect can be achieved
---using view:translate on the Z axis.
+view:translate(x, y, z) --> same warning applies here, do not translate
+                            across the Z axis for the page and its
+                            icons simultaneously, the same blurring
+                            effect will occur if you do.
 
---view.alpha = 0 --completely transparent
---view.alpha = 0.5 --semitransparent
---view.alpha = 1 --completely opaque
+there is no scale function. the same effect can be achieved
+using view:translate on the Z axis.
 
---more will be added later
+view.alpha = 0 --> completely transparent
+view.alpha = 0.5 --> semitransparent
+view.alpha = 1 --> completely opaque
 
+more will be added later
+]]
 
 --this is the function that gets called when the screen moves
 --remember to "return" it at the end

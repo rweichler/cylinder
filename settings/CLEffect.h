@@ -5,7 +5,7 @@
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *path;
 @property (nonatomic, copy) NSString *pack;
-@property (nonatomic, assign, getter=isHidden) BOOL hidden;
+@property (nonatomic, assign, getter=isHidden) BOOL broken;
 
 + (CLEffect *)effectWithPath:(NSString *)path;
 - (id)initWithPath:(NSString *)path;

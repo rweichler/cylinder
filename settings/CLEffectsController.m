@@ -6,6 +6,8 @@
 #import "CLAlignedTableViewCell.h"
 #include <objc/runtime.h>
 
+static CLEffectsController *sharedController = nil;
+
 @implementation UIDevice (OSVersion)
 - (BOOL)iOSVersionIsAtLeast:(NSString*)version {
     NSComparisonResult result = [[self systemVersion] compare:version options:NSNumericSearch];
@@ -40,6 +42,7 @@
 		if ([self respondsToSelector:@selector(setView:)])
 			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];			
 	}
+    sharedController = self;
 	return self;
 }
 
@@ -58,8 +61,8 @@
 			NSString *effectIdentifier = [effect.pack stringByAppendingFormat: @".%@", effect.name];
 			CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
 
-			if ([[ctrl.settings objectForKey: PrefsHiddenKey] containsObject: effectIdentifier])
-				effect.hidden = true;
+			if ([[ctrl.settings objectForKey: PrefsBrokenKey] containsObject: effectIdentifier])
+				effect.broken = true;
 			
 			[self.effects addObject:effect];
 		}
@@ -90,6 +93,7 @@
 }
 
 - (void)dealloc { 
+    sharedController = nil;
 	self.effects = nil;
 	[super dealloc];
 }
@@ -116,6 +120,14 @@
 	return self.currentEffects.count;
 }
 
+-(void)setCellIcon:(UITableViewCell *)cell effect:(CLEffect *)effect
+{
+    if(effect.broken)
+        cell.imageView.image = [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/CylinderSettings.bundle/error.png"];
+    else
+        cell.imageView.image = nil;
+}
+
 - (id) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
     if (!cell) {
@@ -125,6 +137,7 @@
 	CLEffect *effect = [self.currentEffects objectAtIndex:indexPath.row];
 	cell.textLabel.text = effect.name;	
 	cell.selected = false;
+    [self setCellIcon:cell effect:effect];
 
 	if ([effect.name isEqualToString: selectedEffect] && !tableView.isEditing) {
 		cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -182,8 +195,73 @@ void $PSViewController$hideNavigationBarButtons(PSRootController *self, SEL _cmd
 id $PSViewController$initForContentSize$(PSRootController *self, SEL _cmd, CGRect contentSize) {
     return [self init];
 }
+#define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
+#define LOG_PATH LOG_DIR"errors.log"
+
+void write_error(const char *error)
+{
+    if(![NSFileManager.defaultManager fileExistsAtPath:LOG_PATH isDirectory:nil])
+    {
+        if(![NSFileManager.defaultManager fileExistsAtPath:LOG_DIR isDirectory:nil])
+            [NSFileManager.defaultManager createDirectoryAtPath:LOG_DIR withIntermediateDirectories:false attributes:nil error:nil];
+        [[NSFileManager defaultManager] createFileAtPath:LOG_PATH contents:nil attributes:nil];
+    }
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:LOG_PATH];
+    [fileHandle seekToEndOfFile];
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"[yyyy-MM-dd HH:mm:ss] "];
+    NSString *dateStr = [dateFormatter stringFromDate:NSDate.date];
+
+    [fileHandle writeData:[dateStr dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileHandle writeData:[NSData dataWithBytes:error length:(strlen(error) + 1)]];
+    [fileHandle writeData:[NSData dataWithBytes:"\n" length:2]];
+    [fileHandle closeFile];
+}
+
+#define ERROR_DIR @"/var/mobile/Library/Logs/Cylinder/.errornotify"
+
+static inline void luaErrorNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+    write_error("GOT NOTIFICATION");
+    CLEffectsController *self = sharedController;
+    if(!self) return;
+    BOOL isDir;
+    if(![NSFileManager.defaultManager fileExistsAtPath:ERROR_DIR isDirectory:&isDir] || isDir) return;
+    NSData *data = [NSData dataWithContentsOfFile:ERROR_DIR];
+    NSArray *info = [[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease] componentsSeparatedByString:@"\n"];
+    if(info.count != 2) return;
+
+    
+
+    UITableView *tableView = self.view;
+
+    //for(NSString *key in info)
+    {
+        NSString *key = info[0];
+        write_error("KEY");
+        write_error(key.UTF8String);
+        BOOL broken = [info[1] boolValue];//true;//[info[key] boolValue];
+        for(int i = 0; i < self.currentEffects.count; i++)
+        {
+            CLEffect *effect = self.currentEffects[i];
+            write_error(effect.name.UTF8String);
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            if([effect.name isEqualToString:key])
+            {
+                effect.broken = broken;
+                UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+                [self setCellIcon:cell effect:effect];
+            }
+        }
+    }
+    [tableView reloadData];
+}
 
 static __attribute__((constructor)) void __wbsInit() {
     WBSAddMethod(PSViewController, hideNavigationBarButtons, $PSViewController$hideNavigationBarButtons, "v@:");
     WBSAddMethod(PSViewController, initForContentSize:, $PSViewController$initForContentSize$, "@@:{ff}");
+
+    CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
+    CFNotificationCenterAddObserver(r, NULL, &luaErrorNotification, (CFStringRef)@"luaERROR", NULL, 0);
 }

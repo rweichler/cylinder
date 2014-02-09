@@ -1,4 +1,6 @@
 return function(view, percent, left)
-    if left then percent = -percent end
-    view:translate(percent*20, 0, percent*100)
+    local x = -percent*20
+    local z = percent*100
+    if left then z = -z end
+    view:translate(x, 0, z)
 end

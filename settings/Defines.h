@@ -10,7 +10,7 @@
 #define PrefsOldMethodKey    @"useOldMethod"
 
 #define PrefsPackKey         @"pack"
-#define PrefsHiddenKey       @"hiddenEffects"
+#define PrefsBrokenKey       @"brokenEffects"
 
 #define IN_SPRINGBOARD()     ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
 #define IS_RETINA()          ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] && [[UIScreen mainScreen] scale] == 2)

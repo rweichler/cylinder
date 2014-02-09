@@ -2,7 +2,7 @@
 #import "Defines.h"
 
 @implementation CLEffect
-@synthesize name=_name, path=_path, pack=_pack, hidden=_hidden;
+@synthesize name=_name, path=_path, pack=_pack, broken=_broken;
 
 + (CLEffect*)effectWithPath:(NSString*)path {
 	return [[[self alloc] initWithPath:path] autorelease];
