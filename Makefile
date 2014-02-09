@@ -37,8 +37,8 @@ $(PACKAGE): tweak/* settings/*
 	cp tweak/Cylinder.dylib $(MOBSUB)
 	cp tweak/Cylinder.plist $(MOBSUB)
 	cp -r tweak/scripts/* .tmp/Library/Cylinder/
-	cp -r settings/.theos/obj/CylinderSettings.bundle .tmp/Library/PreferenceBundles
-	cp settings/entry.plist .tmp/Library/PreferenceLoader/Preferences
+	cp -r settings/CylinderSettings.bundle .tmp/Library/PreferenceBundles
+	cp settings/CylinderSettingsLoader.plist .tmp/Library/PreferenceLoader/Preferences/
 	cp control .tmp/DEBIAN/
 	dpkg-deb -b .tmp
 	mv .tmp.deb $(PACKAGE)

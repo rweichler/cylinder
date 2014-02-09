@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-SCP="scp" # -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-IPHONE_IP="iphone" #"root@192.168.1.7"
-
-$SCP -r .theos/obj/CylinderSettings.bundle $IPHONE_IP:/Library/PreferenceBundles/
-$SCP entry.plist $IPHONE_IP:/Library/PreferenceLoader/Preferences/CylinderSettings.plist

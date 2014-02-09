@@ -1,23 +1,25 @@
-#This was completely ripped off of Alex Zielenski's Zeppelin settings.
+NAME=Cylinder
+IPHONE_IP=iphone #root@192.168.1.7
+SCP=scp #-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
-#Thanks.
+CC=xcrun -sdk iphoneos clang
+ARCH=-arch armv7 -arch arm64
+SDKS=-mios-version-min=3.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk
+#ARC=-fobjc-arc
+FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore
+FLAGS= -dynamiclib -undefined suppress -flat_namespace -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
+DYLIB=CylinderSettings
 
-include theos/makefiles/common.mk
+COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m
+REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h Defines.h
 
-BUNDLE_NAME = CylinderSettings
-CylinderSettings_FILES = CylinderSettings.m CLAlignedTableViewCell.m CLEffectsController.m CLEffect.m
-CylinderSettings_INSTALL_PATH = /Library/PreferenceBundles
-CylinderSettings_FRAMEWORKS = UIKit
-CylinderSettings_PRIVATE_FRAMEWORKS = Preferences
-CylinderSettings_CFLAGS = -I../include
+all: bin
 
-include $(THEOS_MAKE_PATH)/bundle.mk
+clean:
+	rm -rf bin
 
-
-internal-stage::
-	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/Library/PreferenceLoader/Preferences$(ECHO_END)
-	$(ECHO_NOTHING)cp entry.plist $(THEOS_STAGING_DIR)/Library/PreferenceLoader/Preferences/CylinderSettings.plist$(ECHO_END)
-
-after-stage::
-	$(ECHO_NOTHING)find $(THEOS_STAGING_DIR) -iname '*.plist' -exec plutil -convert binary1 {} \;$(ECHO_END)
-	$(ECHO_NOTHING)find $(THEOS_STAGING_DIR) -iname '*.png' -exec pincrush -i {} \;$(ECHO_END)
+bin: $(REQ)
+	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $(DYLIB)
+	mkdir -p CylinderSettings.bundle
+	cp Resources/* CylinderSettings.bundle/
+	mv $(DYLIB) CylinderSettings.bundle

@@ -1,4 +1,4 @@
-#import "substrate/substrate.h"
+#import <substrate.h>
 #import <UIKit/UIKit.h>
 #import "luashit.h"
 #import "macros.h"

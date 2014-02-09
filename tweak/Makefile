@@ -6,7 +6,7 @@ CC=xcrun -sdk iphoneos clang
 ARCH=-arch armv7 -arch arm64
 SDKS=-mios-version-min=3.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk
 #ARC=-fobjc-arc
-FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore
+FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
 FLAGS= -dynamiclib #-undefined suppress -flat_namespace
 DYLIB=$(NAME).dylib
 LIBLUA=lua/liblua.a
@@ -14,7 +14,7 @@ LIBLUA=lua/liblua.a
 MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
 CYLINDER_DIR=/Library/Cylinder/
 
-COMP=substrate/libsubstrate.dylib CompileMe.m $(LIBLUA)
+COMP=../include/libsubstrate.dylib CompileMe.m $(LIBLUA)
 REQ=$(COMP) Tweak.m luashit.h luashit.m macros.h Makefile
 
 all: $(DYLIB)

@@ -1,5 +1,5 @@
 cylinder.deb
 Cylinder.dylib
-settings/.theos
+settings/CylinderSettings.bundle
 *.o
 *.a

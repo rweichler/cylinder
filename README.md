@@ -43,51 +43,11 @@ it will be hard to update. Thanks!
 
 ##Building
 
-### The tweak itself
-
-```
-cd tweak
-make
-export MOBSUB=/Library/MobileSubstrate/DynamicLibraries/
-scp Cylinder.dylib iphone:$MOBSUB
-scp Cylinder.plist iphone:$MOBSUB
-scp -r scripts/* iphone:/Library/Cylinder/
-```
-
-* "iphone" is root@192.168.1.x or whatever your iphone's IP address is.
-* /Library/Cylinder must be a folder on the phone.
-
-### The preference bundle
-
-NOTE: You need rpetrich's [theos](http://github.com/rpetrich/theos) installed.
-
-You also need a working copy of ldid ([instructions here](http://iphonedevwiki.net/index.php/Theos/Getting_Started#On_Mac_OS_X_or_Linux)),
-and you need the "theos" alias in the settings directory to
-point to wherever you installed theos.
-
-```
-cd settings
-make
-```
-
-Then, you need to copy it to your phone with SCP. Check out the "copy" file
-in that directory and edit it for your setup. Then just run
-
-```
-./copy
-```
-
-### Debian package
-
-Remember to fix all of the things mentioned in "The preference bundle".
-Once you got that working, you can just do
-
 ```
 make package
 ```
 
-in the root directory to make cylinder.deb, which you can use to easily
-install this on your phone using dpkg-deb or iFile or whatever.
+Puts a freshly baked cylinder.deb in the root of the repository. :)
 
 ## License
 
