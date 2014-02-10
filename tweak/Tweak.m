@@ -56,14 +56,14 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
             {
                 view = scrollView.subviews[index];
                 if([view isKindOfClass:SBIconListView])
-                    genscrol(scrollView, index, view);
+                    genscrol(scrollView, index - i, view);
             }
             int index2 = (int)(percent + i + 1);
             if(index != index2 && index2 >= 0 && index2 < scrollView.subviews.count)
             {
                 view = scrollView.subviews[index2];
                 if([view isKindOfClass:SBIconListView])
-                    genscrol(scrollView, index2, view);
+                    genscrol(scrollView, index2 - i, view);
             }
             break;
         }
