@@ -1,4 +1,4 @@
-#import "Defines.h"
+#import <Defines.h>
 #import "CLEffectsController.h"
 #import "CylinderSettings.h"
 
@@ -85,7 +85,7 @@ static CLEffectsController *sharedController = nil;
 	
 	selectedEffect = [ctrl.settings objectForKey:PrefsEffectKey];
 	if (!selectedEffect)
-		selectedEffect = @"Cube (inside)";
+		selectedEffect = @DEFAULT_EFFECT;
 }
 
 - (void)viewWillAppear:(BOOL)animated {

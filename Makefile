@@ -12,12 +12,12 @@ all: tweak settings
 	cd settings && $(MAKE)
 
 clean:
+	rm -f cylinder.deb
 	cd tweak && $(MAKE) clean
 	cd settings && $(MAKE) clean
 
 package-dirs:
 	mkdir -p .tmp
-	mkdir -p .tmp/DEBIAN
 	mkdir -p .tmp/Library
 	mkdir -p .tmp/Library/Cylinder
 	mkdir -p .tmp/Library/MobileSubstrate
@@ -31,7 +31,7 @@ tweak:
 settings:
 	cd settings && $(MAKE)
 
-$(PACKAGE): tweak/* settings/* control
+$(PACKAGE): tweak/* settings/* DEBIAN/*
 	$(MAKE) all
 	$(MAKE) package-dirs
 	cp tweak/Cylinder.dylib $(MOBSUB)
@@ -39,7 +39,7 @@ $(PACKAGE): tweak/* settings/* control
 	cp -r tweak/scripts/* .tmp/Library/Cylinder/
 	cp -r settings/CylinderSettings.bundle .tmp/Library/PreferenceBundles
 	cp settings/CylinderSettingsLoader.plist .tmp/Library/PreferenceLoader/Preferences/
-	cp control .tmp/DEBIAN/
+	cp -r DEBIAN .tmp/
 	dpkg-deb -b .tmp
 	mv .tmp.deb $(PACKAGE)
 	rm -rf .tmp

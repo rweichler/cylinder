@@ -1,5 +1,5 @@
 #import "CLEffect.h"
-#import "Defines.h"
+#import <Defines.h>
 
 @implementation CLEffect
 @synthesize name=_name, path=_path, pack=_pack, broken=_broken;

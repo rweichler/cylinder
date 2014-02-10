@@ -1,6 +1,6 @@
 #import "CylinderSettings.h"
 
-#import "Defines.h"
+#import <Defines.h>
 #import "CLEffect.h"
 
 

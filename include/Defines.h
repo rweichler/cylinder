@@ -12,6 +12,7 @@
 #define PrefsPackKey         @"pack"
 #define PrefsBrokenKey       @"brokenEffects"
 
+#define DEFAULT_EFFECT "Cube (inside)"
 #define IN_SPRINGBOARD()     ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
 #define IS_RETINA()          ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] && [[UIScreen mainScreen] scale] == 2)
 #define PREFS_PATH           [NSString stringWithFormat:@"%@/Library/Preferences/com.r333d.cylinder.plist", NSHomeDirectory()]

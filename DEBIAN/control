@@ -2,7 +2,8 @@ Package: com.r333d.cylinder
 Name: Cylinder
 Version: 0.1
 Architecture: iphoneos-arm
-Description: GitHub build
+Depends: firmware (>= 5.0), mobilesubstrate, preferenceloader
+Description: Make your icons dance
 Homepage: http://github.com/rweichler/cylinder
 Maintainer: Reed Weichler <rweichler+cydia@gmail.com>
 Author: Reed Weichler (rweichler) <rweichler+cydia@gmail.com>

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+EFFECTS="/Library/Cylinder"
+PLIST="/var/mobile/Library/Preferences/com.r333d.cylinder.plist"
+LOGS="/var/mobile/Library/Logs/Cylinder"
+
+function _repair_dir
+{
+    if [ -d "$1" ]; then
+        chown -R mobile:mobile "$1"
+    fi
+}
+
+function _repair_file
+{
+    if [ -f "$1" ]; then
+        chown mobile:mobile "$1"
+    fi
+}
+
+_repair_dir "$EFFECTS"
+_repair_dir "$LOGS"
+_repair_file "$PLIST"
+
+exit 0
