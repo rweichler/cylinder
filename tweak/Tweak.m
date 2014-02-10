@@ -6,6 +6,7 @@
 static Class SBIconListView;
 static IMP original_SB_scrollViewDidScroll;
 static IMP original_SB_scrollViewDidEndDecelerating;
+static IMP original_SB_wallpaperRelativeBounds;
 
 static BOOL _enabled;
 
@@ -70,6 +71,19 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
     }
 }
 
+//iOS 7 folder blur glitch hotfix for 3D effects.
+typedef CGRect (*wprb_type)(id, SEL);
+CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
+{
+    wprb_type func = (wprb_type)(original_SB_wallpaperRelativeBounds);
+    CGRect frame = func(self, _cmd);
+    if(frame.origin.x < 0) frame.origin.x = 0;
+    if(frame.origin.x > SCREEN_SIZE.width - frame.size.width) frame.origin.x = SCREEN_SIZE.width - frame.size.width;
+    if(frame.origin.y > SCREEN_SIZE.height - frame.size.height) frame.origin.y = SCREEN_SIZE.height - frame.size.height;
+    if(frame.origin.y < 0) frame.origin.y = 0;
+    return frame;
+}
+
 void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
@@ -102,6 +116,8 @@ static void initialize() {
 
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
     MSHookMessageEx(cls, @selector(scrollViewDidEndDecelerating:), (IMP)SB_scrollViewDidEndDecelerating, (IMP *)&original_SB_scrollViewDidEndDecelerating);
+    cls = NSClassFromString(@"SBFolderIconBackgroundView");
+    if(cls) MSHookMessageEx(cls, @selector(wallpaperRelativeBounds), (IMP)SB_wallpaperRelativeBounds, (IMP *)&original_SB_wallpaperRelativeBounds);
 
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
