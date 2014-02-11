@@ -45,6 +45,7 @@ void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
     [scrollView.superview sendSubviewToBack:scrollView];
 }
 
+typedef void (*siifc_func)(id, SEL, float, float, float, BOOL);
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
@@ -59,19 +60,21 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
         UIView *view = [scrollView.subviews objectAtIndex:i];
         if([view isKindOfClass:SBIconListView])
         {
-            int index = (int)(percent + i);
-            if(index >= 0 && index < scrollView.subviews.count)
+            for(int j = 0; j < 2; j++)
             {
-                view = [scrollView.subviews objectAtIndex:index];
-                if([view isKindOfClass:SBIconListView])
+                int index = (int)(percent + i + j);
+                if(index >= 0 && index < scrollView.subviews.count)
+                {
+                    view = [scrollView.subviews objectAtIndex:index];
+                    SEL sel = @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:);
+                    if(IOS_VERSION < 7 && [view respondsToSelector:sel])
+                    {
+                        siifc_func imp = (siifc_func)[view methodForSelector:sel];
+                        imp(view, sel, 0, 3, 4, false);
+                    }
                     genscrol(scrollView, index - i, view);
-            }
-            int index2 = (int)(percent + i + 1);
-            if(index != index2 && index2 >= 0 && index2 < scrollView.subviews.count)
-            {
-                view = [scrollView.subviews objectAtIndex:index2];
-                if([view isKindOfClass:SBIconListView])
-                    genscrol(scrollView, index2 - i, view);
+                }
+                if(percent < 0) break;
             }
             break;
         }
@@ -79,10 +82,10 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 }
 
 //iOS 7 folder blur glitch hotfix for 3D effects.
-typedef CGRect (*wprb_type)(id, SEL);
+typedef CGRect (*wprb_func)(id, SEL);
 CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
 {
-    wprb_type func = (wprb_type)(original_SB_wallpaperRelativeBounds);
+    wprb_func func = (wprb_func)(original_SB_wallpaperRelativeBounds);
     CGRect frame = func(self, _cmd);
     if(frame.origin.x < 0) frame.origin.x = 0;
     if(frame.origin.x > SCREEN_SIZE.width - frame.size.width) frame.origin.x = SCREEN_SIZE.width - frame.size.width;
