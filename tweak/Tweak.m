@@ -55,6 +55,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
     float percent = scrollView.contentOffset.x/scrollView.frame.size.width;
     if(IOS_VERSION < 7) percent--;
 
+    //only animate the pages that are visible
     for(int i = 0; i < scrollView.subviews.count; i++)
     {
         UIView *view = [scrollView.subviews objectAtIndex:i];
@@ -63,7 +64,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
             for(int j = 0; j < 2; j++)
             {
                 int index = (int)(percent + i + j);
-                if(index >= 0 && index < scrollView.subviews.count)
+                if(index - i >= 0 && index < scrollView.subviews.count)
                 {
                     view = [scrollView.subviews objectAtIndex:index];
                     SEL sel = @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:);
@@ -74,7 +75,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
                     }
                     genscrol(scrollView, index - i, view);
                 }
-                if(percent < 0) break;
+                //if(percent < 0) break;
             }
             break;
         }
