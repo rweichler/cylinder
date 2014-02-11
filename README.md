@@ -43,7 +43,7 @@ This allows for rapid testing.
 * ~~Add preferences bundle~~
 * Add more example Barrel thingies
 * Code cleanup
-* Release!
+* Release?
 
 I'd really appreciate it if nobody posted this on reddit,
 or jailbreakqa or anything like that until I get to the
@@ -72,7 +72,3 @@ Puts a freshly baked cylinder.deb in the root of the repository. :)
 ## License
 
 [GNU GPL](https://github.com/rweichler/cylinder/blob/master/LICENSE), unless otherwise stated in the files themselves.
-
-________
-
-Also it's kind of funny, I wanted to pick a name that was like Barrel, and I landed on Cylinder. I didn't even realize the significance of the 'Cy' prefix. hehehehehhehehehe. Sorry saurik.
