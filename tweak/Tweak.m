@@ -2,12 +2,14 @@
 #import <UIKit/UIKit.h>
 #import "luashit.h"
 #import "macros.h"
+#import "UIView+Cylinder.h"
 
 static Class SBIconListView;
 static IMP original_SB_scrollViewWillBeginDragging;
 static IMP original_SB_scrollViewDidScroll;
 static IMP original_SB_scrollViewDidEndDecelerating;
 static IMP original_SB_wallpaperRelativeBounds;
+static IMP original_SB_showIconImages;
 
 static BOOL _enabled;
 
@@ -45,7 +47,19 @@ void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
     [scrollView.superview sendSubviewToBack:scrollView];
 }
 
-typedef void (*siifc_func)(id, SEL, float, float, float, BOOL);
+static int biggestTo = 0;
+void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL jittering)
+{
+    if(to > biggestTo) biggestTo = to;
+    if(self.isOnScreen)
+    {
+        from = 0;
+        to = biggestTo;
+        total = biggestTo + 1;
+    }
+    original_SB_showIconImages(self, _cmd, from, to, total, jittering);
+}
+
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
@@ -54,30 +68,29 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 
     float percent = scrollView.contentOffset.x/scrollView.frame.size.width;
     if(IOS_VERSION < 7) percent--;
-
+    int start = -1;
     //only animate the pages that are visible
     for(int i = 0; i < scrollView.subviews.count; i++)
     {
         UIView *view = [scrollView.subviews objectAtIndex:i];
         if([view isKindOfClass:SBIconListView])
         {
-            for(int j = 0; j < 2; j++)
+            if(start == -1) start = i;
+            view.isOnScreen = false;
+        }
+    }
+    if(start != -1)
+    {
+        for(int i = 0; i < 2; i++)
+        {
+            int index = (int)(percent + i + start);
+            if(index - start >= 0 && index < scrollView.subviews.count)
             {
-                int index = (int)(percent + i + j);
-                if(index - i >= 0 && index < scrollView.subviews.count)
-                {
-                    view = [scrollView.subviews objectAtIndex:index];
-                    SEL sel = @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:);
-                    if(IOS_VERSION < 7 && [view respondsToSelector:sel])
-                    {
-                        siifc_func imp = (siifc_func)[view methodForSelector:sel];
-                        imp(view, sel, 0, 3, 4, false);
-                    }
-                    genscrol(scrollView, index - i, view);
-                }
-                //if(percent < 0) break;
+                UIView *view = [scrollView.subviews objectAtIndex:index];
+                view.isOnScreen = true;
+                genscrol(scrollView, index - start, view);
             }
-            break;
+            //if(percent < 0) break;
         }
     }
 }
@@ -131,6 +144,8 @@ static void initialize() {
         MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
     cls = NSClassFromString(@"SBFolderIconBackgroundView");
     if(cls) MSHookMessageEx(cls, @selector(wallpaperRelativeBounds), (IMP)SB_wallpaperRelativeBounds, (IMP *)&original_SB_wallpaperRelativeBounds);
+
+    if(SBIconListView) MSHookMessageEx(SBIconListView, @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:), (IMP)SB_showIconImages, (IMP *)&original_SB_showIconImages);
 
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
