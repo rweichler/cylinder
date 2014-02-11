@@ -2,7 +2,7 @@
 
 The free software alternative to Barrel
 
-![](https://raw2.github.com/rweichler/cylinder/master/screenie.gif)
+![](https://raw2.github.com/rweichler/cylinder/master/code.png)
 
 ## Why?
 
@@ -18,7 +18,7 @@ Everything!
 * Cube (outside)
 * Stairs (down left)
 * Stairs (down right)
-* Spin &lt;---- the one in the screenshot
+* [Spin](https://raw2.github.com/rweichler/cylinder/master/screenie.git)
 * Chomp &lt;---- custom "chomping" effect I made
 
 If you want to make your own effects, check out
