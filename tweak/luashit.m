@@ -200,7 +200,7 @@ static int l_uiview_index(lua_State *L)
         int index = lua_tonumber(L, 2) - 1;
         if(index < self.subviews.count)
         {
-            push_view(self.subviews[index]);
+            push_view([self.subviews objectAtIndex:index]);
             return 1;
         }
     }
@@ -214,7 +214,7 @@ static int l_uiview_index(lua_State *L)
             for(int i = 0; i < self.subviews.count; i++)
             {
                 lua_pushnumber(L, i+1);
-                push_view(self.subviews[i]);
+                push_view([self.subviews objectAtIndex:i]);
                 lua_settable(L, -3);
             }
             return 1;

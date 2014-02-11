@@ -22,8 +22,7 @@
     NSMutableString *name = [NSMutableString string];
     for(int i = 0; i < ext.count - 1; i++)
     {
-        [name appendString:ext[i]];
-
+        [name appendString:[ext objectAtIndex:i]];
         if(i != ext.count - 2) [name appendString:@"."];
     }
 

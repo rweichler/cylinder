@@ -4,6 +4,7 @@
 #import "macros.h"
 
 static Class SBIconListView;
+static IMP original_SB_scrollViewWillBeginDragging;
 static IMP original_SB_scrollViewDidScroll;
 static IMP original_SB_scrollViewDidEndDecelerating;
 static IMP original_SB_wallpaperRelativeBounds;
@@ -38,6 +39,12 @@ void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView
         reset_everything(view);
 }
 
+void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
+{
+    original_SB_scrollViewWillBeginDragging(self, _cmd, scrollView);
+    [scrollView.superview sendSubviewToBack:scrollView];
+}
+
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
@@ -49,20 +56,20 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 
     for(int i = 0; i < scrollView.subviews.count; i++)
     {
-        UIView *view = scrollView.subviews[i];
+        UIView *view = [scrollView.subviews objectAtIndex:i];
         if([view isKindOfClass:SBIconListView])
         {
             int index = (int)(percent + i);
             if(index >= 0 && index < scrollView.subviews.count)
             {
-                view = scrollView.subviews[index];
+                view = [scrollView.subviews objectAtIndex:index];
                 if([view isKindOfClass:SBIconListView])
                     genscrol(scrollView, index - i, view);
             }
             int index2 = (int)(percent + i + 1);
             if(index != index2 && index2 >= 0 && index2 < scrollView.subviews.count)
             {
-                view = scrollView.subviews[index2];
+                view = [scrollView.subviews objectAtIndex:index2];
                 if([view isKindOfClass:SBIconListView])
                     genscrol(scrollView, index2 - i, view);
             }
@@ -88,14 +95,14 @@ void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
 
-    if(settings && ![settings[@"enabled"] boolValue])
+    if(settings && ![[settings valueForKey:@"enabled"] boolValue])
     {
         close_lua();
         _enabled = false;
     }
     else
     {
-        NSString *key = settings[PrefsEffectKey];
+        NSString *key = [settings valueForKey:PrefsEffectKey];
         _enabled = init_lua(key.UTF8String);
     }
 }
@@ -116,6 +123,8 @@ static void initialize() {
 
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
     MSHookMessageEx(cls, @selector(scrollViewDidEndDecelerating:), (IMP)SB_scrollViewDidEndDecelerating, (IMP *)&original_SB_scrollViewDidEndDecelerating);
+    if(IOS_VERSION < 7)
+        MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
     cls = NSClassFromString(@"SBFolderIconBackgroundView");
     if(cls) MSHookMessageEx(cls, @selector(wallpaperRelativeBounds), (IMP)SB_wallpaperRelativeBounds, (IMP *)&original_SB_wallpaperRelativeBounds);
 

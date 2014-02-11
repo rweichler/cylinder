@@ -216,12 +216,12 @@ static inline void luaErrorNotification(CFNotificationCenterRef center, void *ob
 
 
     UITableView *tableView = self.view;
-    NSString *key = info[0];
-    BOOL broken = [info[1] boolValue];
+    NSString *key = [info objectAtIndex:0];
+    BOOL broken = [[info objectAtIndex:1] boolValue];
 
     for(int i = 0; i < self.currentEffects.count; i++)
     {
-        CLEffect *effect = self.currentEffects[i];
+        CLEffect *effect = [self.currentEffects objectAtIndex:i];
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
         if([effect.name isEqualToString:key])
         {

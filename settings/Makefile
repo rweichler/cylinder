@@ -10,8 +10,8 @@ FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore
 FLAGS= -dynamiclib -undefined suppress -flat_namespace -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
 DYLIB=CylinderSettings
 
-COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m
-REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h
+COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m writeit.m
+REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h writeit.h
 
 all: $(DYLIB).bundle
 
