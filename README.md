@@ -53,7 +53,7 @@ it will be hard to update. Thanks!
 
 ##Building
 
-If you don't feel like building this, [here's a .deb](http://r333d.com/cylinder.deb).
+If you don't feel like building this, [here's a .deb](https://raw2.github.com/rweichler/cylinder/master/cylinder.deb).
 
 First, init the submodules:
 
