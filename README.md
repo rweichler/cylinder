@@ -18,7 +18,7 @@ Everything!
 * Cube (outside)
 * Stairs (down left)
 * Stairs (down right)
-* [Spin](https://raw2.github.com/rweichler/cylinder/master/screenie.git)
+* [Spin](https://raw2.github.com/rweichler/cylinder/master/screenie.gif)
 * Chomp &lt;---- custom "chomping" effect I made
 
 If you want to make your own effects, check out
