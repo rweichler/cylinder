@@ -1,4 +1,4 @@
-local stairs = include("include/stairs.lua")
+local stairs = dofile("include/stairs.lua")
 
 return function(page, offset, width, height)
     return stairs(page, offset/width, true)

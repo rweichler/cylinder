@@ -1,4 +1,4 @@
-local cube = include("include/cube.lua")
+local cube = dofile("include/cube.lua")
 
 local M_PI = 3.14159265
 

@@ -1,7 +1,7 @@
 --[[
 available functions:
 
-include("file.lua") --> runs the lua file like a function and returns whatever it returns
+dofile("file.lua") --> runs the lua file like a function and returns whatever it returns
 
 view:rotate(angle, pitch, yaw, roll) --> rotate the view by angle (in radians).
                                      --  typically pitch, yaw, roll are 1, -1 or 0.

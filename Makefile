@@ -1,6 +1,6 @@
 IPHONE_IP=iphone
 #IPHONE_IP=root@192.168.1.7
-SSH_FLAGS=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+#SSH_FLAGS=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 PACKAGE=cylinder.deb
 BUNDLE_IDENTIFIER=com.r333d.cylinder
 

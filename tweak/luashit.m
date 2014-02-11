@@ -52,6 +52,8 @@ BOOL init_lua(const char *script)
     //set globals
     lua_pushcfunction(L, l_include);
     lua_setglobal(L, "include");
+    lua_pushcfunction(L, l_include);
+    lua_setglobal(L, "dofile");
 
     lua_newtable(L);
     l_push_base_transform(L);
