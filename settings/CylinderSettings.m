@@ -90,6 +90,17 @@
 	[self sendSettings];
 }
 
+-(NSNumber *)randomized
+{
+    return [self.settings objectForKey:PrefsRandomizedKey];
+}
+
+-(void)setRandomized:(NSNumber *)randomized
+{
+    [_settings setObject:randomized forKey:PrefsRandomizedKey];
+    [self sendSettings];
+}
+
 - (void)writeSettings {
 	NSData *data = [NSPropertyListSerialization dataFromPropertyList:self.settings format:NSPropertyListBinaryFormat_v1_0 errorDescription:NULL];
 

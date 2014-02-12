@@ -13,6 +13,9 @@ static IMP original_SB_showIconImages;
 
 static BOOL _enabled;
 
+static u_int32_t _rand;
+static int _page = -100;
+
 void reset_everything(UIView *view)
 {
     view.layer.transform = CATransform3DIdentity;
@@ -28,10 +31,18 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
     CGSize size = scrollView.frame.size;
     float offset = scrollView.contentOffset.x;
+
+    int page = (int)(offset/size.width);
+    if(page != _page)
+    {
+        _rand = arc4random();
+        _page = page;
+    }
+
     if(IOS_VERSION < 7) i++; //on iOS 6-, the spotlight is a page to the left, so we gotta bump the pageno. up a notch
     offset -= i*size.width;
 
-    _enabled = manipulate(view, offset, size.width, size.height);
+    _enabled = manipulate(view, offset, size.width, size.height, _rand);
 }
 
 void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView)
@@ -116,6 +127,10 @@ void load_that_shit()
     {
         close_lua();
         _enabled = false;
+    }
+    else if(settings && [[settings valueForKey:@"randomized"] boolValue])
+    {
+        _enabled = init_lua_random();
     }
     else
     {

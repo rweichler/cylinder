@@ -6,8 +6,11 @@
 #define LOG_PATH LOG_DIR"errors.log"
 
 static lua_State *L = NULL;
-const char *_script;
-static int func;
+
+static int *_scripts = NULL;
+static const char **_scriptNames = NULL;
+static int _scriptCount;
+
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
 static int l_push_base_transform(lua_State *L);
@@ -19,6 +22,16 @@ static int l_include(lua_State *L);
 
 
 void write_error(const char *error);
+
+static void remove_script(int index)
+{
+    for(int i = index + 1; i < _scriptCount; i++)
+    {
+        _scripts[i - 1] = _scripts[i];
+        _scriptNames[i - 1] = _scriptNames[i];
+    }
+    _scriptCount--;
+}
 
 void post_notification(const char *script, BOOL broken)
 {
@@ -34,15 +47,10 @@ void close_lua()
 {
     if(L != NULL) lua_close(L);
     L = NULL;
-
-    post_notification(_script, true);
-    
 }
-BOOL init_lua(const char *script)
-{
-    BOOL success = true;
-    _script = script;
 
+static void create_state()
+{
     //if we are reloading, close the state
     if(L != NULL) lua_close(L);
 
@@ -68,33 +76,105 @@ BOOL init_lua(const char *script)
     lua_pushcfunction(L, l_uiview_setindex);
     lua_setfield(L, -2, "__newindex");
 
-    if(script == NULL) script = "Cube (inside)";
+    lua_pop(L, 1);
+}
 
-    char *path = (char *)malloc(sizeof(char)*(strlen(script) + 1 + strlen(CYLINDER_DIR) + 1 + 5));
-    path[0] = '\0';
-    strcat(path, CYLINDER_DIR);
-    strcat(path, script);
-    strcat(path, ".lua");
+int open_script(const char *script)
+{
+    int func = -1;
+
+    const char *path = [NSString stringWithFormat:@CYLINDER_DIR"%s.lua", script].UTF8String;
 
     //load our file and save the function we want to call
     if(luaL_loadfile(L, path) != LUA_OK || lua_pcall(L, 0, 1, 0) != 0)
     {
         write_error(lua_tostring(L, -1));
-        lua_close(L);
-        L = NULL;
-        success = false;
+        post_notification(script, true);
+    }
+    else if(!lua_isfunction(L, -1))
+    {
+        write_error([NSString stringWithFormat:@"error opening %s: result must be a function", script].UTF8String);
         post_notification(script, true);
     }
     else
     {
+        lua_pushvalue(L, -1);
         func = luaL_ref(L, LUA_REGISTRYINDEX);
-        lua_pop(L, 1);
         post_notification(script, false);
     }
 
-    free(path);
+    lua_pop(L, 1);
 
-    return success;
+    return func;
+}
+
+BOOL init_lua(const char *script)
+{
+    create_state();
+    if(script == NULL) script = "Cube (inside)";
+
+    int func = open_script(script);
+
+    if(_scripts != NULL) free(_scripts);
+    if(_scriptNames != NULL) free(_scriptNames);
+
+    if(func != -1)
+    {
+        _scripts = (int *)malloc(sizeof(int));
+        _scriptNames = (const char **)malloc(sizeof(char *));
+        _scripts[0] = func;
+        _scriptNames[0] = script;
+        _scriptCount = 1;
+        return true;
+    }
+    else
+    {
+        _scripts = NULL;
+        _scriptNames = NULL;
+        _scriptCount = 0;
+        return false;
+    }
+}
+
+BOOL init_lua_random()
+{
+    create_state();
+
+    NSArray *scripts = [NSFileManager.defaultManager contentsOfDirectoryAtPath:@CYLINDER_DIR error: nil];
+    if(_scripts != NULL) free(_scripts);
+    if(_scriptNames != NULL) free(_scriptNames);
+    _scriptCount = 0;
+    if(scripts.count == 0)
+    {
+        _scripts = NULL;
+        _scriptNames = NULL;
+        return false;
+    }
+    _scripts = (int *)malloc(scripts.count*sizeof(int));
+    _scriptNames = (const char **)malloc(scripts.count*sizeof(char *));
+    for(int i = 0; i < scripts.count; i++)
+    {
+        char *script = (char *)[[scripts objectAtIndex:i] UTF8String];
+        int len = strlen(script);
+        if(len > 4 && strcmp(script, "EXAMPLE.lua") != 0 && !strcmp(script + sizeof(char)*(len - 4), ".lua"))
+        {
+            script[len - 4] = '\0';
+            int func = open_script((const char *)script);
+            if(func != -1)
+            {
+                _scripts[_scriptCount] = func;
+                _scriptNames[_scriptCount] = script;
+                _scriptCount++;
+            }
+        }
+    }
+    if(_scriptCount == 0)
+    {
+        free(_scripts);
+        free(_scriptNames);
+        return false;
+    }
+    return true;
 }
 
 static int l_include(lua_State *L)
@@ -137,18 +217,19 @@ void write_error(const char *error)
     [fileHandle closeFile];
 }
 
-void push_view(UIView *view)
+static void push_view(UIView *view)
 {
     lua_pushlightuserdata(L, view);
     luaL_getmetatable(L, "UIView");
     lua_setmetatable(L, -2);
 }
 
-BOOL manipulate(UIView *view, float offset, float width, float height)
+BOOL manipulate(UIView *view, float offset, float width, float height, u_int32_t rand)
 {
-    if(L == NULL) return false;
+    if(L == NULL || _scriptCount == 0) return false;
 
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func);
+    int funcIndex = rand % _scriptCount;
+    lua_rawgeti(L, LUA_REGISTRYINDEX, _scripts[funcIndex]);
 
     push_view(view);
     lua_pushnumber(L, offset);
@@ -162,11 +243,17 @@ BOOL manipulate(UIView *view, float offset, float width, float height)
     if(lua_pcall(L, 4, 1, 0) != 0)
     {
         write_error(lua_tostring(L, -1));
-        close_lua();
-        return false;
+        lua_pop(L, 1);
+        post_notification(_scriptNames[funcIndex], true);
+        remove_script(funcIndex);
+        if(_scriptCount == 0) close_lua();
+        return manipulate(view, offset, width, height, rand);
     }
-    lua_pop(L, 1);
-    return true;
+    else
+    {
+        lua_pop(L, 1);
+        return true;
+    }
 }
 
 
@@ -295,7 +382,7 @@ static int l_transform_translate(lua_State *L)
 
 const static char *ERR_MALFORMED = "malformed transformation matrix";
 
-float POPA_T(lua_State *L, int index)
+static float POPA_T(lua_State *L, int index)
 {
     lua_pushnumber(L, index);
     lua_gettable(L, -2);

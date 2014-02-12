@@ -11,7 +11,7 @@ FLAGS= -dynamiclib -undefined suppress -flat_namespace -I../include -I../include
 DYLIB=CylinderSettings
 
 COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m writeit.m
-REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h writeit.h
+REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h writeit.h Resources/*
 
 all: $(DYLIB).bundle
 

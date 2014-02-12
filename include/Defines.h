@@ -7,6 +7,7 @@
 #define PrefsCarrierTextKey  @"carrierText"
 #define PrefsUseTextKey      @"useText"
 #define PrefsEnabledKey      @"enabled"
+#define PrefsRandomizedKey      @"randomized"
 #define PrefsOldMethodKey    @"useOldMethod"
 
 #define PrefsPackKey         @"pack"
@@ -23,7 +24,7 @@
 
 #define kEffectsDirectory     @"/Library/Cylinder"
 #define kPacksDirectory      @"/Library/Cylinder/Packs"
-#define DefaultPrefs         [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Cylinder", PrefsPackKey, @"Cube (inside)", PrefsEffectKey, [NSNumber numberWithBool:YES], PrefsEnabledKey, nil]
+#define DefaultPrefs         [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Cylinder", PrefsPackKey, @"Cube (inside)", PrefsEffectKey, [NSNumber numberWithBool:YES], PrefsEnabledKey, [NSNumber numberWithBool:false], PrefsRandomizedKey, nil]
 
 @interface UIDevice (de)
 - (BOOL)iOSVersionIsAtLeast:(NSString *)vers;
