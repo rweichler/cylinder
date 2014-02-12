@@ -293,12 +293,14 @@ static int l_transform_translate(lua_State *L)
     return 0;
 }
 
+const static char *ERR_MALFORMED = "malformed transformation matrix";
+
 float POPA_T(lua_State *L, int index)
 {
     lua_pushnumber(L, index);
     lua_gettable(L, -2);
     if(!lua_isnumber(L, -1))
-        return luaL_error(L, "malformed transformation matrix");
+        return luaL_error(L, ERR_MALFORMED);
 
     float result = lua_tonumber(L, -1);
     lua_pop(L, 1);
@@ -339,7 +341,7 @@ static int l_push_base_transform(lua_State *L)
     lua_pushnumber(LUASTATE, ++I);\
     lua_gettable(LUASTATE, -3);\
     if(!lua_isnumber(LUASTATE, -1))\
-        return luaL_error(LUASTATE, "malformed transformation matrix");\
+        return luaL_error(LUASTATE, ERR_MALFORMED);\
     TRANSFORM.M = lua_tonumber(LUASTATE, -1);\
     lua_pop(LUASTATE, 1)
 
@@ -349,7 +351,7 @@ static int l_set_transform(lua_State *L, UIView *self) //-1 = transform
         return luaL_error(L, "transform must be a table");
     lua_len(L, -1);
     if(lua_tonumber(L, -1) != 16)
-        return luaL_error(L, "malformed transformation matrix");
+        return luaL_error(L, ERR_MALFORMED);
     lua_pop(L, 1);
 
     CATransform3D transform;
