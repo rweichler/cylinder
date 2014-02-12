@@ -132,10 +132,11 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
 static void initialize() {
-    SBIconListView = NSClassFromString(@"SBIconListView");
+    SBIconListView = NSClassFromString(@"SBIconListView"); //iOS 4+
+    if(!SBIconListView) SBIconListView = NSClassFromString(@"SBIconList"); //iOS 3
     load_that_shit();
 
-    //hook scroll
+    //hook scroll                                   //iOS 6-              //iOS 7
     Class cls = NSClassFromString(IOS_VERSION < 7 ? @"SBIconController" : @"SBFolderView");
 
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);

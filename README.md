@@ -29,11 +29,34 @@ appear in settings. You don't even have to respring!
 This allows for rapid testing.
 
 
-## Tested devices / iOS versions
+## Compatible devices
 
-* iPod touch 4 on 5.1.1
-* iPhone 4S on 7.0.4
-* iPhone 5S on 7.0.4 (preference menu??)
+### Tested
+
+* iPod touch 4
+* iPhone 4S
+* iPhone 5S
+
+## Compatible iOS versions
+
+### Tested
+
+* iOS 5
+* iOS 7
+
+### Not tested, but almost definitely works
+
+* iOS 6
+* iOS 4
+
+### Not tested, but might work
+
+* iOS 3
+
+### Probably doesn't work
+
+* iOS 2
+* iPhone OS
 
 ## Todo list
 
