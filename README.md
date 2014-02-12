@@ -64,6 +64,8 @@ This allows for rapid testing.
 * ~~Port it to a Mobilesubstrate tweak~~
 * ~~Add Lua bindings~~
 * ~~Add preferences bundle~~
+* ~~Fix OS specific bugs~~ &lt;----- well, maybe not all of them but it is acceptable
+* ~~Add randomize switch~~
 * Add more example Barrel thingies
 * Code cleanup
 * Release?
