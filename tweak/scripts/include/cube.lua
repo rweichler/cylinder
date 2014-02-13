@@ -2,7 +2,7 @@ local M_PI = 3.14159265
 --this code could use some improving...
 return function (view, width, percent, is_inside)
     local angle = percent*M_PI
-    local m = is_inside and 1/3 or -5/9
+    local m = is_inside and 1/3 or -2/3
 
     local x = width/2
     if percent < 0 then x = -x end

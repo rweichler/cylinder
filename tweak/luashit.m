@@ -237,8 +237,12 @@ BOOL manipulate(UIView *view, float offset, float width, float height, u_int32_t
     lua_pushnumber(L, height);
 
     view.layer.transform = CATransform3DIdentity;
+    view.alpha = 1;
     for(UIView *v in view.subviews)
+    {
         v.layer.transform = CATransform3DIdentity;
+        view.alpha = 1;
+    }
 
     if(lua_pcall(L, 4, 1, 0) != 0)
     {
