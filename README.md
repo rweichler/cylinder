@@ -73,6 +73,8 @@ This allows for rapid testing.
 
 If you don't feel like building this, [here's a .deb](https://raw2.github.com/rweichler/cylinder/master/cylinder.deb).
 
+And [here's a .deb](http://r333d.com/repo/cylinder.php) for the last stable release.
+
 First, init the submodules:
 
 ```
