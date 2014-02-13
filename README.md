@@ -68,13 +68,6 @@ This allows for rapid testing.
 * ~~Add randomize switch~~
 * Add more example Barrel thingies
 * Code cleanup
-* Release?
-
-I'd really appreciate it if nobody posted this on reddit,
-or jailbreakqa or anything like that until I get to the
-Release step. This tweak is unstable, and a lot of bindings
-are temporary, and if this gets publicized before I finish
-it will be hard to update. Thanks!
 
 ##Building
 
