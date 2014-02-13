@@ -9,8 +9,9 @@ SDKS=-mios-version-min=3.0 -isysroot /Applications/Xcode.app/Contents/Developer/
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore
 FLAGS= -dynamiclib -undefined suppress -flat_namespace -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
 DYLIB=CylinderSettings
+LIBLUA=../include/lua/liblua.a
 
-COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m writeit.m
+COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m writeit.m $(LIBLUA)
 REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h writeit.h Resources/*
 
 all: $(DYLIB).bundle
@@ -19,7 +20,11 @@ clean:
 	rm -rf $(DYLIB).bundle
 
 $(DYLIB).bundle: $(REQ)
+	$(MAKE) $(LIBLUA)
 	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $(DYLIB)
 	mkdir -p $(DYLIB).bundle
 	cp Resources/* $(DYLIB).bundle/
 	mv $(DYLIB) $(DYLIB).bundle
+
+$(LIBLUA):
+	cd ../include/lua && $(MAKE)

@@ -9,7 +9,7 @@ SDKS=-mios-version-min=3.0 -isysroot /Applications/Xcode.app/Contents/Developer/
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
 FLAGS= -dynamiclib #-undefined suppress -flat_namespace
 DYLIB=$(NAME).dylib
-LIBLUA=lua/liblua.a
+LIBLUA=../include/lua/liblua.a
 
 MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
 CYLINDER_DIR=/Library/Cylinder/
@@ -26,10 +26,10 @@ copy: $(DYLIB)
 
 clean:
 	rm -f $(DYLIB)
-	cd lua && $(MAKE) clean
+	cd ../include/lua && $(MAKE) clean
 
 $(DYLIB): $(REQ)
 	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $@
 
-$(LIBLUA): lua/Makefile
-	cd lua && $(MAKE)
+$(LIBLUA):
+	cd ../include/lua && $(MAKE)

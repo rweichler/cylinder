@@ -1,5 +1,5 @@
 #import "luashit.h"
-#import "lua/lauxlib.h"
+#import <lua/lauxlib.h>
 #import "macros.h"
 
 #define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
