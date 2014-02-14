@@ -1,7 +1,5 @@
-local M_PI = 3.14159265
-
 local function spin(view, percent)
-    local angle = percent*M_PI*2
+    local angle = percent*math.pi*2
 
     local i = 0
     while true do

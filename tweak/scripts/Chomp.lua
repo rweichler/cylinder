@@ -1,7 +1,5 @@
 local cube = dofile("include/cube.lua")
 
-local M_PI = 3.14159265
-
 local function chomp(view, percent, height)
     local oldp = percent
     if percent < 0 then percent = -percent end

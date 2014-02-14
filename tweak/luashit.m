@@ -1,9 +1,11 @@
 #import "luashit.h"
 #import <lua/lauxlib.h>
+#import <lua/lualib.h>
 #import "macros.h"
 
 #define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
-#define LOG_PATH LOG_DIR"errors.log"
+#define LOG_PATH "errors.log"
+#define PRINT_PATH "print.log"
 
 static lua_State *L = NULL;
 
@@ -18,10 +20,28 @@ static int l_set_transform(lua_State *L, UIView *self); //-1 = transform
 static int l_get_transform(lua_State *L, UIView *self); //pushes transform to top of stack
 static int l_uiview_index(lua_State *L);
 static int l_uiview_setindex(lua_State *L);
-static int l_include(lua_State *L);
+static int l_loadfile_override(lua_State *L);
+static int l_print(lua_State *L);
 
+static const char * get_stack(lua_State *L, const char *strr);
 
 void write_error(const char *error);
+void write_file(const char *msg, const char *filename);
+
+static const char *OS_DANGER[] = {
+    "exit",
+    "setlocale",
+    //"date",
+    //"getenv",
+    //"difftime",
+    "remove",
+    //"time",
+    //"clock",
+    "tmpname",
+    "rename",
+    "execute",
+    NULL
+};
 
 static void remove_script(int index)
 {
@@ -57,12 +77,37 @@ static void create_state()
     //create state
     L = luaL_newstate();
 
-    //set globals
-    lua_pushcfunction(L, l_include);
-    lua_setglobal(L, "include");
-    lua_pushcfunction(L, l_include);
+    //load libraries
+    luaL_openlibs(L);
+
+    //disable dangerous libraries
+    lua_pushnil(L);
+    lua_setglobal(L, LUA_LOADLIBNAME);
+    lua_pushnil(L);
+    lua_setglobal(L, LUA_IOLIBNAME);
+    lua_pushnil(L);
+    lua_setglobal(L, "require");
+
+    //disable dangerous functions
+
+    lua_getglobal(L, LUA_OSLIBNAME);
+    for(int i = 0; OS_DANGER[i] != NULL; i++)
+    {
+        lua_pushstring(L, OS_DANGER[i]);
+        lua_pushnil(L);
+        lua_settable(L, -3);
+    }
+    lua_pop(L, 1);
+
+    //override certain functions
+    lua_getglobal(L, "dofile");
+    lua_pushcclosure(L, l_loadfile_override, 1);
     lua_setglobal(L, "dofile");
 
+    lua_pushcfunction(L, l_print);
+    lua_setglobal(L, "print");
+
+    //set globals
     lua_newtable(L);
     l_push_base_transform(L);
     lua_setglobal(L, "BASE_TRANSFORM");
@@ -177,34 +222,52 @@ BOOL init_lua_random()
     return true;
 }
 
-static int l_include(lua_State *L)
+static int l_loadfile_override(lua_State *L)
 {
-    if(!lua_isstring(L, 1))
-    {
-        lua_pushstring(L, "argument must be a string");
-        return lua_error(L);
-    }
-    const char *filename = lua_tostring(L, 1);
-    const char *path = [@CYLINDER_DIR stringByAppendingPathComponent:[NSString stringWithUTF8String:filename]].UTF8String;
+    const char *file = lua_tostring(L, 1);
 
-    if(luaL_loadfile(L, path) != LUA_OK || lua_pcall(L, 0, 1, 0) != 0)
-    {
-        return luaL_error(L, "%s", lua_tostring(L, -1));
-    }
+    if(file != NULL)
+        file = [NSString stringWithFormat:@"/Library/Cylinder/%s", file].UTF8String;
 
+    int top = lua_gettop(L);
+    lua_pushvalue(L, lua_upvalueindex(1));
+    lua_insert(L, 1);
+
+    if(file != NULL)
+    {
+        lua_pushstring(L, file);
+        lua_remove(L, 2);
+        lua_insert(L, 2);
+    }
+    lua_call(L, top, 1);
     return 1;
+}
+
+static int l_print(lua_State *L)
+{
+    const char *str = lua_tostring(L, 1);
+    if(str == NULL) return luaL_error(L, "could not argument for printing");
+
+    write_file(str, "print.log");
+    return 0;
 }
 
 
 void write_error(const char *error)
 {
-    if(![NSFileManager.defaultManager fileExistsAtPath:LOG_PATH isDirectory:nil])
+    write_file(error, LOG_PATH);
+}
+void write_file(const char *msg, const char *filename)
+{
+    NSString *path = [LOG_DIR stringByAppendingPathComponent:[NSString stringWithUTF8String:filename]];
+
+    if(![NSFileManager.defaultManager fileExistsAtPath:path isDirectory:nil])
     {
         if(![NSFileManager.defaultManager fileExistsAtPath:LOG_DIR isDirectory:nil])
             [NSFileManager.defaultManager createDirectoryAtPath:LOG_DIR withIntermediateDirectories:false attributes:nil error:nil];
-        [[NSFileManager defaultManager] createFileAtPath:LOG_PATH contents:nil attributes:nil];
+        [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
     }
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:LOG_PATH];
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:path];
     [fileHandle seekToEndOfFile];
 
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -212,7 +275,7 @@ void write_error(const char *error)
     NSString *dateStr = [dateFormatter stringFromDate:NSDate.date];
 
     [fileHandle writeData:[dateStr dataUsingEncoding:NSUTF8StringEncoding]];
-    [fileHandle writeData:[NSData dataWithBytes:error length:(strlen(error) + 1)]];
+    [fileHandle writeData:[NSData dataWithBytes:msg length:(strlen(msg) + 1)]];
     [fileHandle writeData:[NSData dataWithBytes:"\n" length:2]];
     [fileHandle closeFile];
 }
@@ -464,4 +527,36 @@ static int l_get_transform(lua_State *L, UIView *self) //pushes transform to top
     int i = 0;
     CALL_TRANSFORM_MACRO(PUSH_TRANSFORM, L, i, self.layer.transform);
     return 1;
+}
+
+static const char * get_stack(lua_State *L, const char *strr)
+{
+    NSMutableString *str = [NSMutableString stringWithFormat:@"%s{", strr];
+    int i;
+    int top = lua_gettop(L);
+    for (i = 1; i <= top; i++) {  /* repeat for each level */
+        int t = lua_type(L, i);
+        switch (t) {
+                
+            case LUA_TSTRING:  /* strings */
+                [str appendFormat:@"\"%s\"", lua_tostring(L, i)];
+                break;
+                
+            case LUA_TBOOLEAN:  /* booleans */
+                [str appendString:lua_toboolean(L, i) ? @"true" : @"false"];
+                break;
+                
+            case LUA_TNUMBER:  /* numbers */
+                [str appendFormat:@"%g", lua_tonumber(L, i)];
+                break;
+                
+            default:  /* other values */
+                [str appendFormat:@"<%s>", lua_typename(L, t)];
+                break;
+                
+        }
+        if(i < top)
+            [str appendString:@",  "];  /* put a separator */
+    }
+    return [NSString stringWithFormat:@"%@} %d", str, top].UTF8String;
 }

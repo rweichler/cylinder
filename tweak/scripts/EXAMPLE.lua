@@ -39,8 +39,6 @@ more will be added later
 
 --declare your own constants and functions here
 
-PI = 3.14159265
-
 function abs(x) --> absolute value convenience function
     if x < 0 then
         return -x
@@ -58,10 +56,10 @@ end
 return function(view, offset, width, height)
     local percent = offset/width
 
-    view:rotate(percent*PI/3, 1, 0, 0) --> this will tilt the page slightly backward
+    view:rotate(percent*math.pi/3, 1, 0, 0) --> this will tilt the page slightly backward
 
     local first_icon = view[1]
-    first_icon:rotate(percent*PI*2) --> this will spin the first icon in the page
+    first_icon:rotate(percent*math.pi*2) --> this will spin the first icon in the page
 
     local i = 0
     while true do --> loop through all of the icons
