@@ -394,6 +394,26 @@ static int l_uiview_index(lua_State *L)
             lua_pushcfunction(L, l_transform_translate);
             return 1;
         }
+        else if(!strcmp(key, "x"))
+        {
+            lua_pushnumber(L, self.frame.origin.x);
+            return 1;
+        }
+        else if(!strcmp(key, "y"))
+        {
+            lua_pushnumber(L, self.frame.origin.y);
+            return 1;
+        }
+        else if(!strcmp(key, "width"))
+        {
+            lua_pushnumber(L, self.frame.size.width);
+            return 1;
+        }
+        else if(!strcmp(key, "height"))
+        {
+            lua_pushnumber(L, self.frame.size.height);
+            return 1;
+        }
     }
 
     return 0;
