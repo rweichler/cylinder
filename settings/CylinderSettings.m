@@ -1,11 +1,10 @@
 #import "CylinderSettings.h"
-
 #import <Defines.h>
 #import "CLEffect.h"
 
-
-@interface CylinderSettingsListController () {
-	NSMutableDictionary *_settings;
+@interface CylinderSettingsListController()
+{
+    NSMutableDictionary *_settings;
 }
 @property (nonatomic, retain, readwrite) NSMutableDictionary *settings;
 @end
@@ -13,11 +12,13 @@
 @implementation CylinderSettingsListController
 @synthesize settings = _settings;
 
-- (id)initForContentSize:(CGSize)size {
-	if ((self = [super initForContentSize:size])) {
-		self.settings = [([NSMutableDictionary dictionaryWithContentsOfFile:PREFS_PATH] ?: DefaultPrefs) retain];
-	}
-	return self;
+- (id)initForContentSize:(CGSize)size
+{
+    if ((self = [super initForContentSize:size])) {
+        self.settings = [([NSMutableDictionary dictionaryWithContentsOfFile:PREFS_PATH] ?: DefaultPrefs) retain];
+        if(![[_settings valueForKey:PrefsEffectKey] isKindOfClass:NSArray.class]) [_settings setValue:nil forKey:PrefsEffectKey];
+    }
+    return self;
 }
 
 - (id)specifiers {
@@ -68,17 +69,29 @@
 	[self sendSettings];
 }
 
-- (void)setCurrentEffect:(CLEffect *)effect {
-	if ([effect.name isEqualToString: [_settings objectForKey: PrefsEffectKey]])
-		return;
-	
-	[_settings setObject:effect.name forKey:PrefsEffectKey];
-	[_settings setObject:effect.pack forKey:PrefsPackKey];
+-(void)setSelectedEffects:(NSArray *)effects
+{
+    NSMutableString *text = [NSMutableString string];
+    NSMutableArray *toWrite = [NSMutableArray arrayWithCapacity:effects.count];
+    for(CLEffect *effect in effects)
+    {
+        if(!effect.name || !effect.directory) continue;
 
-	UITableViewCell *cell = [self.table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
-	cell.detailTextLabel.text = effect.name;
-	
-	[self sendSettings];
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:effect.name, PrefsEffectKey, effect.directory, PrefsEffectDirKey, nil];
+        [toWrite addObject:dict];
+
+        [text appendString:effect.name];
+        if(effect != effects.lastObject)
+        {
+            [text appendString:@", "];
+        }
+    }
+
+    UITableViewCell *cell = [self.table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+    cell.detailTextLabel.text = text;
+
+    [_settings setObject:toWrite forKey:PrefsEffectKey];
+    [self sendSettings];
 }
 
 - (NSNumber *)enabled {

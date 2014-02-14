@@ -1,6 +1,6 @@
-local cube = dofile("include/cube.lua")
+local cube = dofile("rweichler/include/cube.lua")
 
-return function(page, offset, width, height)
+return function (page, offset, width, height)
     cube(page, width, offset/width, false)
 
     local percent = offset/width

@@ -12,6 +12,7 @@ static lua_State *L = NULL;
 static int *_scripts = NULL;
 static const char **_scriptNames = NULL;
 static int _scriptCount;
+BOOL _randomize;
 
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
@@ -57,7 +58,8 @@ void post_notification(const char *script, BOOL broken)
 {
     if(script != NULL)
     {
-        [[[NSString stringWithFormat:@"%s\n%d", script, broken] dataUsingEncoding:NSUTF8StringEncoding] writeToFile:LOG_DIR".errornotify" atomically:true];
+        NSString *nsscript = [[NSString stringWithUTF8String:script] stringByReplacingOccurrencesOfString:@"/" withString:@"\n"];
+        [[[NSString stringWithFormat:@"%@\n%d", nsscript, broken] dataUsingEncoding:NSUTF8StringEncoding] writeToFile:LOG_DIR".errornotify" atomically:true];
         CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
         CFNotificationCenterPostNotification(r, CFSTR("luaERROR"), NULL, NULL, true);
     }
@@ -153,39 +155,13 @@ int open_script(const char *script)
     return func;
 }
 
-BOOL init_lua(const char *script)
+BOOL init_lua(NSArray *scripts, BOOL random)
 {
-    create_state();
-    if(script == NULL) script = "Cube (inside)";
-
-    int func = open_script(script);
-
-    if(_scripts != NULL) free(_scripts);
-    if(_scriptNames != NULL) free(_scriptNames);
-
-    if(func != -1)
-    {
-        _scripts = (int *)malloc(sizeof(int));
-        _scriptNames = (const char **)malloc(sizeof(char *));
-        _scripts[0] = func;
-        _scriptNames[0] = script;
-        _scriptCount = 1;
-        return true;
-    }
-    else
-    {
-        _scripts = NULL;
-        _scriptNames = NULL;
-        _scriptCount = 0;
-        return false;
-    }
-}
-
-BOOL init_lua_random()
-{
+    _randomize = random;
     create_state();
 
-    NSArray *scripts = [NSFileManager.defaultManager contentsOfDirectoryAtPath:@CYLINDER_DIR error: nil];
+    if(scripts == nil) scripts = DEFAULT_EFFECTS;
+
     if(_scripts != NULL) free(_scripts);
     if(_scriptNames != NULL) free(_scriptNames);
     _scriptCount = 0;
@@ -197,20 +173,16 @@ BOOL init_lua_random()
     }
     _scripts = (int *)malloc(scripts.count*sizeof(int));
     _scriptNames = (const char **)malloc(scripts.count*sizeof(char *));
-    for(int i = 0; i < scripts.count; i++)
+    for(NSDictionary *scriptDict in scripts)
     {
-        char *script = (char *)[[scripts objectAtIndex:i] UTF8String];
-        int len = strlen(script);
-        if(len > 4 && strcmp(script, "EXAMPLE.lua") != 0 && !strcmp(script + sizeof(char)*(len - 4), ".lua"))
+        const char *script = [NSString stringWithFormat:@"%@/%@", [scriptDict valueForKey:PrefsEffectDirKey], [scriptDict valueForKey:PrefsEffectKey]].UTF8String;
+
+        int func = open_script(script);
+        if(func != -1)
         {
-            script[len - 4] = '\0';
-            int func = open_script((const char *)script);
-            if(func != -1)
-            {
-                _scripts[_scriptCount] = func;
-                _scriptNames[_scriptCount] = script;
-                _scriptCount++;
-            }
+            _scripts[_scriptCount] = func;
+            _scriptNames[_scriptCount] = script;
+            _scriptCount++;
         }
     }
     if(_scriptCount == 0)
@@ -287,17 +259,33 @@ static void push_view(UIView *view)
     lua_setmetatable(L, -2);
 }
 
-BOOL manipulate(UIView *view, float offset, float width, float height, u_int32_t rand)
-{
-    if(L == NULL || _scriptCount == 0) return false;
 
-    int funcIndex = rand % _scriptCount;
+static BOOL manipulate_step(UIView *view, float offset, float width, float height, int funcIndex)
+{
     lua_rawgeti(L, LUA_REGISTRYINDEX, _scripts[funcIndex]);
 
     push_view(view);
     lua_pushnumber(L, offset);
     lua_pushnumber(L, width);
     lua_pushnumber(L, height);
+
+    BOOL success = lua_pcall(L, 4, 1, 0) == 0;
+
+    if(!success)
+    {
+        write_error(lua_tostring(L, -1));
+        post_notification(_scriptNames[funcIndex], true);
+        remove_script(funcIndex);
+        if(_scriptCount == 0) close_lua();
+    }
+
+    lua_pop(L, 1);
+    return success;
+}
+
+BOOL manipulate(UIView *view, float offset, float width, float height, u_int32_t rand)
+{
+    if(L == NULL || _scriptCount == 0) return false;
 
     view.layer.transform = CATransform3DIdentity;
     view.alpha = 1;
@@ -306,20 +294,22 @@ BOOL manipulate(UIView *view, float offset, float width, float height, u_int32_t
         v.layer.transform = CATransform3DIdentity;
         view.alpha = 1;
     }
-
-    if(lua_pcall(L, 4, 1, 0) != 0)
+    if(_randomize)
     {
-        write_error(lua_tostring(L, -1));
-        lua_pop(L, 1);
-        post_notification(_scriptNames[funcIndex], true);
-        remove_script(funcIndex);
-        if(_scriptCount == 0) close_lua();
-        return manipulate(view, offset, width, height, rand);
+        if(manipulate_step(view, offset, width, height, rand % _scriptCount))
+            return true;
+        else
+            return manipulate(view, offset, width, height, rand); //next script will be different since
+                                                                  //_scriptCount has decremented by 1
     }
     else
     {
-        lua_pop(L, 1);
-        return true;
+        for(int i = 0; i < _scriptCount; i++)
+        {
+            if(!manipulate_step(view, offset, width, height, i))
+                i--;
+        }
+        return _scriptCount > 0; //if _scriptCount is 0 then that means every script errored
     }
 }
 
@@ -443,7 +433,9 @@ static int l_transform_rotate(lua_State *L)
 
     if(fabs(pitch) > 0.01 || fabs(yaw) > 0.01)
         transform.m34 = -0.002;
+
     transform = CATransform3DRotate(transform, lua_tonumber(L, 2), pitch, yaw, roll);
+
     self.layer.transform = transform;
 
     return 0;

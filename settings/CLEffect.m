@@ -2,7 +2,7 @@
 #import <Defines.h>
 
 @implementation CLEffect
-@synthesize name=_name, path=_path, pack=_pack, broken=_broken;
+@synthesize name=_name, path=_path, directory=_directory, broken=_broken, selected=_selected;
 
 + (CLEffect*)effectWithPath:(NSString*)path {
 	return [[[self alloc] initWithPath:path] autorelease];
@@ -12,6 +12,7 @@
 	BOOL isDir;
 	BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
 
+    NSArray *components = [path pathComponents];
     NSArray *ext = [path.lastPathComponent componentsSeparatedByString: @"."];
 	
     if (!exists || isDir || ![ext.lastObject isEqualToString:@"lua"]) {
@@ -26,15 +27,10 @@
         if(i != ext.count - 2) [name appendString:@"."];
     }
 
-    if([name isEqualToString:@"EXAMPLE"])
-    {
-        [self release];
-        return nil;
-    }
-	
 	if ((self = [super init])) {
 		self.name = name;
         self.path = path;
+        self.directory = [components objectAtIndex:(components.count - 2)];
 	}
 	return self;
 }
@@ -42,6 +38,7 @@
 - (void)dealloc {
 	self.name = nil;
 	self.path = nil;
+    self.directory = nil;
 	[super dealloc];
 }
 

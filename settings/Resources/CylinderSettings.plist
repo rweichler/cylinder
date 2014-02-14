@@ -40,7 +40,7 @@
 			<key>key</key>
 			<string>effect</string>
 			<key>label</key>
-			<string>Effect</string>
+			<string>Effects</string>
 			<key>name</key>
 			<string>Effect</string>
 		</dict>
@@ -62,7 +62,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>footerText</key>
-			<string>sup baby</string>
+            <string>that new elk road EP tho</string>
 			<key>isStaticText</key>
 			<true/>
 		</dict>
@@ -80,7 +80,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>View source on GitHub</string>
+			<string>View source (and license) on GitHub</string>
 		</dict>
 	</array>
 	<key>title</key>

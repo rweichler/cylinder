@@ -20,7 +20,7 @@ Everything!
 * Stairs (down right)
 * [Spin](https://raw2.github.com/rweichler/cylinder/master/screenie.gif)
 * Chomp &lt;---- custom "chomping" effect I made
-* And *dozens* of tweaks on [/r/cylinder](http://reddit.com/r/cylinder)!
+* And [*dozens*](http://www.youtube.com/watch?v=lKie-vgUGdI) of tweaks on [/r/cylinder](http://reddit.com/r/cylinder)!
 
 If you want to make your own effects, check out
 [EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua).

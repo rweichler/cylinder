@@ -12,18 +12,21 @@ DYLIB=CylinderSettings
 LIBLUA=../include/lua/liblua.a
 
 COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m writeit.m $(LIBLUA)
-REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h writeit.h Resources/*
+REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h writeit.h
 
 all: $(DYLIB).bundle
 
 clean:
 	rm -rf $(DYLIB).bundle
 
-$(DYLIB).bundle: $(REQ)
+$(DYLIB).bundle: Resources/* $(DYLIB).bundle/$(DYLIB)
+	mkdir -p $(DYLIB).bundle
+	cp -r Resources/* $(DYLIB).bundle/
+	$(MAKE) $(DYLIB).bundle/$(DYLIB)
+
+$(DYLIB).bundle/$(DYLIB): $(REQ)
 	$(MAKE) $(LIBLUA)
 	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $(DYLIB)
-	mkdir -p $(DYLIB).bundle
-	cp Resources/* $(DYLIB).bundle/
 	mv $(DYLIB) $(DYLIB).bundle
 
 $(LIBLUA):

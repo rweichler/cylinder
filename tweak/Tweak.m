@@ -123,19 +123,17 @@ void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
 
-    if(settings && ![[settings valueForKey:@"enabled"] boolValue])
+    if(settings && ![[settings valueForKey:PrefsEnabledKey] boolValue])
     {
         close_lua();
         _enabled = false;
     }
-    else if(settings && [[settings valueForKey:@"randomized"] boolValue])
-    {
-        _enabled = init_lua_random();
-    }
     else
     {
-        NSString *key = [settings valueForKey:PrefsEffectKey];
-        _enabled = init_lua(key.UTF8String);
+        BOOL random = [[settings valueForKey:PrefsRandomizedKey] boolValue];
+        NSArray *effects = [settings valueForKey:PrefsEffectKey];
+        if(![effects isKindOfClass:NSArray.class]) effects = nil; //this is for backwards compatibility
+        _enabled = init_lua(effects, random);
     }
 }
 

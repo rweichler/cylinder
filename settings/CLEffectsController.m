@@ -9,7 +9,8 @@
 static CLEffectsController *sharedController = nil;
 
 @implementation UIDevice (OSVersion)
-- (BOOL)iOSVersionIsAtLeast:(NSString*)version {
+- (BOOL)iOSVersionIsAtLeast:(NSString*)version
+{
     NSComparisonResult result = [[self systemVersion] compare:version options:NSNumericSearch];
     return (result == NSOrderedDescending || result == NSOrderedSame);
 }
@@ -26,11 +27,12 @@ static CLEffectsController *sharedController = nil;
 
 
 @implementation CLEffectsController
-@synthesize effects = _effects;
-@synthesize packs  = _packs;
+@synthesize effects = _effects, selectedEffects=_selectedEffects;
 
-- (id)initForContentSize:(CGSize)size {
-	if ((self = [super initForContentSize:size])) {		
+- (id)initForContentSize:(CGSize)size
+{
+	if ((self = [super initForContentSize:size]))
+    {
 		_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) style:UITableViewStyleGrouped];
 		[_tableView setDataSource:self];
 		[_tableView setDelegate:self];
@@ -50,79 +52,126 @@ static CLEffectsController *sharedController = nil;
 	return self;
 }
 
-- (void)addEffectsFromDirectory:(NSString *)directory pack: (NSString *)pack {
-	NSFileManager *manager = [NSFileManager defaultManager];
-	NSArray *diskEffects = [manager contentsOfDirectoryAtPath:directory error:nil];
-	
-	for (NSString *scriptName in diskEffects) {
-		NSString *path = [directory stringByAppendingPathComponent:scriptName];
+- (void)addEffectsFromDirectory:(NSString *)directory
+{
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSArray *directoryContents = [manager contentsOfDirectoryAtPath:directory error:nil];
 
-		CLEffect *effect = [CLEffect effectWithPath:path];
-		effect.pack = pack ? pack : @"";
-		
-		
-		if (effect) {
-			NSString *effectIdentifier = [effect.pack stringByAppendingFormat: @".%@", effect.name];
-			CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
+    for (NSString *dirName in directoryContents)
+    {
+        NSString *path = [directory stringByAppendingPathComponent:dirName];
 
-			if ([[ctrl.settings objectForKey: PrefsBrokenKey] containsObject: effectIdentifier])
-				effect.broken = true;
-			
-			[self.effects addObject:effect];
-		}
-	}
+        BOOL isDir;
+        if(![manager fileExistsAtPath:path isDirectory:&isDir] || !isDir) continue;
+
+        NSArray *scripts = [manager contentsOfDirectoryAtPath:path error:nil];
+        if(scripts.count == 0) continue;
+
+        NSMutableArray *effects = [NSMutableArray array];
+        for(NSString *script in scripts)
+        {
+            CLEffect *effect = [CLEffect effectWithPath:[path stringByAppendingPathComponent:script]];
+            if(effect)
+                [effects addObject:effect];
+        }
+        if(effects.count > 0)
+            [self.effects setObject:effects forKey:dirName];
+    }
 }
 
-- (void)refreshList {
-	self.effects = [NSMutableArray array];
-	self.packs  = [NSMutableArray array];
-	CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
-	[self addEffectsFromDirectory: kEffectsDirectory pack: nil];
-			
-	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)];
-	[self.effects sortUsingDescriptors:[NSArray arrayWithObject:descriptor]];
-	[descriptor release]; // sort
-	
-	selectedEffect = [ctrl.settings objectForKey:PrefsEffectKey];
-	if (!selectedEffect)
-		selectedEffect = @DEFAULT_EFFECT;
+-(CLEffect *)effectWithName:(NSString *)name inDirectory:(NSString *)directory
+{
+    if(!name || !directory) return nil;
+
+    NSArray *effects = [self.effects valueForKey:directory];
+    for(CLEffect *effect in effects)
+    {
+        if([effect.name isEqualToString:name])
+        {
+            return effect;
+        }
+    }
+    return nil;
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-	[self refreshList];
+- (void)refreshList
+{
+    self.effects = [NSMutableDictionary dictionary];
+    CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
+    [self addEffectsFromDirectory:kEffectsDirectory];
+
+    NSArray *effects = [ctrl.settings objectForKey:PrefsEffectKey];
+
+    if([effects isKindOfClass:NSArray.class] && effects.count > 0)
+    {
+        self.selectedEffects = [NSMutableArray arrayWithCapacity:effects.count];
+        for(NSDictionary *dict in effects)
+        {
+            NSString *name = [ctrl.settings objectForKey:PrefsEffectKey];
+            NSString *dir = [ctrl.settings objectForKey:PrefsEffectDirKey];
+            CLEffect *effect = [self effectWithName:name inDirectory:dir];
+            effect.selected = true;
+            if(effect)
+                [self.selectedEffects addObject:effect];
+        }
+    }
+    if(self.selectedEffects.count == 0)
+    {
+        CLEffect *effect = [self effectWithName:DEFAULT_EFFECT inDirectory:DEFAULT_DIRECTORY];
+        effect.selected = true;
+        self.selectedEffects = [NSMutableArray arrayWithObject:effect];
+    }
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self refreshList];
     [super viewWillAppear:animated];
 }
 
-- (NSArray *)currentEffects {
-	return self.effects;
-}
-
-- (void)dealloc { 
+- (void)dealloc
+{
     sharedController = nil;
-	self.effects = nil;
-	[super dealloc];
+    self.selectedEffects = nil;
+    self.effects = nil;
+    [super dealloc];
 }
 
-- (NSString*)navigationTitle {
-	return @"Effects";
+- (NSString*)navigationTitle
+{
+    return @"Effects";
 }
 
-- (id)view {
-	return _tableView;
+- (id)view
+{
+    return _tableView;
 }
 
 /* UITableViewDelegate / UITableViewDataSource Methods {{{ */
-- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.effects.count;
 }
 
-- (id) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-
-    return @"";
+-(NSString *)keyForIndex:(int)index
+{
+    int i = 0;
+    for(NSString *key in self.effects)
+    {
+        if(i == index) return key;
+        i++;
+    }
+    return nil;
 }
 
-- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return self.currentEffects.count;
+- (id) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [self keyForIndex:section];
+}
+
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [[self.effects valueForKey:[self keyForIndex:section]] count];
 }
 
 -(void)setCellIcon:(UITableViewCell *)cell effect:(CLEffect *)effect
@@ -133,57 +182,66 @@ static CLEffectsController *sharedController = nil;
         cell.imageView.image = nil;
 }
 
-- (id) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+-(CLEffect *)effectAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *key = [self keyForIndex:indexPath.section];
+    NSArray *effects = [self.effects valueForKey:key];
+    CLEffect *effect = [effects objectAtIndex:indexPath.row];
+    return effect;
+}
+
+- (id) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
     if (!cell) {
         cell = [[[CLAlignedTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"] autorelease];
     }
-    
-	CLEffect *effect = [self.currentEffects objectAtIndex:indexPath.row];
-	cell.textLabel.text = effect.name;	
-	cell.selected = false;
+
+    CLEffect *effect = [self effectAtIndexPath:indexPath];
+
+    cell.textLabel.text = effect.name;
+    cell.selected = false;
     [self setCellIcon:cell effect:effect];
 
-	if ([effect.name isEqualToString: selectedEffect] && !tableView.isEditing) {
-		cell.accessoryType = UITableViewCellAccessoryCheckmark;
-	} else if (!tableView.isEditing) {
-		cell.accessoryType = UITableViewCellAccessoryNone;
-	}
+    cell.accessoryType = effect.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 
     return cell;
 }
 
-- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (!tableView.isEditing) {
-		// deselect old one
-		[tableView deselectRowAtIndexPath:indexPath animated:YES];
-	
-	
-		UITableViewCell *old = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow: [[self.currentEffects valueForKey:@"name"] indexOfObject: selectedEffect] inSection: 0]];
-		if (old)
-			old.accessoryType = UITableViewCellAccessoryNone;
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!tableView.isEditing)
+    {
+        // deselect old one
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
+        CLEffect *effect = [self effectAtIndexPath:indexPath];
+        effect.selected = !effect.selected;
 
-		UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-		// check it off
-		cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        if(effect.selected)
+        {
+            [self.selectedEffects addObject:effect];
+        }
+        else
+        {
+            [self.selectedEffects removeObject:effect];
+        }
 
-		CLEffect *effect = (CLEffect*)[self.currentEffects objectAtIndex:indexPath.row];
-	
-		// make the title changes
-		CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        // check it off
+        cell.accessoryType = effect.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 
-        ctrl.currentEffect = effect;
-	
-		selectedEffect = effect.name;
+        // make the title changes
+        CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
 
-	} else {
-		// future pack functionality
-	}
+        ctrl.selectedEffects = self.selectedEffects;
+
+    }
 }
 
-- (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath {
-	return (UITableViewCellEditingStyle)3;
+- (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    return (UITableViewCellEditingStyle)3;
 }
 
 @end
@@ -216,19 +274,29 @@ static inline void luaErrorNotification(CFNotificationCenterRef center, void *ob
 
 
     UITableView *tableView = self.view;
-    NSString *key = [info objectAtIndex:0];
-    BOOL broken = [[info objectAtIndex:1] boolValue];
-
-    for(int i = 0; i < self.currentEffects.count; i++)
+    NSString *dir = [info objectAtIndex:0];
+    NSString *scriptName = [info objectAtIndex:1];
+    BOOL broken = [[info objectAtIndex:2] boolValue];
+    int s = 0;
+    for(NSString *key in self.effects)
     {
-        CLEffect *effect = [self.currentEffects objectAtIndex:i];
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
-        if([effect.name isEqualToString:key])
+        if([key isEqualToString:dir])
         {
-            effect.broken = broken;
-            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-            [self setCellIcon:cell effect:effect];
+            NSArray *effects = [self.effects valueForKey:key];
+            for(int r = 0; r < effects.count; r++)
+            {
+                CLEffect *effect = [effects objectAtIndex:r];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:r inSection:s];
+                if([effect.name isEqualToString:scriptName])
+                {
+                    effect.broken = broken;
+                    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+                    [self setCellIcon:cell effect:effect];
+
+                }
+            }
         }
+        s++;
     }
 }
 

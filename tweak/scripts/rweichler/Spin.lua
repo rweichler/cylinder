@@ -13,4 +13,4 @@ end
 return function(page, offset, width, height)
     local percent = offset/width
     spin(page, percent)
-end
+end, "Spin"

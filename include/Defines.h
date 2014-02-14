@@ -4,6 +4,7 @@
 #define CLLog(format, ...) NSLog(@"Cylinder: %@", [NSString stringWithFormat: format, ## __VA_ARGS__])
 
 #define PrefsEffectKey        @"effect"
+#define PrefsEffectDirKey  @"effectFolder"
 #define PrefsCarrierTextKey  @"carrierText"
 #define PrefsUseTextKey      @"useText"
 #define PrefsEnabledKey      @"enabled"
@@ -13,7 +14,9 @@
 #define PrefsPackKey         @"pack"
 #define PrefsBrokenKey       @"brokenEffects"
 
-#define DEFAULT_EFFECT "Cube (inside)"
+#define DEFAULT_EFFECT @"Cube (inside)"
+#define DEFAULT_DIRECTORY @"rweichler"
+
 #define IN_SPRINGBOARD()     ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.springboard"])
 #define IS_RETINA()          ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] && [[UIScreen mainScreen] scale] == 2)
 #define PREFS_PATH           [NSString stringWithFormat:@"%@/Library/Preferences/com.r333d.cylinder.plist", NSHomeDirectory()]
@@ -24,7 +27,8 @@
 
 #define kEffectsDirectory     @"/Library/Cylinder"
 #define kPacksDirectory      @"/Library/Cylinder/Packs"
-#define DefaultPrefs         [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Cylinder", PrefsPackKey, @"Cube (inside)", PrefsEffectKey, [NSNumber numberWithBool:YES], PrefsEnabledKey, [NSNumber numberWithBool:false], PrefsRandomizedKey, nil]
+#define DEFAULT_EFFECTS      [NSArray arrayWithObjects:[NSDictionary dictionaryWithObjectsAndKeys:DEFAULT_EFFECT, PrefsEffectKey, DEFAULT_DIRECTORY, PrefsEffectDirKey, nil], nil]
+#define DefaultPrefs         [NSMutableDictionary dictionaryWithObjectsAndKeys: DEFAULT_EFFECTS, PrefsEffectKey, [NSNumber numberWithBool:YES], PrefsEnabledKey, [NSNumber numberWithBool:false], PrefsRandomizedKey, nil]
 
 @interface UIDevice (de)
 - (BOOL)iOSVersionIsAtLeast:(NSString *)vers;

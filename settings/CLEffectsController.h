@@ -1,17 +1,16 @@
 #import <Preferences/PSViewController.h>
+#import "CLEffect.h"
 
 @interface CLEffectsController : PSViewController <UITableViewDelegate, UITableViewDataSource> {
 	UITableView *_tableView;
-	NSMutableArray *_effects;
-	NSMutableArray *_packs;
-	NSString *selectedEffect;
+	NSMutableDictionary *_effects;
+    NSMutableArray *_selectedEffects;
 }
-@property (nonatomic, retain) NSMutableArray *effects;
-@property (nonatomic, retain) NSMutableArray *packs;
+@property (nonatomic, retain) NSMutableDictionary *effects;
+@property (nonatomic, retain) NSMutableArray *selectedEffects;
 // + (void)load;
 - (id)initForContentSize:(CGSize)size;
 - (id)view;
 - (NSString*)navigationTitle;
 - (void)refreshList;
-- (NSArray *)currentEffects;
 @end 

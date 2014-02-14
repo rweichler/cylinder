@@ -3,7 +3,7 @@
 
 @interface CylinderSettingsListController: PSListController
 @property (nonatomic, retain, readonly) NSDictionary *settings;
-- (void)setCurrentEffect:(CLEffect *)effect;
+- (void)setSelectedEffects:(NSArray *)effects;
 - (void)writeSettings;
 - (void)sendSettings;
 @end
