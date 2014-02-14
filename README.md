@@ -42,6 +42,7 @@ This allows for rapid testing.
 ### Tested
 
 * iPod touch 4
+* iPod touch 5
 * iPhone 4S
 * iPhone 5S
 
