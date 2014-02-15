@@ -20,6 +20,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import <Defines.h>
 #import "CLEffectsController.h"
 #import "CylinderSettings.h"
+#import "writeit.h"
 
 // #import "UDTableView.h"
 #import "CLAlignedTableViewCell.h"
@@ -286,37 +287,17 @@ static inline void luaErrorNotification(CFNotificationCenterRef center, void *ob
     if(!self) return;
     BOOL isDir;
     if(![NSFileManager.defaultManager fileExistsAtPath:ERROR_DIR isDirectory:&isDir] || isDir) return;
-    NSData *data = [NSData dataWithContentsOfFile:ERROR_DIR];
-    NSArray *info = [[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease] componentsSeparatedByString:@"\n"];
-    if(info.count != 2) return;
 
-
-
-    UITableView *tableView = self.view;
-    NSString *dir = [info objectAtIndex:0];
-    NSString *scriptName = [info objectAtIndex:1];
-    BOOL broken = [[info objectAtIndex:2] boolValue];
-    int s = 0;
-    for(NSString *key in self.effects)
+    NSArray *errors = [NSArray arrayWithContentsOfFile:ERROR_DIR];
+    for(NSDictionary *effectDict in errors)
     {
-        if([key isEqualToString:dir])
-        {
-            NSArray *effects = [self.effects valueForKey:key];
-            for(int r = 0; r < effects.count; r++)
-            {
-                CLEffect *effect = [effects objectAtIndex:r];
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:r inSection:s];
-                if([effect.name isEqualToString:scriptName])
-                {
-                    effect.broken = broken;
-                    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-                    [self setCellIcon:cell effect:effect];
-
-                }
-            }
-        }
-        s++;
+        NSString *name = [effectDict valueForKey:PrefsEffectKey];
+        NSString *folder = [effectDict valueForKey:PrefsEffectDirKey];
+        CLEffect *effect = [self effectWithName:name inDirectory:folder];
+        effect.broken = [[effectDict valueForKey:@"broken"] boolValue];
     }
+
+    [(UITableView *)self.view reloadData];
 }
 
 static __attribute__((constructor)) void __wbsInit() {

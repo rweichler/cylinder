@@ -36,7 +36,7 @@ all: $(DYLIB).bundle
 clean:
 	rm -rf $(DYLIB).bundle
 
-$(DYLIB).bundle: Resources/* $(DYLIB).bundle/$(DYLIB)
+$(DYLIB).bundle: Resources/*
 	mkdir -p $(DYLIB).bundle
 	cp -r Resources/* $(DYLIB).bundle/
 	$(MAKE) $(DYLIB).bundle/$(DYLIB)
@@ -44,7 +44,7 @@ $(DYLIB).bundle: Resources/* $(DYLIB).bundle/$(DYLIB)
 $(DYLIB).bundle/$(DYLIB): $(REQ)
 	$(MAKE) $(LIBLUA)
 	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $(DYLIB)
-	mv $(DYLIB) $(DYLIB).bundle
+	mv $(DYLIB) $(DYLIB).bundle/$(DYLIB)
 
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)

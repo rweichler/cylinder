@@ -26,8 +26,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define LOG_PATH "errors.log"
 #define PRINT_PATH "print.log"
 
-static int dofileFunc;
-
 static lua_State *L = NULL;
 
 static int *_scripts = NULL;
@@ -75,12 +73,25 @@ static void remove_script(int index)
     _scriptCount--;
 }
 
-void post_notification(const char *script, BOOL broken)
+NSDictionary *gen_error_dict(const char *script, BOOL broken)
 {
-    if(script != NULL)
+    NSArray *components = [NSString stringWithUTF8String:script].pathComponents;
+    NSString *folder = [components objectAtIndex:0];
+    NSString *name = [components objectAtIndex:1];
+    NSNumber *nsbroken = [NSNumber numberWithBool:broken];
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+        folder, PrefsEffectDirKey,
+        name, PrefsEffectKey,
+        nsbroken, @"broken",
+        nil];
+}
+
+void error_notification(NSArray *errors)
+{
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:errors format:NSPropertyListBinaryFormat_v1_0 errorDescription:NULL];
+    if(data)
     {
-        NSString *nsscript = [[NSString stringWithUTF8String:script] stringByReplacingOccurrencesOfString:@"/" withString:@"\n"];
-        [[[NSString stringWithFormat:@"%@\n%d", nsscript, broken] dataUsingEncoding:NSUTF8StringEncoding] writeToFile:LOG_DIR".errornotify" atomically:true];
+        [data writeToFile:LOG_DIR".errornotify" atomically:true];
         CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
         CFNotificationCenterPostNotification(r, CFSTR("luaERROR"), NULL, NULL, true);
     }
@@ -190,18 +201,15 @@ int open_script(const char *script)
     if(!loaded)
     {
         write_error(lua_tostring(L, -1));
-        post_notification(script, true);
     }
     else if(!lua_isfunction(L, -1))
     {
         write_error([NSString stringWithFormat:@"error opening %s: result must be a function", script].UTF8String);
-        post_notification(script, true);
     }
     else
     {
         lua_pushvalue(L, -1);
         func = luaL_ref(L, LUA_REGISTRYINDEX);
-        post_notification(script, false);
     }
 
     lua_pop(L, 1);
@@ -227,11 +235,17 @@ BOOL init_lua(NSArray *scripts, BOOL random)
     }
     _scripts = (int *)malloc(scripts.count*sizeof(int));
     _scriptNames = (const char **)malloc(scripts.count*sizeof(char *));
+    NSMutableArray *errors = [NSMutableArray arrayWithCapacity:scripts.count];
     for(NSDictionary *scriptDict in scripts)
     {
         const char *script = [NSString stringWithFormat:@"%@/%@", [scriptDict valueForKey:PrefsEffectDirKey], [scriptDict valueForKey:PrefsEffectKey]].UTF8String;
 
         int func = open_script(script);
+
+        NSMutableDictionary *errorDict = scriptDict.mutableCopy;
+        [errorDict setValue:[NSNumber numberWithBool:(func == -1)] forKey:@"broken"];
+        [errors addObject:errorDict];
+
         if(func != -1)
         {
             _scripts[_scriptCount] = func;
@@ -239,6 +253,9 @@ BOOL init_lua(NSArray *scripts, BOOL random)
             _scriptCount++;
         }
     }
+
+    error_notification(errors);
+
     if(_scriptCount == 0)
     {
         free(_scripts);
@@ -333,7 +350,8 @@ static BOOL manipulate_step(UIView *view, float offset, float width, float heigh
     if(!success)
     {
         write_error(lua_tostring(L, -1));
-        post_notification(_scriptNames[funcIndex], true);
+        NSArray *errors = [NSArray arrayWithObject:gen_error_dict(_scriptNames[funcIndex], true)];
+        error_notification(errors);
         remove_script(funcIndex);
         if(_scriptCount == 0) close_lua();
     }
