@@ -1,4 +1,4 @@
-local cube = dofile("rweichler/include/cube.lua")
+local cube = dofile("include/cube.lua")
 
 local function chomp(view, percent, height)
     local oldp = percent

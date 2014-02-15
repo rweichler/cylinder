@@ -1,4 +1,4 @@
-local fade = dofile("supermamon/include/fade.lua")
+local fade = dofile("include/fade.lua")
 
 local M_PI = 3.14159265
 

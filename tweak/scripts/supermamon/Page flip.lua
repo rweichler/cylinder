@@ -4,7 +4,7 @@
 PageFlip effect v1.0
 		
 ]]
-local fade = dofile("supermamon/include/fade.lua")
+local fade = dofile("include/fade.lua")
 return function(page, offset, width, height)
 	local M_PI = 3.14159265
 	local percent = offset/width

@@ -26,6 +26,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define LOG_PATH "errors.log"
 #define PRINT_PATH "print.log"
 
+static int dofileFunc;
+
 static lua_State *L = NULL;
 
 static int *_scripts = NULL;
@@ -121,10 +123,6 @@ static void create_state()
     lua_pop(L, 1);
 
     //override certain functions
-    lua_getglobal(L, "dofile");
-    lua_pushcclosure(L, l_loadfile_override, 1);
-    lua_setglobal(L, "dofile");
-
     lua_pushcfunction(L, l_print);
     lua_setglobal(L, "print");
 
@@ -145,6 +143,35 @@ static void create_state()
     lua_pop(L, 1);
 }
 
+static void changedofile(const char *folder, const char *dofile)
+{
+    lua_pushstring(L, dofile);
+    lua_gettable(L, -2);
+    //function(), _ENV{}, dofile()
+    lua_pushstring(L, folder);
+    //function(), _ENV{}, dofile(), "folder"
+    lua_pushcclosure(L, l_loadfile_override, 2);
+    //function(), _ENV{}, newdofile()
+    lua_pushstring(L, dofile);
+    //function(), _ENV{}, newdofile(), "dofile"
+    lua_insert(L, -2);
+    //function(), _ENV{}, "dofile", newdofile()
+    lua_settable(L, -3);
+    //function(), _ENV{}
+}
+
+static void set_environment(const char *script)
+{
+    const char *folder = [[[NSString stringWithUTF8String:script].pathComponents objectAtIndex:0] UTF8String];
+    //function()
+    lua_getupvalue(L, -1, 1);
+    //function(), _ENV{}
+    changedofile(folder, "dofile");
+    changedofile(folder, "loadfile");
+    lua_pop(L, 1);
+}
+
+
 int open_script(const char *script)
 {
     int func = -1;
@@ -152,7 +179,15 @@ int open_script(const char *script)
     const char *path = [NSString stringWithFormat:@CYLINDER_DIR"%s.lua", script].UTF8String;
 
     //load our file and save the function we want to call
-    if(luaL_loadfile(L, path) != LUA_OK || lua_pcall(L, 0, 1, 0) != 0)
+    BOOL loaded = luaL_loadfile(L, path) == LUA_OK;
+    if(loaded)
+    {
+        set_environment(script);
+        loaded = lua_pcall(L, 0, 1, 0) == LUA_OK;
+    }
+
+
+    if(!loaded)
     {
         write_error(lua_tostring(L, -1));
         post_notification(script, true);
@@ -216,9 +251,10 @@ BOOL init_lua(NSArray *scripts, BOOL random)
 static int l_loadfile_override(lua_State *L)
 {
     const char *file = lua_tostring(L, 1);
+    const char *subfolder = lua_tostring(L, lua_upvalueindex(2));
 
     if(file != NULL)
-        file = [NSString stringWithFormat:@"/Library/Cylinder/%s", file].UTF8String;
+        file = [NSString stringWithFormat:@"/Library/Cylinder/%s/%s", subfolder, file].UTF8String;
 
     int top = lua_gettop(L);
     lua_pushvalue(L, lua_upvalueindex(1));
@@ -230,7 +266,11 @@ static int l_loadfile_override(lua_State *L)
         lua_remove(L, 2);
         lua_insert(L, 2);
     }
-    lua_call(L, top, 1);
+    BOOL success = lua_pcall(L, top, 1, 0) == LUA_OK;
+    if(!success)
+    {
+        return luaL_error(L, lua_tostring(L, -1));
+    }
     return 1;
 }
 

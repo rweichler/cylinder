@@ -6,8 +6,8 @@ Tornado v1.0
 Merged the original Cube (Outside)and Spin
 	
 ]]
-local cube = dofile("rweichler/include/cube.lua")
-local fade = dofile("supermamon/include/fade.lua")
+local cube = dofile("../rweichler/include/cube.lua")
+local fade = dofile("include/fade.lua")
 local M_PI = 3.14159265
 
 local function spin(view, percent)
