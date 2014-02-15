@@ -7,7 +7,7 @@ BUNDLE_IDENTIFIER=com.r333d.cylinder
 MOBSUB=.tmp/Library/MobileSubstrate/DynamicLibraries
 
 
-all: tweak settings
+all:
 	cd tweak && $(MAKE)
 	cd settings && $(MAKE)
 
@@ -31,8 +31,7 @@ tweak:
 settings:
 	cd settings && $(MAKE)
 
-$(PACKAGE): tweak/* settings/* DEBIAN/*
-	$(MAKE) all
+$(PACKAGE): all
 	$(MAKE) package-dirs
 	cp tweak/Cylinder.dylib $(MOBSUB)
 	cp tweak/Cylinder.plist $(MOBSUB)
