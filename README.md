@@ -1,8 +1,8 @@
-# TO REPOSITORY OWNERS
+# TO PEOPLE WHO JUST WANT A .DEB
 
 ### *ESPECIALLY* insanelyi and hackyouriphone
 
-[HOST THIS ONE!!!!!](http://r333d.com/repo/cylinder.php) THE ONE IN THIS REPOSITORY IS AN **_UNSTABLE BUILD_**. It's literally broken.
+[USE THIS ONE!!!!!](http://r333d.com/repo/cylinder.php) THE ONE IN THIS REPOSITORY IS AN **_UNSTABLE BUILD_**. It's literally broken.
 
 
 # Cylinder
