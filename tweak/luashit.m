@@ -154,32 +154,42 @@ static void create_state()
     lua_pop(L, 1);
 }
 
-static void changedofile(const char *folder, const char *dofile)
+static void changedofile(const char *folder, const char *func)
 {
-    lua_pushstring(L, dofile);
+    //(), {}
+    lua_getupvalue(L, -2, 1);
+    lua_pushstring(L, func);
+    //(), {}, _ENV, func""
     lua_gettable(L, -2);
-    //function(), _ENV{}, dofile()
     lua_pushstring(L, folder);
-    //function(), _ENV{}, dofile(), "folder"
+    //(), {}, _ENV{}, func(), folder""
     lua_pushcclosure(L, l_loadfile_override, 2);
-    //function(), _ENV{}, newdofile()
-    lua_pushstring(L, dofile);
-    //function(), _ENV{}, newdofile(), "dofile"
-    lua_insert(L, -2);
-    //function(), _ENV{}, "dofile", newdofile()
-    lua_settable(L, -3);
-    //function(), _ENV{}
+    //(), {}, _ENV{}, newfunc()
+    lua_pushstring(L, func);
+    lua_pushvalue(L, -2);
+    //(), {}, _ENV{}, newfunc(), func"", newfunc()
+    lua_settable(L, -5);
+    //(), {}, _ENV{}, newfunc()
+    lua_pop(L, 2);
+    //(), {}
 }
 
 static void set_environment(const char *script)
 {
     const char *folder = [[[NSString stringWithUTF8String:script].pathComponents objectAtIndex:0] UTF8String];
-    //function()
-    lua_getupvalue(L, -1, 1);
-    //function(), _ENV{}
+    //()
+    lua_newtable(L);
+    lua_newtable(L);
+    lua_pushstring(L, "__index");
+    lua_getupvalue(L, -4, 1);
+    //(), {}, {}, "__index", _ENV{}
+    lua_settable(L, -3);
+    //(), {}, {"__index":_ENV{}}
+    lua_setmetatable(L, -2);
+    //(), {}
     changedofile(folder, "dofile");
     changedofile(folder, "loadfile");
-    lua_pop(L, 1);
+    lua_setupvalue(L, -2, 1);
 }
 
 
