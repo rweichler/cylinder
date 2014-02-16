@@ -74,8 +74,12 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://twitter.com/rweichler"]];
 }
 
-- (void)viewSource:(id)sender {
+- (void)visitGithub:(id)sender {
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://github.com/rweichler/cylinder"]];
+}
+
+- (void)visitReddit:(id)sender {
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://reddit.com/r/cylinder"]];
 }
 
 - (void)respring:(id)sender {

@@ -122,10 +122,10 @@ static CLEffectsController *sharedController = nil;
     [self addEffectsFromDirectory:kEffectsDirectory];
 
     NSArray *effects = [ctrl.settings objectForKey:PrefsEffectKey];
+    self.selectedEffects = [NSMutableArray array];
 
-    if([effects isKindOfClass:NSArray.class] && effects.count > 0)
+    if([effects isKindOfClass:NSArray.class])
     {
-        self.selectedEffects = [NSMutableArray arrayWithCapacity:effects.count];
         for(NSDictionary *dict in effects)
         {
             NSString *name = [dict objectForKey:PrefsEffectKey];
@@ -136,11 +136,11 @@ static CLEffectsController *sharedController = nil;
                 [self.selectedEffects addObject:effect];
         }
     }
-    if(self.selectedEffects.count == 0)
+    else
     {
         CLEffect *effect = [self effectWithName:DEFAULT_EFFECT inDirectory:DEFAULT_DIRECTORY];
         effect.selected = true;
-        self.selectedEffects = [NSMutableArray arrayWithObject:effect];
+        [self.selectedEffects addObject:effect];
     }
 }
 

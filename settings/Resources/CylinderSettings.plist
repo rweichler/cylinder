@@ -76,11 +76,19 @@
 		</dict>
 		<dict>
 			<key>action</key>
-			<string>viewSource:</string>
+			<string>visitGithub:</string>
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
 			<string>View source (and license) on GitHub</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>visitReddit:</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+            <string>Go to /r/cylinder for more effects</string>
 		</dict>
 	</array>
 	<key>title</key>
