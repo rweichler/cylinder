@@ -22,7 +22,21 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define MARGIN 0
 #define IMAGE_PADDING 10
 @implementation CLAlignedTableViewCell
-- (void) layoutSubviews {
+@synthesize numberLabel=_numberLabel, effect=_effect;
+
+-(id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    if(self == [super initWithStyle:style reuseIdentifier:reuseIdentifier])
+    {
+        _numberLabel = [[UILabel alloc] init];
+        _numberLabel.font = [_numberLabel.font fontWithSize:16];
+        _numberLabel.textColor = [UIColor colorWithRed:0 green:0.2 blue:1 alpha:1];
+    }
+    return self;
+}
+
+- (void) layoutSubviews
+{
     [super layoutSubviews];
     CGRect cvf = self.contentView.frame;
     CGFloat width = 44; //60;
@@ -31,12 +45,18 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
     self.textLabel.frame = CGRectMake(width + MARGIN,
                               self.textLabel.frame.origin.y,
-                              cvf.size.width - width - 2*MARGIN,
+                              cvf.size.width - width*2 - 2*MARGIN,
                               self.textLabel.frame.size.height);
 
     self.detailTextLabel.frame = CGRectMake(width + MARGIN,
                        self.detailTextLabel.frame.origin.y,
-                       cvf.size.width - width - 2*MARGIN,
+                       cvf.size.width - width*2 - 2*MARGIN,
                        self.detailTextLabel.frame.size.height);
+    self.numberLabel.frame = CGRectMake(
+            self.frame.size.width - 44,
+            self.textLabel.frame.origin.y,
+            44,
+            44);
+    [self addSubview:self.numberLabel];
 }
 @end

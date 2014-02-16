@@ -21,7 +21,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import <Defines.h>
 
 @implementation CLEffect
-@synthesize name=_name, path=_path, directory=_directory, broken=_broken, selected=_selected;
+@synthesize name=_name, path=_path, directory=_directory, broken=_broken, selected=_selected, cell=_cell;
 
 + (CLEffect*)effectWithPath:(NSString*)path {
 	return [[[self alloc] initWithPath:path] autorelease];

@@ -128,8 +128,8 @@ static CLEffectsController *sharedController = nil;
         self.selectedEffects = [NSMutableArray arrayWithCapacity:effects.count];
         for(NSDictionary *dict in effects)
         {
-            NSString *name = [ctrl.settings objectForKey:PrefsEffectKey];
-            NSString *dir = [ctrl.settings objectForKey:PrefsEffectDirKey];
+            NSString *name = [dict objectForKey:PrefsEffectKey];
+            NSString *dir = [dict objectForKey:PrefsEffectDirKey];
             CLEffect *effect = [self effectWithName:name inDirectory:dir];
             effect.selected = true;
             if(effect)
@@ -213,21 +213,27 @@ static CLEffectsController *sharedController = nil;
     return effect;
 }
 
-- (id) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+-(id)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if(indexPath.section < self.effects.count)
     {
         CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
         if (!cell)
-            cell = [[[CLAlignedTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"] autorelease];
+            cell = [CLAlignedTableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"].autorelease;
 
         CLEffect *effect = [self effectAtIndexPath:indexPath];
+        cell.effect.cell = nil;
+        effect.cell.effect = nil;
+        effect.cell = cell;
+        cell.effect = effect;
 
         cell.textLabel.text = effect.name;
         cell.selected = false;
         [self setCellIcon:cell effect:effect];
 
-        cell.accessoryType = effect.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        cell.accessoryType = /*effect.selected ? UITableViewCellAccessoryCheckmark :*/ UITableViewCellAccessoryNone;
+
+        cell.numberLabel.text = effect.selected ? [NSString stringWithFormat:@"%d", (int)([self.selectedEffects indexOfObject:effect] + 1)] : @"";
 
         return cell;
     }
@@ -282,12 +288,16 @@ static CLEffectsController *sharedController = nil;
         }
         else
         {
+            effect.cell.numberLabel.text = @"";
             [self.selectedEffects removeObject:effect];
         }
 
-        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        // check it off
-        cell.accessoryType = effect.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        for(int i = 0; i < self.selectedEffects.count; i++)
+        {
+            CLEffect *e = [self.selectedEffects objectAtIndex:i];
+            CLAlignedTableViewCell *cell = (CLAlignedTableViewCell *)e.cell;
+            cell.numberLabel.text = [NSString stringWithFormat:@"%d", (i + 1)];
+        }
 
         // make the title changes
         CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
@@ -334,7 +344,6 @@ static inline void luaErrorNotification(CFNotificationCenterRef center, void *ob
         CLEffect *effect = [self effectWithName:name inDirectory:folder];
         effect.broken = [[effectDict valueForKey:@"broken"] boolValue];
     }
-
     [(UITableView *)self.view reloadData];
 }
 

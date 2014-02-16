@@ -18,6 +18,11 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #import <UIKit/UIKit.h>
+
+@class CLEffect;
+
 @interface CLAlignedTableViewCell : UITableViewCell {
 }
+@property (nonatomic, retain) UILabel *numberLabel;
+@property (nonatomic, assign) CLEffect *effect;
 @end

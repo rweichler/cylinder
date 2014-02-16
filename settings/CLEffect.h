@@ -18,9 +18,11 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #import <UIKit/UIKit.h>
+#import "CLAlignedTableViewCell.h"
 
 @interface CLEffect : NSObject
 
+@property (nonatomic, assign) CLAlignedTableViewCell *cell;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *path;
 @property (nonatomic, copy) NSString *directory;
