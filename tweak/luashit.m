@@ -28,9 +28,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 static lua_State *L = NULL;
 
-static int *_scripts = NULL;
-static const char **_scriptNames = NULL;
-static int _scriptCount;
+static NSMutableArray *_scripts = nil;
+static NSMutableArray *_scriptNames = nil;
 BOOL _randomize;
 
 static int l_transform_rotate(lua_State *L);
@@ -65,17 +64,13 @@ static const char *OS_DANGER[] = {
 
 static void remove_script(int index)
 {
-    for(int i = index + 1; i < _scriptCount; i++)
-    {
-        _scripts[i - 1] = _scripts[i];
-        _scriptNames[i - 1] = _scriptNames[i];
-    }
-    _scriptCount--;
+    [_scripts removeObjectAtIndex:index];
+    [_scriptNames removeObjectAtIndex:index];
 }
 
-NSDictionary *gen_error_dict(const char *script, BOOL broken)
+NSDictionary *gen_error_dict(NSString *script, BOOL broken)
 {
-    NSArray *components = [NSString stringWithUTF8String:script].pathComponents;
+    NSArray *components = script.pathComponents;
     NSString *folder = [components objectAtIndex:0];
     NSString *name = [components objectAtIndex:1];
     NSNumber *nsbroken = [NSNumber numberWithBool:broken];
@@ -101,13 +96,14 @@ void close_lua()
 {
     if(L != NULL) lua_close(L);
     L = NULL;
+    [_scripts release];
+    [_scriptNames release];
+    _scripts = nil;
+    _scriptNames = nil;
 }
 
 static void create_state()
 {
-    //if we are reloading, close the state
-    if(L != NULL) lua_close(L);
-
     //create state
     L = luaL_newstate();
 
@@ -207,7 +203,6 @@ int open_script(const char *script)
         loaded = lua_pcall(L, 0, 1, 0) == LUA_OK;
     }
 
-
     if(!loaded)
     {
         write_error(lua_tostring(L, -1));
@@ -229,28 +224,22 @@ int open_script(const char *script)
 
 BOOL init_lua(NSArray *scripts, BOOL random)
 {
+    if(scripts == nil) scripts = DEFAULT_EFFECTS;
+    if(scripts.count == 0) return false;
+
     _randomize = random;
+    close_lua();
     create_state();
 
-    if(scripts == nil) scripts = DEFAULT_EFFECTS;
+    _scripts = [NSMutableArray arrayWithCapacity:scripts.count].retain;
+    _scriptNames = [NSMutableArray arrayWithCapacity:scripts.count].retain;
 
-    if(_scripts != NULL) free(_scripts);
-    if(_scriptNames != NULL) free(_scriptNames);
-    _scriptCount = 0;
-    if(scripts.count == 0)
-    {
-        _scripts = NULL;
-        _scriptNames = NULL;
-        return false;
-    }
-    _scripts = (int *)malloc(scripts.count*sizeof(int));
-    _scriptNames = (const char **)malloc(scripts.count*sizeof(char *));
     NSMutableArray *errors = [NSMutableArray arrayWithCapacity:scripts.count];
     for(NSDictionary *scriptDict in scripts)
     {
-        const char *script = [NSString stringWithFormat:@"%@/%@", [scriptDict valueForKey:PrefsEffectDirKey], [scriptDict valueForKey:PrefsEffectKey]].UTF8String;
+        NSString *script = [NSString stringWithFormat:@"%@/%@", [scriptDict valueForKey:PrefsEffectDirKey], [scriptDict valueForKey:PrefsEffectKey]];
 
-        int func = open_script(script);
+        int func = open_script(script.UTF8String);
 
         NSMutableDictionary *errorDict = scriptDict.mutableCopy;
         [errorDict setValue:[NSNumber numberWithBool:(func == -1)] forKey:@"broken"];
@@ -258,18 +247,16 @@ BOOL init_lua(NSArray *scripts, BOOL random)
 
         if(func != -1)
         {
-            _scripts[_scriptCount] = func;
-            _scriptNames[_scriptCount] = script;
-            _scriptCount++;
+            [_scripts addObject:[NSNumber numberWithInt:func]];
+            [_scriptNames addObject:script];
         }
     }
 
     error_notification(errors);
 
-    if(_scriptCount == 0)
+    if(_scripts.count == 0)
     {
-        free(_scripts);
-        free(_scriptNames);
+        close_lua();
         return false;
     }
     return true;
@@ -315,6 +302,7 @@ void write_error(const char *error)
 {
     write_file(error, LOG_PATH);
 }
+
 void write_file(const char *msg, const char *filename)
 {
     NSString *path = [LOG_DIR stringByAppendingPathComponent:[NSString stringWithUTF8String:filename]];
@@ -346,33 +334,38 @@ static void push_view(UIView *view)
 }
 
 
-static BOOL manipulate_step(UIView *view, float offset, float width, float height, int funcIndex)
+static BOOL manipulate_step(UIView *view, float offset, int funcIndex)
 {
-    lua_rawgeti(L, LUA_REGISTRYINDEX, _scripts[funcIndex]);
+    int func = [[_scripts objectAtIndex:funcIndex] intValue];
+    lua_rawgeti(L, LUA_REGISTRYINDEX, func);
 
     push_view(view);
     lua_pushnumber(L, offset);
-    lua_pushnumber(L, width);
-    lua_pushnumber(L, height);
+    lua_pushnumber(L, SCREEN_SIZE.width);
+    lua_pushnumber(L, SCREEN_SIZE.height);
 
     BOOL success = lua_pcall(L, 4, 1, 0) == 0;
 
     if(!success)
     {
         write_error(lua_tostring(L, -1));
-        NSArray *errors = [NSArray arrayWithObject:gen_error_dict(_scriptNames[funcIndex], true)];
+        NSDictionary *error = gen_error_dict([_scriptNames objectAtIndex:funcIndex], true);
+        NSArray *errors = [NSArray arrayWithObject:error];
         error_notification(errors);
         remove_script(funcIndex);
-        if(_scriptCount == 0) close_lua();
     }
-
     lua_pop(L, 1);
     return success;
 }
 
-BOOL manipulate(UIView *view, float offset, float width, float height, u_int32_t rand)
+BOOL manipulate(UIView *view, float offset, u_int32_t rand)
 {
-    if(L == NULL || _scriptCount == 0) return false;
+    if(L == NULL) return false;
+    else if(_scripts.count == 0)
+    {
+        close_lua();
+        return false;
+    }
 
     view.layer.transform = CATransform3DIdentity;
     view.alpha = 1;
@@ -383,20 +376,28 @@ BOOL manipulate(UIView *view, float offset, float width, float height, u_int32_t
     }
     if(_randomize)
     {
-        if(manipulate_step(view, offset, width, height, rand % _scriptCount))
+        if(manipulate_step(view, offset, rand % _scripts.count))
             return true;
         else
-            return manipulate(view, offset, width, height, rand); //next script will be different since
-                                                                  //_scriptCount has decremented by 1
+            return manipulate(view, offset, rand); //next script will be different since
+                                                                  //_scripts.count has decremented by 1
     }
     else
     {
-        for(int i = 0; i < _scriptCount; i++)
+        for(int i = 0; i < _scripts.count; i++)
         {
-            if(!manipulate_step(view, offset, width, height, i))
+            if(!manipulate_step(view, offset, i))
                 i--;
         }
-        return _scriptCount > 0; //if _scriptCount is 0 then that means every script errored
+        if(_scripts.count == 0)
+        {
+            close_lua();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }
 

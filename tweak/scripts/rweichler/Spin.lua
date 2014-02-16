@@ -10,7 +10,7 @@ local function spin(view, percent)
     end
 end
 
-return function(page, offset, width, height)
-    local percent = offset/width
+return function(page, offset, screen_width, screen_height)
+    local percent = offset/page.width
     spin(page, percent)
-end, "Spin"
+end

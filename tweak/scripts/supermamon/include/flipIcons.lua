@@ -2,14 +2,13 @@
 - @supermamon | 13 Feb 2014
 
 flipIcons function
-	view	: assign to page
+	page	: assign to page
 	percent	: percentage of transition
 	direction: "h" for horizontal, "v" for vertical"
 		
 ]]
-return function (view, percent, direction)
-	local M_PI = 3.14159265
-    local angle = percent*M_PI
+return function (page, percent, direction)
+    local angle = percent*math.pi
 	local pitch = 0
 	local yaw = 0
 	
@@ -22,8 +21,8 @@ return function (view, percent, direction)
     local i = 0
     while true do
         i = i + 1
-        local v = view[i]
-        if v == nil then break end
-        v:rotate(angle, pitch, yaw)
+        local icon = page[i]
+        if icon == nil then break end
+        icon:rotate(angle, pitch, yaw)
     end
 end

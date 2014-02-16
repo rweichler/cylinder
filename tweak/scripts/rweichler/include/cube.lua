@@ -1,12 +1,12 @@
 --this code could use some improving...
-return function (view, width, percent, is_inside)
+return function (page, percent, is_inside)
     local angle = percent*math.pi
     local m = is_inside and 1/3 or -2/3
 
-    local x = width/2
+    local x = page.width/2
     if percent < 0 then x = -x end
 
-    view:translate(x, 0, 0)
-    view:rotate(m*angle, 0, 1, 0)
-    view:translate(-x, 0, 0)
+    page:translate(x, 0, 0)
+    page:rotate(m*angle, 0, 1, 0)
+    page:translate(-x, 0, 0)
 end

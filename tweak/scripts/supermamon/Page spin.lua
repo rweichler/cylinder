@@ -7,14 +7,12 @@ Basically copied the Spin effect and applied it to the page.
 Nothing to brag about
 	
 ]]
-local M_PI = 3.14159265
-
 local function pagespin(view, percent)
-    local angle = percent*M_PI*2
+    local angle = percent*math.pi*2
     view:rotate(angle)
 end
 
-return function(page, offset, width, height)
-    local percent = offset/width
+return function(page, offset, screen_width, screen_height)
+    local percent = offset/page.width
     pagespin(page, percent)
 end

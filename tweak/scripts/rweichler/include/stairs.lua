@@ -1,6 +1,6 @@
-return function(view, percent, left)
+return function(view, percent, is_going_left)
     local x = -percent*20
     local z = percent*100
-    if left then z = -z end
+    if is_going_left then z = -z end
     view:translate(x, 0, z)
 end

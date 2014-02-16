@@ -36,7 +36,7 @@ all: $(DYLIB).bundle
 clean:
 	rm -rf $(DYLIB).bundle
 
-$(DYLIB).bundle: Resources/*
+$(DYLIB).bundle: Resources/* $(REQ)
 	mkdir -p $(DYLIB).bundle
 	cp -r Resources/* $(DYLIB).bundle/
 	$(MAKE) $(DYLIB).bundle/$(DYLIB)

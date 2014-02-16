@@ -8,7 +8,7 @@ This reverses the spin direction of every other icon
 
 		
 ]]
-local function spin(view, percent)
+local function spin(page, percent)
     local angle = percent*math.pi*2
 
     local i = 0
@@ -16,17 +16,17 @@ local function spin(view, percent)
     while true do
         i = i + 1
 		o = i % 2
-        local v = view[i]
-        if v == nil then break end
+        local icon = page[i]
+        if icon == nil then break end
 
 		-- reverse the direction on every other icon
 		if o ~= 0 then angle = -angle end
 		
-        v:rotate(angle)
+        icon:rotate(angle)
     end
 end
 
-return function(page, offset, width, height)
-    local percent = offset/width
+return function(page, offset, screen_width, screen_height)
+    local percent = offset/page.width
     spin(page, percent)
 end

@@ -7,6 +7,5 @@ fade function
 		
 ]]
 return function (view, percent)
-    if percent < 0 then percent = -percent end
-    view.alpha = 1 - percent
+    view.alpha = 1 - math.abs(percent)
 end

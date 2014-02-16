@@ -61,12 +61,7 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
     if(IOS_VERSION < 7) i++; //on iOS 6-, the spotlight is a page to the left, so we gotta bump the pageno. up a notch
     offset -= i*size.width;
 
-    if([scrollView.delegate isKindOfClass:NSClassFromString(IOS_VERSION < 7 ? @"SBIconController" : @"SBRootFolderView")])
-    {
-        size.height = SCREEN_SIZE.height;
-    }
-
-    _enabled = manipulate(view, offset, size.width, size.height, _rand);
+    _enabled = manipulate(view, offset, _rand);
 }
 
 void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView)

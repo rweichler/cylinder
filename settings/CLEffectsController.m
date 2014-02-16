@@ -43,6 +43,7 @@ static CLEffectsController *sharedController = nil;
 
 @interface PSViewController(Private)
 -(void)viewWillAppear:(BOOL)animated;
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 
@@ -170,7 +171,7 @@ static CLEffectsController *sharedController = nil;
 /* UITableViewDelegate / UITableViewDataSource Methods {{{ */
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return self.effects.count;
+    return self.effects.count + 1;
 }
 
 -(NSString *)keyForIndex:(int)index
@@ -191,6 +192,8 @@ static CLEffectsController *sharedController = nil;
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if(section == self.effects.count) return 1;
+
     return [[self.effects valueForKey:[self keyForIndex:section]] count];
 }
 
@@ -212,28 +215,63 @@ static CLEffectsController *sharedController = nil;
 
 - (id) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
-    if (!cell) {
-        cell = [[[CLAlignedTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"] autorelease];
+    if(indexPath.section < self.effects.count)
+    {
+        CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
+        if (!cell)
+            cell = [[[CLAlignedTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"] autorelease];
+
+        CLEffect *effect = [self effectAtIndexPath:indexPath];
+
+        cell.textLabel.text = effect.name;
+        cell.selected = false;
+        [self setCellIcon:cell effect:effect];
+
+        cell.accessoryType = effect.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+
+        return cell;
     }
+    else
+    {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FooterCell"];
+        if(!cell)
+        {
+            cell = [UITableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FooterCell"].autorelease;
+            cell.textLabel.numberOfLines = 0;
+            //cell.textLabel.font = [cell.textLabel.font fontWithSize:8];
+            cell.textLabel.text = @"WARNING: combining certain 3D effects may cause lag";
+            cell.backgroundView = UIView.alloc.init.autorelease;
+            cell.selectedBackgroundView = UIView.alloc.init.autorelease;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        return cell;
+    }
+}
 
-    CLEffect *effect = [self effectAtIndexPath:indexPath];
-
-    cell.textLabel.text = effect.name;
-    cell.selected = false;
-    [self setCellIcon:cell effect:effect];
-
-    cell.accessoryType = effect.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-
-    return cell;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGFloat height = 44;//[super tableView:tableView heightForRowAtIndexPath:indexPath];
+    if(indexPath.section == self.effects.count)
+    {
+        return height*2;
+    }
+    else
+    {
+        return height;
+    }
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if(indexPath.section >= self.effects.count)
+    {
+        [tableView deselectRowAtIndexPath:indexPath animated:false];
+        return;
+    }
     if (!tableView.isEditing)
     {
         // deselect old one
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [tableView deselectRowAtIndexPath:indexPath animated:true];
 
         CLEffect *effect = [self effectAtIndexPath:indexPath];
         effect.selected = !effect.selected;
