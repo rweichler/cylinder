@@ -11,30 +11,19 @@ The free software alternative to Barrel
 
 ![](https://raw2.github.com/rweichler/cylinder/master/code.png)
 
-## Why?
-
-Because.
-
-## What works
-
-Everything!
-
 ## Available Effects
 
-* Cube (inside)
-* Cube (outside)
-* Stairs (down left)
-* Stairs (down right)
-* [Spin](https://raw2.github.com/rweichler/cylinder/master/screenie.gif)
-* Chomp &lt;---- custom "chomping" effect I made
-* And [*dozens*](http://www.youtube.com/watch?v=lKie-vgUGdI) of tweaks on [/r/cylinder](http://reddit.com/r/cylinder)!
+* A lot, I don't feel like listing them all anymore.
+
+If you want more, check out [/r/cylinder](http://reddit.com/r/cylinder)!
 
 If you want to make your own effects, check out
 [EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua).
-Once you've made your own effect, just drop it in
-/Library/Cylinder on your phone, and it should
-appear in settings. You don't even have to respring!
-This allows for rapid testing.
+Once you've made your own effect, make a folder with
+your name in /Library/Cylinder on your phone (like 
+/Library/Cylinder/rweichler), drop your scripts in,
+and it should appear in settings. You don't even have to
+respring! This allows for rapid testing.
 
 
 ## Compatible devices
