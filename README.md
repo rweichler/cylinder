@@ -50,13 +50,10 @@ This allows for rapid testing.
 
 ### Tested
 
+* iOS 4 (preference bundle crashes)
 * iOS 5
-* iOS 7
-
-### Not tested, but almost definitely works
-
 * iOS 6
-* iOS 4
+* iOS 7
 
 ### Not tested, but might work
 
