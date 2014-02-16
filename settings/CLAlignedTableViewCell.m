@@ -31,6 +31,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
         _numberLabel = [[UILabel alloc] init];
         _numberLabel.font = [_numberLabel.font fontWithSize:16];
         _numberLabel.textColor = [UIColor colorWithRed:0 green:0.2 blue:1 alpha:1];
+        _numberLabel.backgroundColor = UIColor.clearColor;
     }
     return self;
 }

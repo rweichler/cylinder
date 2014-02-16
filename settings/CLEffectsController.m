@@ -246,8 +246,6 @@ static CLEffectsController *sharedController = nil;
             cell.textLabel.numberOfLines = 0;
             //cell.textLabel.font = [cell.textLabel.font fontWithSize:8];
             cell.textLabel.text = @"WARNING: combining certain 3D effects may cause lag";
-            cell.backgroundView = UIView.alloc.init.autorelease;
-            cell.selectedBackgroundView = UIView.alloc.init.autorelease;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
         return cell;
