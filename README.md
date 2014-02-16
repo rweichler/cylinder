@@ -61,8 +61,10 @@ respring! This allows for rapid testing.
 * ~~Add preferences bundle~~
 * ~~Fix OS specific bugs~~ &lt;----- well, maybe not all of them but it is acceptable
 * ~~Add randomize switch~~
-* Add more example Barrel thingies
-* Code cleanup
+* ~~Add more example Barrel thingies~~
+* ~~Code cleanup~~ &lt;-------- this is ongoing
+* Fix conflicts with popular tweaks
+* Put on BigBoss
 
 ##Building
 
