@@ -334,15 +334,22 @@ static inline void luaErrorNotification(CFNotificationCenterRef center, void *ob
     BOOL isDir;
     if(![NSFileManager.defaultManager fileExistsAtPath:ERROR_DIR isDirectory:&isDir] || isDir) return;
 
+    BOOL changed = false;
     NSArray *errors = [NSArray arrayWithContentsOfFile:ERROR_DIR];
     for(NSDictionary *effectDict in errors)
     {
         NSString *name = [effectDict valueForKey:PrefsEffectKey];
         NSString *folder = [effectDict valueForKey:PrefsEffectDirKey];
         CLEffect *effect = [self effectWithName:name inDirectory:folder];
-        effect.broken = [[effectDict valueForKey:@"broken"] boolValue];
+        BOOL broken = [[effectDict valueForKey:@"broken"] boolValue];
+
+        if(broken && !effect.broken) changed = true;
+
+        effect.broken = broken;
+
+        [self setCellIcon:effect.cell effect:effect];
     }
-    [(UITableView *)self.view reloadData];
+    if(changed) [(UITableView *)self.view reloadData];
 }
 
 static __attribute__((constructor)) void __wbsInit() {
