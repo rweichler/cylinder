@@ -17,18 +17,18 @@ end
 --"offset" is the x-offset of the current page to the center of the screen
 --"width" and "height" are the width and height of the screen
 
-return function(view, offset, width, height)
-    local percent = offset/width
+return function(page, offset, screen_width, screen_height)
+    local percent = offset/page.width
 
-    view:rotate(percent*math.pi/3, 1, 0, 0) --> this will tilt the page slightly backward
+    page:rotate(percent*math.pi/3, 1, 0, 0) --> this will tilt the page slightly backward
 
-    local first_icon = view[1]
+    local first_icon = page[1]
     first_icon:rotate(percent*math.pi*2) --> this will spin the first icon in the page
 
     local i = 0
     while true do --> loop through all of the icons
         i = i + 1
-        local icon = view[i]
+        local icon = page[i]
         if icon == nil then --> if there is no view
             break --break out of the loop
         else
