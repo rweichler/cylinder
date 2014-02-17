@@ -39,6 +39,7 @@ static int l_set_transform(lua_State *L, UIView *self); //-1 = transform
 static int l_get_transform(lua_State *L, UIView *self); //pushes transform to top of stack
 static int l_uiview_index(lua_State *L);
 static int l_uiview_setindex(lua_State *L);
+static int l_uiview_len(lua_State *L);
 static int l_loadfile_override(lua_State *L);
 static int l_print(lua_State *L);
 
@@ -146,6 +147,9 @@ static void create_state()
 
     lua_pushcfunction(L, l_uiview_setindex);
     lua_setfield(L, -2, "__newindex");
+
+    lua_pushcfunction(L, l_uiview_len);
+    lua_setfield(L, -2, "__len");
 
     lua_pop(L, 1);
 }
@@ -401,31 +405,6 @@ BOOL manipulate(UIView *view, float offset, u_int32_t rand)
     }
 }
 
-
-static int l_uiview_setindex(lua_State *L)
-{
-    UIView *self = (UIView *)lua_touserdata(L, 1);
-    if(lua_isstring(L, 2))
-    {
-        const char *key = lua_tostring(L, 2);
-        if(!strcmp(key, "alpha"))
-        {
-            if(!lua_isnumber(L, 3))
-                return luaL_error(L, "alpha must be a number");
-
-            self.alpha = lua_tonumber(L, 3);
-        }
-        else if(!strcmp(key, "transform"))
-        {
-            lua_pushvalue(L, 3);
-            int result = l_set_transform(L, self);
-            lua_pop(L, 1);
-            return result;
-        }
-    }
-    return 0;
-}
-
 static int l_uiview_index(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
@@ -495,6 +474,37 @@ static int l_uiview_index(lua_State *L)
     }
 
     return 0;
+}
+
+static int l_uiview_setindex(lua_State *L)
+{
+    UIView *self = (UIView *)lua_touserdata(L, 1);
+    if(lua_isstring(L, 2))
+    {
+        const char *key = lua_tostring(L, 2);
+        if(!strcmp(key, "alpha"))
+        {
+            if(!lua_isnumber(L, 3))
+                return luaL_error(L, "alpha must be a number");
+
+            self.alpha = lua_tonumber(L, 3);
+        }
+        else if(!strcmp(key, "transform"))
+        {
+            lua_pushvalue(L, 3);
+            int result = l_set_transform(L, self);
+            lua_pop(L, 1);
+            return result;
+        }
+    }
+    return 0;
+}
+
+static int l_uiview_len(lua_State *L)
+{
+    UIView *self = (UIView *)lua_touserdata(L, 1);
+    lua_pushnumber(L, self.subviews.count);
+    return 1;
 }
 
 #define CHECK_UIVIEW(STATE, INDEX) \
