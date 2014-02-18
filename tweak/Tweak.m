@@ -99,6 +99,9 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
     float percent = scrollView.contentOffset.x/scrollView.frame.size.width;
     if(IOS_VERSION < 7) percent--;
     int start = -1;
+    int count = 0;
+    UIView *first = nil;
+    UIView *last = nil;
     //only animate the pages that are visible
     for(int i = 0; i < scrollView.subviews.count; i++)
     {
@@ -107,6 +110,10 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
         {
             if(start == -1) start = i;
             view.isOnScreen = false;
+
+            if(!first) first = view;
+            last = view;
+            count++;
         }
     }
     if(start != -1)
@@ -120,7 +127,16 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
                 view.isOnScreen = true;
                 genscrol(scrollView, index - start, view);
             }
-            //if(percent < 0) break;
+            if(i == 0 && percent + i < 0)
+            {
+                last.isOnScreen = true;
+                genscrol(scrollView, -1, last);
+            }
+            else if(i == 1 && index - start == count)
+            {
+                first.isOnScreen = true;
+                genscrol(scrollView, count, first);
+            }
         }
     }
 }
