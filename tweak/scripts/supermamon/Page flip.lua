@@ -1,18 +1,22 @@
---[[
-- @supermamon | 13 Feb 2014
+--[[ ******************************************************************
+Page Flip v1.1
+by @supermamon (github.com/supermamon/cylinder-scripts/)
 
-PageFlip effect v1.0
-		
-]]
+v1.1 2014-02-16: Compatibility update for Cylinder v0.13.2.15
+v1.0 2014-02-13: First release.
+******************************************************************* ]]
 local fade = dofile("include/fade.lua")
 return function(page, offset, screen_width, screen_height)
+
+	-- track progress
 	local percent = offset/page.width
+	
     local angle = percent*math.pi
-	local x = percent
-    if percent < 0 then x = -x end
+	--local x = math.abs(percent)
 
-    page:translate(x, 0, 0)
-    page:rotate(angle, 0, 1, 0)
-
-	fade(page, percent)
+	-- ** PAGE EFFECTS ** --
+    fade(page,percent)
+	page:rotate(angle, 0, 1, 0)
+    	
+	-- ** ICON EFFECTS ** --
 end

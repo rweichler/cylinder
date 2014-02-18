@@ -1,16 +1,24 @@
---[[
-- @supermamon | 13 Feb 2014
+--[[ ******************************************************************
+FlipIcons (Horizontal) v1.1
+by @supermamon (github.com/supermamon/cylinder-scripts/)
 
-FlipIcons (Horizontal) v1.0
+v1.1 2014-02-16: Compatibility update for Cylinder v0.13.2.15
+v1.0 2014-02-13: First release.
 		
-]]
+******************************************************************* ]]
 local fade = dofile("include/fade.lua")
 local flipIcons = dofile("include/flipIcons.lua")
 local stayPut = dofile("include/stayPut.lua")
 
 return function(page, offset, screen_width, screen_height)
-    local percent = offset/page.width
-    flipIcons(page, percent, "h")
+
+	-- track progress
+	local percent = offset/page.width
+	
+	-- ** PAGE EFFECTS ** --
 	fade(page,percent)
-	stayPut(page, offset, page.width)
+	stayPut(page, offset)
+	
+	-- ** ICON EFFECTS ** --
+    flipIcons(page, percent, "h")
 end

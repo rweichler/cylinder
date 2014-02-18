@@ -127,6 +127,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
                 view.isOnScreen = true;
                 genscrol(scrollView, index - start, view);
             }
+            /*
             if(i == 0 && percent + i < 0)
             {
                 last.isOnScreen = true;
@@ -137,6 +138,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
                 first.isOnScreen = true;
                 genscrol(scrollView, count, first);
             }
+            */
         }
     }
 }
