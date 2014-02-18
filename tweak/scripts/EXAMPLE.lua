@@ -3,39 +3,36 @@
 
 --declare your own constants and functions here
 
-function abs(x) --> absolute value convenience function
-    if x < 0 then
-        return -x
+local function fade(icon, percent) --fade convenience function
+    --set the opacity with respect to how far away it is from the center of the screen
+    if percent > 0.5 then
+        icon.alpha = 0
     else
-        return x
+        icon.alpha = 1 - 2*math.abs(percent)
     end
 end
 
 --this is the function that gets called when the screen moves
 --remember to "return" it at the end
---"view" is the icon page you will be manipulating (aka a view)
+--"page" is the icon page you will be manipulating (aka a view)
 --"offset" is the x-offset of the current page to the center of the screen
---"width" and "height" are the width and height of the screen
+--"screen_width" and "screen_height" are the width and height of the screen
 
 return function(page, offset, screen_width, screen_height)
     local percent = offset/page.width
+
+    for i, icon in subviews(page) do
+        local distance_from_middle = math.abs(page.width/2 - (icon.x + icon.width/2))
+        if distance_from_middle > page.width/4 then --> only do the icons on the sides
+            fade(icon, percent) --> calls the convenience function we made earlier
+        end
+    end
 
     page:rotate(percent*math.pi/3, 1, 0, 0) --> this will tilt the page slightly backward
 
     local first_icon = page[1]
     first_icon:rotate(percent*math.pi*2) --> this will spin the first icon in the page
 
-    local i = 0
-    while true do --> loop through all of the icons
-        i = i + 1
-        local icon = page[i]
-        if icon == nil then --> if there is no view
-            break --break out of the loop
-        else
-            icon.alpha = 1 - abs(percent) --> set the opacity with respect to how far away it is from the center of the screen
-                                          --  this calls the absolute value function we declared earlier
-        end
-    end
 end
 
 --errors are stored in /var/mobile/Library/Logs/Cylinder/errors.log
