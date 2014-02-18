@@ -10,12 +10,7 @@ return function(page, offset, screen_width, screen_height)
     local center_x = page.width/2
     local center_y = page.height/2
 
-    local i = 0
-    while true do
-        i = i + 1
-        local icon = page[i]
-        if not icon then break end
-
+    for i, icon in subviews(page) do
         local x = icon.x + icon.width/2
         local y = icon.y + icon.height/2
 

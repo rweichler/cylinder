@@ -1,11 +1,7 @@
 local function spin(view, percent)
     local angle = percent*math.pi*2
 
-    local i = 0
-    while true do
-        i = i + 1
-        local v = view[i]
-        if v == nil then break end
+    for i, icon in subviews(page) do
         v:rotate(angle)
     end
 end

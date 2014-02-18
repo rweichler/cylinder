@@ -22,6 +22,10 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import <lua/lualib.h>
 #import "macros.h"
 
+#define CHECK_UIVIEW(STATE, INDEX) \
+    if(!lua_isuserdata(STATE, INDEX) || ![(NSObject *)lua_touserdata(STATE, INDEX) isKindOfClass:UIView.class]) \
+        return luaL_error(STATE, "first argument must be a view")
+
 #define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
 #define LOG_PATH "errors.log"
 #define PRINT_PATH "print.log"
@@ -42,6 +46,7 @@ static int l_uiview_setindex(lua_State *L);
 static int l_uiview_len(lua_State *L);
 static int l_loadfile_override(lua_State *L);
 static int l_print(lua_State *L);
+static int l_subviews(lua_State *L);
 
 static const char * get_stack(lua_State *L, const char *strr);
 
@@ -138,6 +143,9 @@ static void create_state()
     lua_newtable(L);
     l_push_base_transform(L);
     lua_setglobal(L, "BASE_TRANSFORM");
+
+    lua_pushcfunction(L, l_subviews);
+    lua_setglobal(L, "subviews");
 
     //set UIView metatable
     luaL_newmetatable(L, "UIView");
@@ -299,6 +307,28 @@ static int l_print(lua_State *L)
 
     write_file(str, "print.log");
     return 0;
+}
+
+//this is literally the same code as ipairs
+static int l_subviewsaux(lua_State *L)
+{
+    CHECK_UIVIEW(L, 1);
+    int i = luaL_checkint(L, 2);
+    i++;
+    lua_pushinteger(L, i);
+    lua_pushvalue(L, -1);
+    lua_gettable(L, 1);
+    return (lua_isnil(L, -1)) ? 1 : 2;
+}
+
+
+static int l_subviews(lua_State *L)
+{
+    CHECK_UIVIEW(L, 1);
+    lua_pushcfunction(L, l_subviewsaux);
+    lua_pushvalue(L, 1);
+    lua_pushinteger(L, 0);
+    return 3;
 }
 
 
@@ -506,10 +536,6 @@ static int l_uiview_len(lua_State *L)
     lua_pushnumber(L, self.subviews.count);
     return 1;
 }
-
-#define CHECK_UIVIEW(STATE, INDEX) \
-    if(!lua_isuserdata(STATE, INDEX) || ![(NSObject *)lua_touserdata(STATE, INDEX) isKindOfClass:UIView.class]) \
-        return luaL_error(STATE, "first argument must be a view")
 
 
 static int l_transform_rotate(lua_State *L)
