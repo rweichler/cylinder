@@ -146,7 +146,11 @@ static CLEffectsController *sharedController = nil;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [self refreshList];
+    if(!_initialized)
+    {
+        [self refreshList];
+        _initialized = true;
+    }
     [super viewWillAppear:animated];
 }
 

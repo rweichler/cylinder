@@ -24,6 +24,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 	UITableView *_tableView;
 	NSMutableDictionary *_effects;
     NSMutableArray *_selectedEffects;
+    BOOL _initialized;
 }
 @property (nonatomic, retain) NSMutableDictionary *effects;
 @property (nonatomic, retain) NSMutableArray *selectedEffects;
