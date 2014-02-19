@@ -16,7 +16,9 @@ return function(page, offset, screen_width, screen_height)
 	local percent = offset/page.width
 	
 	-- ** PAGE EFFECTS ** --
-	fade(page,percent)
+    if math.abs(percent) >= 0.5 then
+        page.alpha = 0
+    end
 	stayPut(page, offset)
 	
 	-- ** ICON EFFECTS ** --

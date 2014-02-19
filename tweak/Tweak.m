@@ -29,6 +29,7 @@ static IMP original_SB_scrollViewDidScroll;
 static IMP original_SB_scrollViewDidEndDecelerating;
 static IMP original_SB_wallpaperRelativeBounds;
 static IMP original_SB_showIconImages;
+static IMP original_SB_layerClass;
 
 static BOOL _enabled;
 
@@ -96,6 +97,8 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 
     if(!_enabled) return;
 
+    //NOTE: the code that follows is extremely bad and desparately needs improvement.
+
     float percent = scrollView.contentOffset.x/scrollView.frame.size.width;
     if(IOS_VERSION < 7) percent--;
     int start = -1;
@@ -127,6 +130,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
                 view.isOnScreen = true;
                 genscrol(scrollView, index - start, view);
             }
+            //failed hotfix for mobius compatibility.
             /*
             if(i == 0 && percent + i < 0)
             {
@@ -154,6 +158,12 @@ CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
     if(frame.origin.y > SCREEN_SIZE.height - frame.size.height) frame.origin.y = SCREEN_SIZE.height - frame.size.height;
     if(frame.origin.y < 0) frame.origin.y = 0;
     return frame;
+}
+
+//special thanks to @noahd for this fix: https://github.com/rweichler/cylinder/issues/17
+Class SB_layerClass(id self, SEL _cmd)
+{
+    return [CATransformLayer class];
 }
 
 void load_that_shit()
@@ -193,10 +203,24 @@ static void initialize() {
     MSHookMessageEx(cls, @selector(scrollViewDidEndDecelerating:), (IMP)SB_scrollViewDidEndDecelerating, (IMP *)&original_SB_scrollViewDidEndDecelerating);
     if(IOS_VERSION < 7)
         MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
+
+    //iOS 7 bug hotfix
     cls = NSClassFromString(@"SBFolderIconBackgroundView");
     if(cls) MSHookMessageEx(cls, @selector(wallpaperRelativeBounds), (IMP)SB_wallpaperRelativeBounds, (IMP *)&original_SB_wallpaperRelativeBounds);
 
+    //iOS 6- not-all-icons-showing hotfix
     if(SBIconListView) MSHookMessageEx(SBIconListView, @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:), (IMP)SB_showIconImages, (IMP *)&original_SB_showIconImages);
+
+    //fix for https://github.com/rweichler/cylinder/issues/17
+    if([SBIconListView respondsToSelector:@selector(layerClass)])
+    {
+        MSHookMessageEx(object_getClass(SBIconListView), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
+    }
+    else
+    {
+        const char *encoding = method_getTypeEncoding(class_getInstanceMethod(NSObject.class, @selector(class)));
+        class_addMethod(object_getClass(SBIconListView), @selector(layerClass), (IMP)SB_layerClass, encoding);
+    }
 
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();

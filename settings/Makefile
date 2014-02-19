@@ -28,8 +28,8 @@ FLAGS= -dynamiclib -undefined suppress -flat_namespace -I../include -I../include
 DYLIB=CylinderSettings
 LIBLUA=../include/lua/liblua.a
 
-COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CylinderSettings.m writeit.m $(LIBLUA)
-REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CylinderSettings.h writeit.h
+COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CLDonateController.m CylinderSettings.m writeit.m $(LIBLUA)
+REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CLDonateController.h CylinderSettings.h writeit.h
 
 all: $(DYLIB).bundle
 

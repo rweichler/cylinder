@@ -171,7 +171,7 @@ static CLEffectsController *sharedController = nil;
 /* UITableViewDelegate / UITableViewDataSource Methods {{{ */
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return self.effects.count + 1;
+    return self.effects.count;
 }
 
 -(NSString *)keyForIndex:(int)index
@@ -215,63 +215,29 @@ static CLEffectsController *sharedController = nil;
 
 -(id)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.section < self.effects.count)
-    {
-        CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
-        if (!cell)
-            cell = [CLAlignedTableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"].autorelease;
+    CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
+    if (!cell)
+        cell = [CLAlignedTableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"].autorelease;
 
-        CLEffect *effect = [self effectAtIndexPath:indexPath];
-        cell.effect.cell = nil;
-        effect.cell.effect = nil;
-        effect.cell = cell;
-        cell.effect = effect;
+    CLEffect *effect = [self effectAtIndexPath:indexPath];
+    cell.effect.cell = nil;
+    effect.cell.effect = nil;
+    effect.cell = cell;
+    cell.effect = effect;
 
-        cell.textLabel.text = effect.name;
-        cell.selected = false;
-        [self setCellIcon:cell effect:effect];
+    cell.textLabel.text = effect.name;
+    cell.selected = false;
+    [self setCellIcon:cell effect:effect];
 
-        cell.accessoryType = /*effect.selected ? UITableViewCellAccessoryCheckmark :*/ UITableViewCellAccessoryNone;
+    cell.accessoryType = /*effect.selected ? UITableViewCellAccessoryCheckmark :*/ UITableViewCellAccessoryNone;
 
-        cell.numberLabel.text = effect.selected ? [NSString stringWithFormat:@"%d", (int)([self.selectedEffects indexOfObject:effect] + 1)] : @"";
+    cell.numberLabel.text = effect.selected ? [NSString stringWithFormat:@"%d", (int)([self.selectedEffects indexOfObject:effect] + 1)] : @"";
 
-        return cell;
-    }
-    else
-    {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FooterCell"];
-        if(!cell)
-        {
-            cell = [UITableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FooterCell"].autorelease;
-            cell.textLabel.numberOfLines = 0;
-            //cell.textLabel.font = [cell.textLabel.font fontWithSize:8];
-            cell.textLabel.text = @"WARNING: combining certain 3D effects may cause lag";
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        }
-        return cell;
-    }
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    CGFloat height = 44;//[super tableView:tableView heightForRowAtIndexPath:indexPath];
-    if(indexPath.section == self.effects.count)
-    {
-        return height*2;
-    }
-    else
-    {
-        return height;
-    }
+    return cell;
 }
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.section >= self.effects.count)
-    {
-        [tableView deselectRowAtIndexPath:indexPath animated:false];
-        return;
-    }
     if (!tableView.isEditing)
     {
         // deselect old one
