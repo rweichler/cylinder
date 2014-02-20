@@ -25,6 +25,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 static Class SBIconListView;
 static IMP original_SB_scrollViewWillBeginDragging;
+static IMP original_SB_scrollViewDidEndDragging;
 static IMP original_SB_scrollViewDidScroll;
 static IMP original_SB_scrollViewDidEndDecelerating;
 static IMP original_SB_wallpaperRelativeBounds;
@@ -35,6 +36,8 @@ static BOOL _enabled;
 
 static u_int32_t _rand;
 static int _page = -100;
+
+static void did_scroll(UIScrollView *scrollView);
 
 void reset_everything(UIView *view)
 {
@@ -84,7 +87,15 @@ void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView
 void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewWillBeginDragging(self, _cmd, scrollView);
-    [scrollView.superview sendSubviewToBack:scrollView];
+    if(IOS_VERSION < 7)
+        [scrollView.superview sendSubviewToBack:scrollView];
+    did_scroll(scrollView);
+}
+
+void SB_scrollViewDidEndDragging(id self, SEL _cmd, UIScrollView *scrollView, BOOL decelerate)
+{
+    original_SB_scrollViewDidEndDragging(self, _cmd, scrollView, decelerate);
+    did_scroll(scrollView);
 }
 
 static int biggestTo = 0;
@@ -103,67 +114,30 @@ void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
-
+    did_scroll(scrollView);
+}
+static void did_scroll(UIScrollView *scrollView)
+{
     if(!_enabled) return;
 
-    //NOTE: the code that follows is extremely bad and desparately needs improvement.
+    CGRect eye = CGRectMake(scrollView.contentOffset.x, 0, scrollView.frame.size.width, scrollView.frame.size.height);
 
-    float percent = scrollView.contentOffset.x/scrollView.frame.size.width;
-    if(IOS_VERSION < 7) percent--;
-    int start = -1;
-    int count = 0;
-    NSMutableArray *wasOnScreen = [NSMutableArray arrayWithCapacity:2];
-    UIView *first = nil;
-    UIView *last = nil;
-    //only animate the pages that are visible
-    for(int i = 0; i < scrollView.subviews.count; i++)
+    int i = 0;
+    for(UIView *view in scrollView.subviews)
     {
-        UIView *view = [scrollView.subviews objectAtIndex:i];
-        if([view isKindOfClass:SBIconListView])
-        {
-            if(view.isOnScreen)
-            {
-                [wasOnScreen addObject:view];
-            }
-            if(start == -1) start = i;
-            view.isOnScreen = false;
+        if(![view isKindOfClass:SBIconListView]) continue;
 
-            if(!first) first = view;
-            last = view;
-            count++;
-        }
-    }
+        BOOL wasOnScreen = view.isOnScreen;
 
-    if(start != -1)
-    {
-        for(int i = 0; i < 2; i++)
-        {
-            int index = (int)(percent + i + start);
-            if(index - start >= 0 && index < scrollView.subviews.count)
-            {
-                UIView *view = [scrollView.subviews objectAtIndex:index];
-                genscrol(scrollView, index - start, view);
-            }
-            //failed hotfix for mobius compatibility.
-            /*
-            if(i == 0 && percent + i < 0)
-            {
-                last.isOnScreen = true;
-                genscrol(scrollView, -1, last);
-            }
-            else if(i == 1 && index - start == count)
-            {
-                first.isOnScreen = true;
-                genscrol(scrollView, count, first);
-            }
-            */
-        }
-    }
-    for(UIView *view in wasOnScreen)
-    {
-        if(!view.isOnScreen)
+        if(CGRectIntersectsRect(eye, view.frame))
+            genscrol(scrollView, i, view);
+
+        if(wasOnScreen && !view.isOnScreen)
             reset_everything(view);
+
+        i++;
     }
+
 }
 
 //iOS 7 folder blur glitch hotfix for 3D effects.
@@ -220,8 +194,8 @@ static void initialize() {
 
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
     MSHookMessageEx(cls, @selector(scrollViewDidEndDecelerating:), (IMP)SB_scrollViewDidEndDecelerating, (IMP *)&original_SB_scrollViewDidEndDecelerating);
-    if(IOS_VERSION < 7)
-        MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
+    MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
+    MSHookMessageEx(cls, @selector(scrollViewDidEndDragging:willDecelerate:), (IMP)SB_scrollViewDidEndDragging, (IMP *)&original_SB_scrollViewDidEndDragging);
 
     //iOS 7 bug hotfix
     cls = NSClassFromString(@"SBFolderIconBackgroundView");

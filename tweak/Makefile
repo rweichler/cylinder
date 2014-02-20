@@ -23,7 +23,8 @@ CC=xcrun -sdk iphoneos clang
 ARCH=-arch armv7 -arch arm64
 SDKS=-mios-version-min=3.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk
 #ARC=-fobjc-arc
-FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
+INCLUDES= -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
+FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework CoreGraphics
 FLAGS= -dynamiclib #-undefined suppress -flat_namespace
 DYLIB=$(NAME).dylib
 LIBLUA=../include/lua/liblua.a
@@ -46,7 +47,7 @@ clean:
 	cd ../include/lua && $(MAKE) clean
 
 $(DYLIB): $(REQ)
-	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(ARC) $(FLAGS) -o $@
+	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(INCLUDES) $(ARC) $(FLAGS) -o $@
 
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)
