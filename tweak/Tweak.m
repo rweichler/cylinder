@@ -49,6 +49,7 @@ void reset_everything(UIView *view)
 
 void genscrol(UIScrollView *scrollView, int i, UIView *view)
 {
+
     CGSize size = scrollView.frame.size;
     float offset = scrollView.contentOffset.x;
 
@@ -62,7 +63,15 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
     if(IOS_VERSION < 7) i++; //on iOS 6-, the spotlight is a page to the left, so we gotta bump the pageno. up a notch
     offset -= i*size.width;
 
-    _enabled = manipulate(view, offset, _rand);
+    if(fabs(offset/view.frame.size.width) >= 1)
+    {
+        view.isOnScreen = false;
+    }
+    else
+    {
+        view.isOnScreen = true;
+        _enabled = manipulate(view, offset, _rand);
+    }
 }
 
 void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView)
@@ -103,6 +112,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
     if(IOS_VERSION < 7) percent--;
     int start = -1;
     int count = 0;
+    NSMutableArray *wasOnScreen = [NSMutableArray arrayWithCapacity:2];
     UIView *first = nil;
     UIView *last = nil;
     //only animate the pages that are visible
@@ -111,6 +121,10 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
         UIView *view = [scrollView.subviews objectAtIndex:i];
         if([view isKindOfClass:SBIconListView])
         {
+            if(view.isOnScreen)
+            {
+                [wasOnScreen addObject:view];
+            }
             if(start == -1) start = i;
             view.isOnScreen = false;
 
@@ -119,6 +133,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
             count++;
         }
     }
+
     if(start != -1)
     {
         for(int i = 0; i < 2; i++)
@@ -127,7 +142,6 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
             if(index - start >= 0 && index < scrollView.subviews.count)
             {
                 UIView *view = [scrollView.subviews objectAtIndex:index];
-                view.isOnScreen = true;
                 genscrol(scrollView, index - start, view);
             }
             //failed hotfix for mobius compatibility.
@@ -144,6 +158,11 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
             }
             */
         }
+    }
+    for(UIView *view in wasOnScreen)
+    {
+        if(!view.isOnScreen)
+            reset_everything(view);
     }
 }
 

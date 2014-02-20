@@ -126,7 +126,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     switch(indexPath.section)
     {
         case TEXT_SECTION:
-            cell.textLabel.text = @"\u2764\u2764\u2764\u2764\u2764\u2764\u2764";
+            cell.textLabel.text = @"\u2764\u2764\u2764\u2764 Thank you \u2764\u2764\u2764\u2764";
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         break;
         case BITCOIN_SECTION:
