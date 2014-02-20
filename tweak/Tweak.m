@@ -25,7 +25,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 static Class SBIconListView;
 static IMP original_SB_scrollViewWillBeginDragging;
-static IMP original_SB_scrollViewDidEndDragging;
 static IMP original_SB_scrollViewDidScroll;
 static IMP original_SB_scrollViewDidEndDecelerating;
 static IMP original_SB_wallpaperRelativeBounds;
@@ -66,7 +65,7 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
     if(IOS_VERSION < 7) i++; //on iOS 6-, the spotlight is a page to the left, so we gotta bump the pageno. up a notch
     offset -= i*size.width;
 
-    if(fabs(offset/view.frame.size.width) >= 1)
+    if(fabs(offset/size.width) >= 1)
     {
         view.isOnScreen = false;
     }
@@ -92,12 +91,6 @@ void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
     did_scroll(scrollView);
 }
 
-void SB_scrollViewDidEndDragging(id self, SEL _cmd, UIScrollView *scrollView, BOOL decelerate)
-{
-    original_SB_scrollViewDidEndDragging(self, _cmd, scrollView, decelerate);
-    did_scroll(scrollView);
-}
-
 static int biggestTo = 0;
 void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL jittering)
 {
@@ -120,7 +113,9 @@ static void did_scroll(UIScrollView *scrollView)
 {
     if(!_enabled) return;
 
-    CGRect eye = CGRectMake(scrollView.contentOffset.x, 0, scrollView.frame.size.width, scrollView.frame.size.height);
+    CGSize size = scrollView.frame.size;
+
+    CGRect eye = CGRectMake(scrollView.contentOffset.x, 0, size.width, size.height);
 
     int i = 0;
     for(UIView *view in scrollView.subviews)
@@ -128,8 +123,8 @@ static void did_scroll(UIScrollView *scrollView)
         if(![view isKindOfClass:SBIconListView]) continue;
 
         BOOL wasOnScreen = view.isOnScreen;
-
-        if(CGRectIntersectsRect(eye, view.frame))
+        CGRect frame = CGRectMake(size.width*(i + (IOS_VERSION < 7)), 0, size.width, size.height);
+        if(CGRectIntersectsRect(eye, frame))
             genscrol(scrollView, i, view);
 
         if(wasOnScreen && !view.isOnScreen)
@@ -195,7 +190,6 @@ static void initialize() {
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
     MSHookMessageEx(cls, @selector(scrollViewDidEndDecelerating:), (IMP)SB_scrollViewDidEndDecelerating, (IMP *)&original_SB_scrollViewDidEndDecelerating);
     MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
-    MSHookMessageEx(cls, @selector(scrollViewDidEndDragging:willDecelerate:), (IMP)SB_scrollViewDidEndDragging, (IMP *)&original_SB_scrollViewDidEndDragging);
 
     //iOS 7 bug hotfix
     cls = NSClassFromString(@"SBFolderIconBackgroundView");
