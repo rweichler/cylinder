@@ -1,16 +1,17 @@
 --[[ ******************************************************************
-Gather Around v1.1
+Gather Around v1.2
 by @supermamon (github.com/supermamon/cylinder-scripts/)
 
 Trying to mimic the animation by "that other tweak".
 Buggy if you keep switching in portrait and landscape mode.
 
+v1.2 2014-02-19: Fixed icon shifting issue when roll starts.
+				 Alternate icon count calculation
 v1.1 2014-02-17: Closer to the target effect.
 v1.0 2014-02-17: First release.
 		
 ******************************************************************* ]]
 local saved = false
-
 local icons ={}
 local lastPageWidth=0
 
@@ -19,7 +20,7 @@ return function(page, offset, screen_width, screen_height)
 	-- track progress
 	local percent = offset/page.width
 	
-	-- reset positions / trying to see if this would fix folders
+	-- reset positions / trying to see if this would fix folders. Yes!
 	if lastPageWidth ~= page.width then
 		saved = false 
 		icons = {}
@@ -33,11 +34,11 @@ return function(page, offset, screen_width, screen_height)
 	
 	local radius = page.width/2*0.70 -- get 70% of the page
 	
-	if page.height<page.width then	
+	if page.height<page.width then -- use the height if it is landscape	
 		radius = page.height/2*0.70
 	end 
 	
-	local iconCount = #page.subviews -- seems it include empty spaces
+	local iconCount = #page --#page.subviews -- seems it include empty spaces
 	local theta = 360/iconCount -- this is the angle in degrees between each icon
 	
 	-- save the original and target icon positions
@@ -95,7 +96,7 @@ return function(page, offset, screen_width, screen_height)
 		icon:rotate(p*icons[j].target.angle)
 
 		if p>=1 then
-			local angle = percent*math.pi*0.25 -- 45 degree rotation
+			local angle = ((percent-0.4)/0.6)*math.pi*0.25 -- 45 degree rotation
 			page:rotate(-angle) -- negative angle is counter-clockwise
 		end
 

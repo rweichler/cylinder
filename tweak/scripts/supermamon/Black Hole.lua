@@ -1,14 +1,16 @@
 --[[ ******************************************************************
-Black Hole v1.0
+Black Hole v1.1
 by @supermamon (github.com/supermamon/cylinder-scripts/)
 
 Same as Gather Around. Applied with fade and stayPut.
 
+v1.1 2014-02-19: Fixed icon shifting issue when roll starts.
+				 Alternate icon count calculation
 v1.0 2014-02-18: First release.
-		
 ******************************************************************* ]]
-local stayPut   = dofile("include/stayPut.lua")
-local fade = dofile("include/fade.lua")
+local stayPut    = dofile("include/stayPut.lua")
+local fade       = dofile("include/fade.lua")
+
 local saved = false
 
 local icons ={}
@@ -37,7 +39,8 @@ return function(page, offset, screen_width, screen_height)
 		radius = page.height/2*0.70
 	end 
 	
-	local iconCount = #page.subviews -- seems it include empty spaces
+	local iconCount = #page
+		--#page.subviews -- seems it include empty spaces
 	local theta = 360/iconCount -- this is the angle in degrees between each icon
 	
 	-- save the original and target icon positions
@@ -96,7 +99,7 @@ return function(page, offset, screen_width, screen_height)
 		icon:rotate(p*icons[j].target.angle)
 
 		if p>=1 then
-			local angle = percent*math.pi*0.25 -- 45 degree rotation
+			local angle = ((percent-0.4)/0.6)*math.pi*0.25 -- 45 degree rotation
 			page:rotate(-angle) -- negative angle is counter-clockwise
 		end
 
