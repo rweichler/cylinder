@@ -436,6 +436,23 @@ BOOL manipulate(UIView *view, float offset, u_int32_t rand)
     }
 }
 
+typedef unsigned int (*maxicons_func)(id, SEL);
+typedef unsigned int (*maxrowcols_func)(id, SEL, UIDeviceOrientation);
+int invoke_int(id self, SEL selector, BOOL use_orientation)
+{
+    IMP imp = [self methodForSelector:selector];
+    if(use_orientation)
+    {
+        maxrowcols_func f = (maxrowcols_func)imp;
+        return (int)f(self, selector, UIDevice.currentDevice.orientation);
+    }
+    else
+    {
+        maxicons_func f = (maxicons_func)imp;
+        return (int)f(self, selector);
+    }
+}
+
 static int l_uiview_index(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
@@ -506,6 +523,39 @@ static int l_uiview_index(lua_State *L)
         {
             lua_pushnumber(L, self.frame.size.height/self.layer.transform.m22);
             return 1;
+        }
+        else if(!strcmp(key, "max_icons"))
+        {
+            SEL selector = @selector(maxIcons);
+            if([self.class respondsToSelector:selector])
+            {
+                lua_pushnumber(L, invoke_int(self.class, selector, false));
+                return 1;
+            }
+            else
+                return 0;
+        }
+        else if(!strcmp(key, "max_columns"))
+        {
+            SEL selector = @selector(iconColumnsForInterfaceOrientation:);
+            if([self.class respondsToSelector:selector])
+            {
+                lua_pushnumber(L, invoke_int(self.class, selector, true));
+                return 1;
+            }
+            else
+                return 0;
+        }
+        else if(!strcmp(key, "max_rows"))
+        {
+            SEL selector = @selector(iconRowsForInterfaceOrientation:);
+            if([self.class respondsToSelector:selector])
+            {
+                lua_pushnumber(L, invoke_int(self.class, selector, true));
+                return 1;
+            }
+            else
+                return 0;
         }
     }
 
