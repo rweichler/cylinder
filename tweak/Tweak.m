@@ -204,6 +204,10 @@ static void initialize() {
         class_addMethod(object_getClass(SBIconListView), @selector(layerClass), (IMP)SB_layerClass, encoding);
     }
 
+    //the above fix hides the dock, so we needa fix dat shit YO
+    Class SBDockIconListView = NSClassFromString(@"SBDockIconListView");
+    if(SBDockIconListView) MSHookMessageEx(object_getClass(SBDockIconListView), @selector(layerClass), original_SB_layerClass, NULL);
+
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
     CFNotificationCenterAddObserver(r, NULL, &setSettingsNotification, (CFStringRef)kCylinderSettingsChanged, NULL, 0);
