@@ -62,9 +62,27 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>footerText</key>
-            <string>Why, hello there.</string>
+            <string>EVERYTHING YOU DO IS SO OAKLAND</string>
 			<key>isStaticText</key>
 			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>default</key>
+			<string></string>
+			<key>defaults</key>
+			<string>com.r333d.cylinder</string>
+			<key>detail</key>
+			<string>CLDonateController</string>
+			<key>id</key>
+			<string>donate</string>
+			<key>key</key>
+			<string>donate</string>
+			<key>label</key>
+			<string>Donate</string>
+			<key>name</key>
+			<string>Donate</string>
 		</dict>
 		<dict>
 			<key>action</key>
@@ -89,24 +107,6 @@
 			<string>PSButtonCell</string>
 			<key>label</key>
             <string>Go to /r/cylinder for more effects</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSLinkListCell</string>
-			<key>default</key>
-			<string></string>
-			<key>defaults</key>
-			<string>com.r333d.cylinder</string>
-			<key>detail</key>
-			<string>CLDonateController</string>
-			<key>id</key>
-			<string>donate</string>
-			<key>key</key>
-			<string>donate</string>
-			<key>label</key>
-			<string>Donate</string>
-			<key>name</key>
-			<string>Donate</string>
 		</dict>
 	</array>
 	<key>title</key>
