@@ -49,11 +49,11 @@ void reset_everything(UIView *view)
     }
 }
 
-void genscrol(UIScrollView *scrollView, int i, UIView *view)
+void genscrol(UIScrollView *scrollView, UIView *view)
 {
 
     CGSize size = scrollView.frame.size;
-    float offset = scrollView.contentOffset.x;
+    float offset = scrollView.contentOffset.x - view.frame.origin.x;
 
     int page = (int)(offset/size.width);
     if(page != _page)
@@ -61,9 +61,6 @@ void genscrol(UIScrollView *scrollView, int i, UIView *view)
         _rand = arc4random();
         _page = page;
     }
-
-    if(IOS_VERSION < 7) i++; //on iOS 6-, the spotlight is a page to the left, so we gotta bump the pageno. up a notch
-    offset -= i*size.width;
 
     if(fabs(offset/size.width) >= 1)
     {
@@ -122,13 +119,11 @@ static void did_scroll(UIScrollView *scrollView)
     {
         if(![view isKindOfClass:SBIconListView]) continue;
 
-        BOOL wasOnScreen = view.isOnScreen;
-        CGRect frame = CGRectMake(size.width*(i + (IOS_VERSION < 7)), 0, size.width, size.height);
-        if(CGRectIntersectsRect(eye, frame))
-            genscrol(scrollView, i, view);
-
-        if(wasOnScreen && !view.isOnScreen)
+        if(view.isOnScreen)
             reset_everything(view);
+
+        if(CGRectIntersectsRect(eye, view.frame))
+            genscrol(scrollView, view);
 
         i++;
     }
