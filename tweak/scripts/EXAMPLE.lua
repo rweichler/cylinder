@@ -56,8 +56,9 @@ view:rotate(angle) --> equivalent of view:rotate(angle, 0, 0, 1)
 
 view:translate(x, y, z) --> this one should be obvious.
 
--- there is no scale function. the same effect can be achieved
--- using view:translate on the Z axis.
+view:scale(size) --> obvious
+view:scale(x, y) --> obvious
+view:scale(x,y,z) --> obvious, although you wont notice the z
 
 view.alpha = 0 --> completely transparent
 view.alpha = 0.5 --> semitransparent

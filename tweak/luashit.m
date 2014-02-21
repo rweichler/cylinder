@@ -38,6 +38,7 @@ BOOL _randomize;
 
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
+static int l_transform_scale(lua_State *L);
 static int l_push_base_transform(lua_State *L);
 static int l_set_transform(lua_State *L, UIView *self); //-1 = transform
 static int l_get_transform(lua_State *L, UIView *self); //pushes transform to top of stack
@@ -481,6 +482,11 @@ static int l_uiview_index(lua_State *L)
             lua_pushcfunction(L, l_transform_translate);
             return 1;
         }
+        else if(!strcmp(key, "scale"))
+        {
+            lua_pushcfunction(L, l_transform_scale);
+            return 1;
+        }
         else if(!strcmp(key, "x"))
         {
             lua_pushnumber(L, self.frame.origin.x);
@@ -493,12 +499,12 @@ static int l_uiview_index(lua_State *L)
         }
         else if(!strcmp(key, "width"))
         {
-            lua_pushnumber(L, self.frame.size.width);
+            lua_pushnumber(L, self.frame.size.width/self.layer.transform.m11);
             return 1;
         }
         else if(!strcmp(key, "height"))
         {
-            lua_pushnumber(L, self.frame.size.height);
+            lua_pushnumber(L, self.frame.size.height/self.layer.transform.m22);
             return 1;
         }
     }
@@ -564,6 +570,7 @@ static int l_transform_rotate(lua_State *L)
 
     return 0;
 }
+
 static int l_transform_translate(lua_State *L)
 {
     CHECK_UIVIEW(L, 1);
@@ -576,6 +583,30 @@ static int l_transform_translate(lua_State *L)
     if(fabs(z) > 0.01)
         transform.m34 = -0.002;
     transform = CATransform3DTranslate(transform, x, y, z);
+    transform.m34 = oldm34;
+
+    self.layer.transform = transform;
+
+    return 0;
+}
+
+static int l_transform_scale(lua_State *L)
+{
+    CHECK_UIVIEW(L, 1);
+
+    UIView *self = (UIView *)lua_touserdata(L, 1);
+
+    CATransform3D transform = self.layer.transform;
+    float x = lua_tonumber(L, 2);
+    float y = x;
+    float z = 1;
+    if(lua_isnumber(L, 3))
+        y = lua_tonumber(L, 3);
+    if(lua_isnumber(L, 4))
+        z = lua_tonumber(L, 4);
+    float oldm34 = transform.m34;
+    transform.m34 = -0.002;
+    transform = CATransform3DScale(transform, x, y, z);
     transform.m34 = oldm34;
 
     self.layer.transform = transform;
