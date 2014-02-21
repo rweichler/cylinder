@@ -2,8 +2,6 @@ local icon_random = dofile("include/icon_random.lua")
 
 return function(page, offset, screen_width, screen_height)
 
-    page:translate(offset, 0, 0)
-
     --magnitude = 0, not subtle at all
     --magnitude = 1, so subtle you don't even notice it
     local magnitude = 0.8
