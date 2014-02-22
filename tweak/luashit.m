@@ -33,7 +33,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 //this allows a 3D perspective, sometimes this value is needed
 //for transformations that translate, THEN rotate. (like cube,
 //page flip, etc)
-#define PERSPECTIVE_DISTANCE 500
+#define PERSPECTIVE_DISTANCE 500.0
 
 static lua_State *L = NULL;
 
