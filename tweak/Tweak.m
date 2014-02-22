@@ -55,7 +55,7 @@ void genscrol(UIScrollView *scrollView, UIView *view)
     CGSize size = scrollView.frame.size;
     float offset = scrollView.contentOffset.x - view.frame.origin.x;
 
-    int page = (int)(offset/size.width);
+    int page = (int)(scrollView.contentOffset.x/size.width);
     if(page != _page)
     {
         _rand = arc4random();
