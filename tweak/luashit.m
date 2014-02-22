@@ -30,6 +30,11 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define LOG_PATH "errors.log"
 #define PRINT_PATH "print.log"
 
+//this allows a 3D perspective, sometimes this value is needed
+//for transformations that translate, THEN rotate. (like cube,
+//page flip, etc)
+#define PERSPECTIVE_DISTANCE 500
+
 static lua_State *L = NULL;
 
 static NSMutableArray *_scripts = nil;
@@ -144,6 +149,9 @@ static void create_state()
     lua_newtable(L);
     l_push_base_transform(L);
     lua_setglobal(L, "BASE_TRANSFORM");
+
+    lua_pushnumber(L, PERSPECTIVE_DISTANCE);
+    lua_setglobal(L, "PERSPECTIVE_DISTANCE");
 
     lua_pushcfunction(L, l_subviews);
     lua_setglobal(L, "subviews");
@@ -612,7 +620,7 @@ static int l_transform_rotate(lua_State *L)
     }
 
     if(fabs(pitch) > 0.01 || fabs(yaw) > 0.01)
-        transform.m34 = -0.002;
+        transform.m34 = -1/PERSPECTIVE_DISTANCE;
 
     transform = CATransform3DRotate(transform, lua_tonumber(L, 2), pitch, yaw, roll);
 
@@ -631,7 +639,7 @@ static int l_transform_translate(lua_State *L)
     float x = lua_tonumber(L, 2), y = lua_tonumber(L, 3), z = lua_tonumber(L, 4);
     float oldm34 = transform.m34;
     if(fabs(z) > 0.01)
-        transform.m34 = -0.002;
+        transform.m34 = -1/PERSPECTIVE_DISTANCE;
     transform = CATransform3DTranslate(transform, x, y, z);
     transform.m34 = oldm34;
 
@@ -655,7 +663,7 @@ static int l_transform_scale(lua_State *L)
     if(lua_isnumber(L, 4))
         z = lua_tonumber(L, 4);
     float oldm34 = transform.m34;
-    transform.m34 = -0.002;
+    transform.m34 = -1/PERSPECTIVE_DISTANCE;
     transform = CATransform3DScale(transform, x, y, z);
     transform.m34 = oldm34;
 
