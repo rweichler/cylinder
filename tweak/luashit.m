@@ -461,6 +461,12 @@ int invoke_int(id self, SEL selector, BOOL use_orientation)
     }
 }
 
+typedef float (*float_func)(id, SEL);
+float invoke_float(id self, SEL selector)
+{
+    return ((float_func)[self methodForSelector:selector])(self, selector);
+}
+
 static int l_uiview_index(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
@@ -564,6 +570,31 @@ static int l_uiview_index(lua_State *L)
             }
             else
                 return 0;
+        }
+        else if(!strcmp(key, "icon_spacing"))
+        {
+            SEL x = @selector(horizontalIconPadding);
+            if(![self respondsToSelector:x])
+            {
+                x = @selector(horizontalIconSpace); //iOS 3
+            }
+            SEL y = @selector(verticalIconPadding);
+
+            if([self respondsToSelector:x] && [self respondsToSelector:y])
+            {
+                lua_newtable(L);
+                lua_pushstring(L, "x");
+                lua_pushnumber(L, invoke_float(self, x));
+                lua_settable(L, -3);
+                lua_pushstring(L, "y");
+                lua_pushnumber(L, invoke_float(self, y));
+                lua_settable(L, -3);
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 
