@@ -48,7 +48,8 @@ int l_create_uiview_metatable(lua_State *L)
     return 0;
 }
 
-
+//screw good practice, i dont have time for casting and
+//private header files
 typedef unsigned int (*maxicons_func)(id, SEL);
 typedef unsigned int (*maxrowcols_func)(id, SEL, UIDeviceOrientation);
 int invoke_int(id self, SEL selector, BOOL use_orientation)
@@ -64,12 +65,6 @@ int invoke_int(id self, SEL selector, BOOL use_orientation)
         maxicons_func f = (maxicons_func)imp;
         return (int)f(self, selector);
     }
-}
-
-typedef float (*float_func)(id, SEL);
-float invoke_float(id self, SEL selector)
-{
-    return ((float_func)[self methodForSelector:selector])(self, selector);
 }
 
 static int l_uiview_index(lua_State *L)
@@ -175,31 +170,6 @@ static int l_uiview_index(lua_State *L)
             }
             else
                 return 0;
-        }
-        else if(!strcmp(key, "icon_spacing"))
-        {
-            SEL x = @selector(horizontalIconPadding);
-            if(![self respondsToSelector:x])
-            {
-                x = @selector(horizontalIconSpace); //iOS 3
-            }
-            SEL y = @selector(verticalIconPadding);
-
-            if([self respondsToSelector:x] && [self respondsToSelector:y])
-            {
-                lua_newtable(L);
-                lua_pushstring(L, "x");
-                lua_pushnumber(L, invoke_float(self, x));
-                lua_settable(L, -3);
-                lua_pushstring(L, "y");
-                lua_pushnumber(L, invoke_float(self, y));
-                lua_settable(L, -3);
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
         }
     }
 
