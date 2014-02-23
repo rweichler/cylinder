@@ -1,13 +1,9 @@
 return function(page, offset, screen_width, screen_height)
     local percent = offset/page.width
     
-    local numIcons = #page.subviews
+    local numIcons = page.max_icons
     
-    local i = 0
-    while true do
-        i = i + 1
-        local icon = page[i]
-        if not icon then break end
+    for i, icon in subviews(page) do
         
         if (percent > 0) then
             local curIconPercent = percent-(0.525/numIcons)*(i-1)
