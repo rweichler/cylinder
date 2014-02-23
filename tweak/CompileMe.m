@@ -28,4 +28,5 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "Tweak.m"
 #import "luashit.m"
+#import "lua_UIView.m"
 #import "UIView+Cylinder.m"
