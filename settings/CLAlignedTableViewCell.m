@@ -21,6 +21,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 #define MARGIN 0
 #define IMAGE_PADDING 10
+#define NUMBER_WIDTH 44
+#define NUMBER_PADDING 5
 @implementation CLAlignedTableViewCell
 @synthesize numberLabel=_numberLabel, effect=_effect;
 
@@ -44,20 +46,27 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     self.imageView.frame = CGRectMake(IMAGE_PADDING, IMAGE_PADDING, width - IMAGE_PADDING*2, cvf.size.height-1 - IMAGE_PADDING*2);
     //self.imageView.contentMode = UIViewContentModeCenter;//|UIViewContentModeScaleAspectFit;
 
+    CGSize size = [self.numberLabel.text sizeWithFont:self.numberLabel.font
+                                        constrainedToSize:CGSizeMake(NUMBER_WIDTH,self.textLabel.frame.size.height)
+                                        lineBreakMode:self.numberLabel.lineBreakMode];
+
+    size.width += NUMBER_PADDING*2;
+
+    self.numberLabel.frame = CGRectMake(
+            self.frame.size.width - size.width,
+            self.textLabel.frame.origin.y,
+            size.width,
+            self.textLabel.frame.size.height);
+
     self.textLabel.frame = CGRectMake(width + MARGIN,
                               self.textLabel.frame.origin.y,
-                              cvf.size.width - width*2 - 2*MARGIN,
+                              cvf.size.width - width*2 - 2*MARGIN - size.width,
                               self.textLabel.frame.size.height);
 
     self.detailTextLabel.frame = CGRectMake(width + MARGIN,
                        self.detailTextLabel.frame.origin.y,
                        cvf.size.width - width*2 - 2*MARGIN,
                        self.detailTextLabel.frame.size.height);
-    self.numberLabel.frame = CGRectMake(
-            self.frame.size.width - 44,
-            self.textLabel.frame.origin.y,
-            44,
-            44);
     [self addSubview:self.numberLabel];
 }
 @end

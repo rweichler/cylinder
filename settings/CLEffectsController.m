@@ -221,7 +221,11 @@ static CLEffectsController *sharedController = nil;
 {
     CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
     if (!cell)
+    {
         cell = [CLAlignedTableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"].autorelease;
+        cell.textLabel.adjustsFontSizeToFitWidth = true;
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
 
     CLEffect *effect = [self effectAtIndexPath:indexPath];
     cell.effect.cell = nil;
@@ -232,8 +236,6 @@ static CLEffectsController *sharedController = nil;
     cell.textLabel.text = effect.name;
     cell.selected = false;
     [self setCellIcon:cell effect:effect];
-
-    cell.accessoryType = /*effect.selected ? UITableViewCellAccessoryCheckmark :*/ UITableViewCellAccessoryNone;
 
     cell.numberLabel.text = effect.selected ? [NSString stringWithFormat:@"%d", (int)([self.selectedEffects indexOfObject:effect] + 1)] : @"";
 
