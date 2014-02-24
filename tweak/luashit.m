@@ -69,6 +69,8 @@ static const char *OS_DANGER[] = {
 
 static void remove_script(int index)
 {
+    int func = [[_scripts objectAtIndex:index] intValue];
+    luaL_unref(L, LUA_REGISTRYINDEX, func);
     [_scripts removeObjectAtIndex:index];
     [_scriptNames removeObjectAtIndex:index];
 }
