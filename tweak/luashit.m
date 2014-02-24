@@ -45,6 +45,7 @@ BOOL _randomize;
 static int l_loadfile_override(lua_State *L);
 static int l_print(lua_State *L);
 static int l_subviews(lua_State *L);
+static int l_popup(lua_State *L);
 
 static const char * get_stack(lua_State *L, const char *strr);
 
@@ -147,6 +148,9 @@ static void create_state()
 
     lua_pushcfunction(L, l_subviews);
     lua_setglobal(L, "subviews");
+
+    lua_pushcfunction(L, l_popup);
+    lua_setglobal(L, "popup");
 
     //set UIView metatable
     l_create_uiview_metatable(L);
@@ -293,9 +297,19 @@ static int l_loadfile_override(lua_State *L)
 static int l_print(lua_State *L)
 {
     const char *str = lua_tostring(L, 1);
-    if(str == NULL) return luaL_error(L, "could not argument for printing");
+    if(str == NULL) return luaL_error(L, "could not process argument for printing");
 
     write_file(str, "print.log");
+    return 0;
+}
+
+static int l_popup(lua_State *L)
+{
+    const char *str = lua_tostring(L, 1);
+    if(str == NULL) return luaL_error(L, "could not process argument for printing");
+
+    [[[UIAlertView.alloc initWithTitle:[NSString stringWithUTF8String:str] message:nil delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
+
     return 0;
 }
 

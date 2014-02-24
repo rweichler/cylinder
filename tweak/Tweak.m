@@ -23,7 +23,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "macros.h"
 #import "UIView+Cylinder.h"
 
-static Class SBIconListView;
+static Class SB_list_class;
 static IMP original_SB_scrollViewWillBeginDragging;
 static IMP original_SB_scrollViewDidScroll;
 static IMP original_SB_scrollViewDidEndDecelerating;
@@ -117,7 +117,7 @@ static void did_scroll(UIScrollView *scrollView)
     int i = 0;
     for(UIView *view in scrollView.subviews)
     {
-        if(![view isKindOfClass:SBIconListView]) continue;
+        if(![view isKindOfClass:SB_list_class]) continue;
 
         if(view.isOnScreen)
             reset_everything(view);
@@ -175,8 +175,9 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
 static void initialize() {
-    SBIconListView = NSClassFromString(@"SBIconListView"); //iOS 4+
-    if(!SBIconListView) SBIconListView = NSClassFromString(@"SBIconList"); //iOS 3
+
+    SB_list_class = NSClassFromString(@"SBIconListView"); //iOS 4+
+    if(!SB_list_class) SB_list_class = NSClassFromString(@"SBIconList"); //iOS 3
     load_that_shit();
 
     //hook scroll                                   //iOS 6-              //iOS 7
@@ -191,17 +192,17 @@ static void initialize() {
     if(cls) MSHookMessageEx(cls, @selector(wallpaperRelativeBounds), (IMP)SB_wallpaperRelativeBounds, (IMP *)&original_SB_wallpaperRelativeBounds);
 
     //iOS 6- not-all-icons-showing hotfix
-    if(SBIconListView) MSHookMessageEx(SBIconListView, @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:), (IMP)SB_showIconImages, (IMP *)&original_SB_showIconImages);
+    if(SB_list_class) MSHookMessageEx(SB_list_class, @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:), (IMP)SB_showIconImages, (IMP *)&original_SB_showIconImages);
 
     //fix for https://github.com/rweichler/cylinder/issues/17
-    if([SBIconListView respondsToSelector:@selector(layerClass)])
+    if([SB_list_class respondsToSelector:@selector(layerClass)])
     {
-        MSHookMessageEx(object_getClass(SBIconListView), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
+        MSHookMessageEx(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
     }
     else
     {
         const char *encoding = method_getTypeEncoding(class_getInstanceMethod(NSObject.class, @selector(class)));
-        class_addMethod(object_getClass(SBIconListView), @selector(layerClass), (IMP)SB_layerClass, encoding);
+        class_addMethod(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, encoding);
     }
 
     //the above fix hides the dock, so we needa fix dat shit YO
