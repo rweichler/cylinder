@@ -295,7 +295,7 @@ static int l_loadfile_override(lua_State *L)
 }
 
 //stolen from lua's print function
-static int l_concat_args(lua_State *L)
+static int l_concat_args(lua_State *L, const char *func_name, const char *separator)
 {
     int n = lua_gettop(L);  /* number of arguments */
     int i;
@@ -309,8 +309,8 @@ static int l_concat_args(lua_State *L)
         s = lua_tolstring(L, -1, NULL);  /* get result */
         if (s == NULL)
             return luaL_error(L,
-                LUA_QL("tostring") " must return a string to " LUA_QL("print"));
-        if (i>1) [result appendString:@"\t"];//luai_writestring("\t", 1);
+                    [NSString stringWithFormat:@LUA_QL("tostring") " must return a string to " LUA_QL("%s"), func_name].UTF8String);
+        if (i>1) [result appendFormat:@"%s", separator];//luai_writestring("\t", 1);
         [result appendFormat:@"%s", s];//luai_writestring(s, l);
         lua_pop(L, 1);  /* pop result */
     }
@@ -321,7 +321,7 @@ static int l_concat_args(lua_State *L)
 
 static int l_print(lua_State *L)
 {
-    l_concat_args(L);
+    l_concat_args(L, "print", "\t");
 
     write_file(lua_tostring(L, -1), "print.log");
     return 0;
@@ -329,9 +329,9 @@ static int l_print(lua_State *L)
 
 static int l_popup(lua_State *L)
 {
-    l_concat_args(L);
+    l_concat_args(L, "popup", "\n");
 
-    [[[UIAlertView.alloc initWithTitle:[NSString stringWithUTF8String:lua_tostring(L, -1)] message:nil delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
+    [[[UIAlertView.alloc initWithTitle:nil message:[NSString stringWithUTF8String:lua_tostring(L, -1)] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
 
     return 0;
 }
