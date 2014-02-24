@@ -31,8 +31,6 @@ local function init(len)
 end
 
 local function make_progress_table(mag, max)
-    if mag < 1/max then mag = 1/max end
-    if mag > 1 then mag = 1 end
     local inc = (1 - mag)/(max - 1)
     local first = mag/2
     local tbl = {}
@@ -45,6 +43,9 @@ end
 return function(page, percent, mag, callback)
     init(#page)
     local max = #view_order
+
+    if mag < 1/max then mag = 1/max end
+    if mag > 1 then mag = 1 end
 
     local negative = percent < 0
 
