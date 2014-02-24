@@ -1,10 +1,3 @@
-# TO PEOPLE WHO JUST WANT A .DEB
-
-### *ESPECIALLY* insanelyi and hackyouriphone
-
-[USE THIS ONE!!!!!](http://r333d.com/repo/cylinder.php) THE ONE IN THIS REPOSITORY IS AN **_UNSTABLE BUILD_**. It's literally broken.
-
-
 # Cylinder
 
 The free software alternative to Barrel
@@ -83,6 +76,12 @@ make package
 ```
 
 Puts a freshly baked cylinder.deb in the root of the repository. :)
+
+## Pull request policy
+
+Pull requests are only for changes and improvements to the core framework. Not custom Lua scripts.
+
+Feel free to post them to [/r/cylinder](http://reddit.com/r/cylinder). Once this is on BigBoss there will also be an easy way for you to submit your scripts there too.
 
 ## License
 
