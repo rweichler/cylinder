@@ -23,6 +23,9 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "macros.h"
 #import "UIView+Cylinder.h"
 
+
+static NSMutableArray *_folders;
+
 static Class SB_list_class;
 static IMP original_SB_scrollViewWillBeginDragging;
 static IMP original_SB_scrollViewDidScroll;
@@ -31,6 +34,8 @@ static IMP original_SB_wallpaperRelativeBounds;
 static IMP original_SB_showIconImages;
 static IMP original_SB_layerClass;
 static IMP original_SB_showAllIcons;
+static IMP original_SB_init;
+static IMP original_SB_dealloc;
 
 static BOOL _enabled;
 
@@ -184,12 +189,46 @@ CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
 //special thanks to @noahd for this fix: https://github.com/rweichler/cylinder/issues/17
 Class SB_layerClass(id self, SEL _cmd)
 {
-    return [CATransformLayer class];
+    if(_enabled || IOS_VERSION < 4)
+        return [CATransformLayer class];
+    else
+        return original_SB_layerClass(self, _cmd);
+}
+
+void add_folder(id self)
+{
+    [_folders addObject:self];
+    [self release];
+}
+
+id SB_init(id self, SEL _cmd)
+{
+    add_folder(self);
+    return original_SB_init(self, _cmd);
+}
+
+id SB_initWithFolder(id self, SEL _cmd, id folder, int orientation, id viewMap)
+{
+    add_folder(self);
+    return original_SB_init(self, _cmd, folder, orientation, viewMap);
+}
+
+void SB_dealloc(id self, SEL _cmd)
+{
+    NSUInteger index = [_folders indexOfObject:self];
+    if(index != NSNotFound)
+    {
+        [self retain];
+        [_folders removeObjectAtIndex:index];
+    }
+    original_SB_dealloc(self, _cmd);
 }
 
 void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
+
+    BOOL enabled = _enabled;
 
     if(settings && ![[settings valueForKey:PrefsEnabledKey] boolValue])
     {
@@ -203,6 +242,28 @@ void load_that_shit()
         if(![effects isKindOfClass:NSArray.class]) effects = nil; //this is for backwards compatibility
         _enabled = init_lua(effects, random);
     }
+
+    if(enabled != _enabled)
+    {
+        //iOS 7
+        SEL first = @selector(resetIconListViews);
+        //iOS 5 and 4 (and probably 6)
+        SEL second1 = @selector(prepareToResetRootIconLists);
+        SEL second2 = @selector(resetRootIconLists);
+        for(id folder in _folders)
+        {
+            if([folder respondsToSelector:first])
+            {
+                [folder performSelector:first];
+            }
+            else if([folder respondsToSelector:second1] && [folder respondsToSelector:second2])
+            {
+                [folder performSelector:second1];
+                [folder performSelector:second2];
+            }
+
+        }
+    }
 }
 
 static inline void setSettingsNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
@@ -214,11 +275,12 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
 __attribute__((constructor))
 static void initialize() {
 
+    _folders = [NSMutableArray array];
+
     SB_list_class = NSClassFromString(@"SBIconListView"); //iOS 4+
     if(!SB_list_class) SB_list_class = NSClassFromString(@"SBIconList"); //iOS 3
     load_that_shit();
 
-    //hook scroll                                   //iOS 6-              //iOS 7
     Class cls = NSClassFromString(IOS_VERSION < 7 ? @"SBIconController" : @"SBFolderView");
 
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
@@ -226,29 +288,27 @@ static void initialize() {
     MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
 
     //iOS 7 bug hotfix
-    cls = NSClassFromString(@"SBFolderIconBackgroundView");
-    if(cls) MSHookMessageEx(cls, @selector(wallpaperRelativeBounds), (IMP)SB_wallpaperRelativeBounds, (IMP *)&original_SB_wallpaperRelativeBounds);
+    Class bg_cls = NSClassFromString(@"SBFolderIconBackgroundView");
+    if(bg_cls) MSHookMessageEx(bg_cls, @selector(wallpaperRelativeBounds), (IMP)SB_wallpaperRelativeBounds, (IMP *)&original_SB_wallpaperRelativeBounds);
 
     //iOS 6- not-all-icons-showing hotfix
     if(SB_list_class) MSHookMessageEx(SB_list_class, @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:), (IMP)SB_showIconImages, (IMP *)&original_SB_showIconImages);
 
     //fix for https://github.com/rweichler/cylinder/issues/17
-    if([SB_list_class respondsToSelector:@selector(layerClass)])
-    {
-        MSHookMessageEx(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
-    }
-    else
-    {
-        const char *encoding = method_getTypeEncoding(class_getInstanceMethod(NSObject.class, @selector(class)));
-        class_addMethod(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, encoding);
-    }
+    MSHookMessageEx(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
 
     //the above fix hides the dock, so we needa fix dat shit YO
     Class SBDockIconListView = NSClassFromString(@"SBDockIconListView");
     if(SBDockIconListView) MSHookMessageEx(object_getClass(SBDockIconListView), @selector(layerClass), original_SB_layerClass, NULL);
 
+    //make _enabled disable the CATransformLayer bit
+    if(IOS_VERSION < 7)
+        MSHookMessageEx(cls, @selector(init), (IMP)SB_init, (IMP *)&original_SB_init);
+    else
+        MSHookMessageEx(cls, @selector(initWithFolder:orientation:viewMap:), (IMP)SB_initWithFolder, (IMP *)&original_SB_init);
+    MSHookMessageEx(cls, @selector(dealloc), (IMP)SB_dealloc, (IMP *)&original_SB_dealloc);
     //fix icon scrunching in certain circumstances
-    if(SB_list_class) MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
+    MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
 
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
