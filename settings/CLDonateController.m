@@ -66,7 +66,18 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		if ([self respondsToSelector:@selector(setView:)])
-			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];			
+			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];
+
+        NSError *sessionError = nil;
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&sessionError];
+        [[AVAudioSession sharedInstance] setActive:true error:&sessionError];
+
+        NSError *error;
+        _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:BUNDLE_PATH "iloveyou.mp3"] error:&error];
+        if(!error)
+        {
+            [_player prepareToPlay];
+        }
 	}
 	return self;
 }
@@ -78,6 +89,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 - (void)dealloc
 {
+    [_player stop];
+    [_player release];
     [super dealloc];
 }
 
@@ -121,13 +134,14 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     {
         cell = [UITableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"].autorelease;
         cell.textLabel.numberOfLines = 0;
+        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
     }
-    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+    //cell.selectionStyle = UITableViewCellSelectionStyleBlue;
     switch(indexPath.section)
     {
         case TEXT_SECTION:
             cell.textLabel.text = @"\u2764\u2764\u2764\u2764 Thank you \u2764\u2764\u2764\u2764";
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            //cell.selectionStyle = UITableViewCellSelectionStyleNone;
         break;
         case BITCOIN_SECTION:
             cell.textLabel.text = BITCOIN_ADDRESS;
@@ -150,6 +164,12 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     else if(indexPath.section == PAYPAL_SECTION)
     {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=rweichler%40gmail%2ecom&lc=US&item_name=Reed%20Weichler&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"]];
+    }
+    else
+    {
+        _player.currentTime = 0;
+        [_player prepareToPlay];
+        [_player play];
     }
 }
 

@@ -44,6 +44,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define kCylinderSettingsChanged         @"com.r333d.cylinder/settingsChanged"
 #define kCylinderSettingsRefreshSettings @"com.r333d.cylinder/refreshSettings"
 
+#define BUNDLE_PATH @"/Library/PreferenceBundles/CylinderSettings.bundle/"
+
 #define kEffectsDirectory     @"/Library/Cylinder"
 #define kPacksDirectory      @"/Library/Cylinder/Packs"
 #define DEFAULT_EFFECTS      [NSArray arrayWithObjects:[NSDictionary dictionaryWithObjectsAndKeys:DEFAULT_EFFECT, PrefsEffectKey, DEFAULT_DIRECTORY, PrefsEffectDirKey, nil], nil]

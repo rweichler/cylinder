@@ -18,11 +18,14 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #import <Preferences/PSViewController.h>
+#import <AVFoundation/AVFoundation.h>
 
-@interface CLDonateController : PSViewController <UITableViewDelegate, UITableViewDataSource> {
-	UITableView *_tableView;
+@interface CLDonateController : PSViewController <UITableViewDelegate, UITableViewDataSource>
+{
+    UITableView *_tableView;
+    AVAudioPlayer *_player;
 }
-- (id)initForContentSize:(CGSize)size;
-- (id)view;
-- (NSString*)navigationTitle;
+-(id)initForContentSize:(CGSize)size;
+-(id)view;
+-(NSString*)navigationTitle;
 @end 

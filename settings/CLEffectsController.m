@@ -204,7 +204,7 @@ static CLEffectsController *sharedController = nil;
 -(void)setCellIcon:(UITableViewCell *)cell effect:(CLEffect *)effect
 {
     if(effect.broken)
-        cell.imageView.image = [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/CylinderSettings.bundle/error.png"];
+        cell.imageView.image = [UIImage imageWithContentsOfFile:BUNDLE_PATH "error.png"];
     else
         cell.imageView.image = nil;
 }
