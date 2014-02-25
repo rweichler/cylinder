@@ -146,8 +146,6 @@ static int l_uiview_index(lua_State *L)
                 lua_pushnumber(L, invoke_int(self.class, selector, false));
                 return 1;
             }
-            else
-                return 0;
         }
         else if(!strcmp(key, "max_columns"))
         {
@@ -157,8 +155,6 @@ static int l_uiview_index(lua_State *L)
                 lua_pushnumber(L, invoke_int(self.class, selector, true));
                 return 1;
             }
-            else
-                return 0;
         }
         else if(!strcmp(key, "max_rows"))
         {
@@ -168,8 +164,6 @@ static int l_uiview_index(lua_State *L)
                 lua_pushnumber(L, invoke_int(self.class, selector, true));
                 return 1;
             }
-            else
-                return 0;
         }
     }
 
