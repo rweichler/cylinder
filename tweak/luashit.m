@@ -333,7 +333,7 @@ static int l_popup(lua_State *L)
 {
     l_concat_args(L, "popup", "\n");
 
-    [[[UIAlertView.alloc initWithTitle:nil message:[NSString stringWithUTF8String:lua_tostring(L, -1)] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
+    [[[UIAlertView.alloc initWithTitle:@"Cylinder" message:[NSString stringWithUTF8String:lua_tostring(L, -1)] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
 
     return 0;
 }
