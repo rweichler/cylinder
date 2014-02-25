@@ -30,6 +30,7 @@ static IMP original_SB_scrollViewDidEndDecelerating;
 static IMP original_SB_wallpaperRelativeBounds;
 static IMP original_SB_showIconImages;
 static IMP original_SB_layerClass;
+static IMP original_SB_showAllIcons;
 
 static BOOL _enabled;
 
@@ -49,9 +50,9 @@ void reset_everything(UIView *view)
     }
 }
 
+//view is an SBIconListView (or SBIconList on older iOS)
 void genscrol(UIScrollView *scrollView, UIView *view)
 {
-
     CGSize size = scrollView.frame.size;
     float offset = scrollView.contentOffset.x - view.frame.origin.x;
 
@@ -69,8 +70,40 @@ void genscrol(UIScrollView *scrollView, UIView *view)
     else
     {
         view.isOnScreen = true;
-        _enabled = manipulate(view, offset, _rand);
+        _enabled = manipulate(view, offset, _rand); //defined in luashit.m
     }
+}
+
+//scrunch fix
+void SB_showAllIcons(UIView *self, SEL _cmd)
+{
+    unsigned long count = self.subviews.count;
+
+    //store our transforms and set them to the identity before calling showAllIcons
+    CATransform3D myTransform = self.layer.transform;
+    CATransform3D *iconTransforms = (CATransform3D *)malloc(count*sizeof(CATransform3D));
+
+    self.layer.transform = CATransform3DIdentity;
+    for(int i = 0; i < count; i++)
+    {
+        UIView *icon = [self.subviews objectAtIndex:i];
+        iconTransforms[i] = icon.layer.transform;
+        icon.layer.transform = CATransform3DIdentity;
+    }
+
+    //call showAllIcons
+    original_SB_showAllIcons(self, _cmd);
+
+    //set everything back to the way it was
+    self.layer.transform = myTransform;
+    for(int i = 0; i < count; i++)
+    {
+        UIView *icon = [self.subviews objectAtIndex:i];
+        self.layer.transform = iconTransforms[i];
+    }
+
+    free(iconTransforms);
+
 }
 
 void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView)
@@ -80,6 +113,7 @@ void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView
         reset_everything(view);
 }
 
+//in iOS 6-, the dock is actually *BEHIND* the icon scroll view, so this fixes that
 void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewWillBeginDragging(self, _cmd, scrollView);
@@ -88,6 +122,9 @@ void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
     did_scroll(scrollView);
 }
 
+//in iOS 6- only 5 columns are shown at a time (for performance, probably)
+//since the animations are unpredictable we want to show all icons in a page
+//if it is visible on the screen. performance loss is pretty negligible
 static int biggestTo = 0;
 void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL jittering)
 {
@@ -106,6 +143,7 @@ void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
     did_scroll(scrollView);
 }
+
 static void did_scroll(UIScrollView *scrollView)
 {
     if(!_enabled) return;
@@ -208,6 +246,9 @@ static void initialize() {
     //the above fix hides the dock, so we needa fix dat shit YO
     Class SBDockIconListView = NSClassFromString(@"SBDockIconListView");
     if(SBDockIconListView) MSHookMessageEx(object_getClass(SBDockIconListView), @selector(layerClass), original_SB_layerClass, NULL);
+
+    //fix icon scrunching in certain circumstances
+    if(SB_list_class) MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
 
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
