@@ -1,7 +1,5 @@
 # Cylinder
 
-The free software alternative to Barrel
-
 ![](https://raw2.github.com/rweichler/cylinder/master/code.png)
 
 ## Available Effects
