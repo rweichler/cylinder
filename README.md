@@ -42,7 +42,7 @@ respring! This allows for rapid testing.
 ### Probably doesn't work
 
 * iOS 2
-* iPhone OS
+* The first iOS (seriously - does anyone still run this one?)
 
 ## Todo list
 
