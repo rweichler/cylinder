@@ -45,6 +45,7 @@ static u_int32_t _rand;
 static int _page = -100;
 
 static void did_scroll(UIScrollView *scrollView);
+void layout_icons(UIView *self);
 
 void reset_everything(UIView *view)
 {
@@ -78,6 +79,10 @@ void genscrol(UIScrollView *scrollView, UIView *view)
     }
     else
     {
+        if(view.hasDifferentSubviews)
+        {
+            layout_icons(view);
+        }
         view.isOnScreen = true;
         _enabled = manipulate(view, offset, _rand); //defined in luashit.m
     }
@@ -322,8 +327,8 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
 
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
-static void initialize() {
-
+static void initialize()
+{
     _folders = [NSMutableArray array];
 
     SB_list_class = NSClassFromString(@"SBIconListView"); //iOS 4+

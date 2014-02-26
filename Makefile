@@ -55,8 +55,6 @@ uninstall:
 respring:
 	ssh $(SSH_FLAGS) $(IPHONE_IP) "killall SpringBoard"
 
-babies:
-	$(MAKE) install && $(MAKE) respring
-
-money:
-	$(MAKE) uninstall && $(MAKE) respring
+babies: $(PACKAGE)
+	scp $(SSH_FLAGS) $(PACKAGE) $(IPHONE_IP):.
+	ssh $(SSH_FLAGS) $(IPHONE_IP) "dpkg -i $(PACKAGE) && killall SpringBoard"

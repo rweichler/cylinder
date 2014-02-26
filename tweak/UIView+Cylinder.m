@@ -33,4 +33,19 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     objc_setAssociatedObject(self, @selector(isOnScreen), num, OBJC_ASSOCIATION_RETAIN);
 }
 
+-(BOOL)hasDifferentSubviews
+{
+    NSNumber *count = objc_getAssociatedObject(self, @selector(hasDifferentSubviews));
+
+    BOOL different = self.subviews.count != count.intValue;
+
+    if(different)
+    {
+        count = [NSNumber numberWithInt:self.subviews.count];
+        objc_setAssociatedObject(self, @selector(hasDifferentSubviews), count, OBJC_ASSOCIATION_RETAIN);
+    }
+
+    return different;
+}
+
 @end
