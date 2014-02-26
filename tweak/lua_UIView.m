@@ -24,8 +24,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
 static int l_transform_scale(lua_State *L);
-static int l_set_transform(lua_State *L, UIView *self); //-1 = transform
-static int l_get_transform(lua_State *L, UIView *self); //pushes transform to top of stack
+static int l_set_transform(lua_State *L, CALayer *self); //-1 = transform
+static int l_get_transform(lua_State *L, CALayer *self); //pushes transform to top of stack
 
 static int l_nsobject_index(lua_State *L);
 static int l_nsobject_setindex(lua_State *L);
@@ -99,10 +99,6 @@ static int l_uiview_index(lua_State *L)
         {
             lua_pushnumber(L, self.alpha);
             return 1;
-        }
-        else if(!strcmp(key, "transform"))
-        {
-            return l_get_transform(L, self);
         }
         else if(!strcmp(key, "rotate"))
         {
@@ -203,6 +199,10 @@ static int l_calayer_index(lua_State *L)
             lua_pushnumber(L, self.bounds.size.height);
             return 1;
         }
+        else if(!strcmp(key, "transform"))
+        {
+            return l_get_transform(L, self);
+        }
     }
 
     return 0;
@@ -232,13 +232,6 @@ static int l_uiview_setindex(lua_State *L)
 
             self.alpha = lua_tonumber(L, 3);
         }
-        else if(!strcmp(key, "transform"))
-        {
-            lua_pushvalue(L, 3);
-            int result = l_set_transform(L, self);
-            lua_pop(L, 1);
-            return result;
-        }
     }
     return 0;
 }
@@ -265,6 +258,13 @@ static int l_calayer_setindex(lua_State *L)
             CGPoint pos = self.position;
             pos.y = lua_tonumber(L, 3);
             self.position = pos;
+        }
+        else if(!strcmp(key, "transform"))
+        {
+            lua_pushvalue(L, 3);
+            int result = l_set_transform(L, self);
+            lua_pop(L, 1);
+            return result;
         }
     }
     return 0;
@@ -420,7 +420,7 @@ int l_push_base_transform(lua_State *L)
     TRANSFORM.M = lua_tonumber(LUASTATE, -1);\
     lua_pop(LUASTATE, 1)
 
-static int l_set_transform(lua_State *L, UIView *self) //-1 = transform
+static int l_set_transform(lua_State *L, CALayer *self) //-1 = transform
 {
     if(!lua_istable(L, -1))
         return luaL_error(L, "transform must be a table");
@@ -432,7 +432,7 @@ static int l_set_transform(lua_State *L, UIView *self) //-1 = transform
     CATransform3D transform;
     int i = 0;
     CALL_TRANSFORM_MACRO(FILL_TRANSFORM, L, i, transform);
-    self.layer.transform = transform;
+    self.transform = transform;
 
     return 0;
 }
@@ -442,11 +442,11 @@ static int l_set_transform(lua_State *L, UIView *self) //-1 = transform
     lua_pushnumber(LUASTATE, TRANSFORM.M);\
     lua_settable(LUASTATE, -3)
 
-static int l_get_transform(lua_State *L, UIView *self) //pushes transform to top of stack
+static int l_get_transform(lua_State *L, CALayer *self) //pushes transform to top of stack
 {
     lua_newtable(L);
     int i = 0;
-    CALL_TRANSFORM_MACRO(PUSH_TRANSFORM, L, i, self.layer.transform);
+    CALL_TRANSFORM_MACRO(PUSH_TRANSFORM, L, i, self.transform);
     return 1;
 }
 
