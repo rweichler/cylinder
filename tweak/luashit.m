@@ -389,10 +389,10 @@ void write_file(const char *msg, const char *filename)
     [fileHandle closeFile];
 }
 
-static void push_view(UIView *view)
+static void push_view(id view)
 {
     lua_pushlightuserdata(L, view);
-    luaL_getmetatable(L, "UIView");
+    luaL_getmetatable(L, "nsobject");
     lua_setmetatable(L, -2);
 }
 
@@ -431,10 +431,12 @@ BOOL manipulate(UIView *view, float offset, u_int32_t rand)
     }
 
     view.layer.transform = CATransform3DIdentity;
+    [view.layer restorePosition];
     view.alpha = 1;
     for(UIView *v in view.subviews)
     {
         v.layer.transform = CATransform3DIdentity;
+        [v.layer restorePosition];
         view.alpha = 1;
     }
     if(_randomize)

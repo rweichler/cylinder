@@ -33,7 +33,7 @@ MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
 CYLINDER_DIR=/Library/Cylinder/
 
 COMP=../include/libsubstrate.dylib CompileMe.m $(LIBLUA)
-REQ=$(COMP) Tweak.m luashit.h luashit.m lua_UIView.h lua_UIView.m macros.h Makefile UIView+Cylinder.m UIView+Cylinder.h
+REQ=$(COMP) Tweak.m luashit.h luashit.m lua_UIView.h lua_UIView.m macros.h Makefile UIView+Cylinder.m UIView+Cylinder.h CALayer+Cylinder.h CALayer+Cylinder.m
 
 all: $(DYLIB)
 

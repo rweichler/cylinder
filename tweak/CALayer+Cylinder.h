@@ -17,12 +17,11 @@ You should have received a copy of the GNU General Public License
 along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#import <QuartzCore/QuartzCore.h>
-#import <lua/lua.h>
 #import <UIKit/UIKit.h>
-#import "CALayer+Cylinder.h"
 
-void close_lua();
-BOOL init_lua(NSArray *scripts, BOOL random);
-CATransform3D *default_transform();
-BOOL manipulate(UIView *view, float offset, u_int32_t rand);
+@interface CALayer(Cylinder)
+-(void)savePosition;
+-(void)restorePosition;
+@property (nonatomic, readonly) CGPoint savedPosition;
+@property (nonatomic, readonly) BOOL hasSavedPosition;
+@end

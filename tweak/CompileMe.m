@@ -30,3 +30,4 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "luashit.m"
 #import "lua_UIView.m"
 #import "UIView+Cylinder.m"
+#import "CALayer+Cylinder.m"

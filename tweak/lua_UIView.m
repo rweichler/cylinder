@@ -26,21 +26,22 @@ static int l_transform_translate(lua_State *L);
 static int l_transform_scale(lua_State *L);
 static int l_set_transform(lua_State *L, UIView *self); //-1 = transform
 static int l_get_transform(lua_State *L, UIView *self); //pushes transform to top of stack
-static int l_uiview_index(lua_State *L);
-static int l_uiview_setindex(lua_State *L);
-static int l_uiview_len(lua_State *L);
+
+static int l_nsobject_index(lua_State *L);
+static int l_nsobject_setindex(lua_State *L);
+static int l_nsobject_len(lua_State *L);
 
 int l_create_uiview_metatable(lua_State *L)
 {
-    luaL_newmetatable(L, "UIView");
+    luaL_newmetatable(L, "nsobject");
 
-    lua_pushcfunction(L, l_uiview_index);
+    lua_pushcfunction(L, l_nsobject_index);
     lua_setfield(L, -2, "__index");
 
-    lua_pushcfunction(L, l_uiview_setindex);
+    lua_pushcfunction(L, l_nsobject_setindex);
     lua_setfield(L, -2, "__newindex");
 
-    lua_pushcfunction(L, l_uiview_len);
+    lua_pushcfunction(L, l_nsobject_len);
     lua_setfield(L, -2, "__len");
 
     lua_pop(L, 1);
@@ -165,7 +166,55 @@ static int l_uiview_index(lua_State *L)
                 return 1;
             }
         }
+        else if(!strcmp(key, "layer"))
+        {
+            push_view(self.layer);
+            return 1;
+        }
     }
+
+    return 0;
+}
+
+static int l_calayer_index(lua_State *L)
+{
+    CALayer *self = (CALayer *)lua_touserdata(L, 1);
+    if(lua_isstring(L, 2))
+    {
+        const char *key = lua_tostring(L, 2);
+
+        if(!strcmp(key, "x"))
+        {
+            lua_pushnumber(L, self.position.x);
+            return 1;
+        }
+        else if(!strcmp(key, "y"))
+        {
+            lua_pushnumber(L, self.position.y);
+            return 1;
+        }
+        else if(!strcmp(key, "width"))
+        {
+            lua_pushnumber(L, self.bounds.size.width);
+            return 1;
+        }
+        else if(!strcmp(key, "height"))
+        {
+            lua_pushnumber(L, self.bounds.size.height);
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int l_nsobject_index(lua_State *L)
+{
+    id self = (id)lua_touserdata(L, 1);
+    if([self isKindOfClass:UIView.class])
+        return l_uiview_index(L);
+    else if([self isKindOfClass:CALayer.class])
+        return l_calayer_index(L);
 
     return 0;
 }
@@ -194,11 +243,58 @@ static int l_uiview_setindex(lua_State *L)
     return 0;
 }
 
+static int l_calayer_setindex(lua_State *L)
+{
+    CALayer *self = (CALayer *)lua_touserdata(L, 1);
+    if(lua_isstring(L, 2))
+    {
+        const char *key = lua_tostring(L, 2);
+
+        if(!strcmp(key, "x"))
+        {
+            if(!lua_isnumber(L, 3)) return luaL_error(L, LUA_QL("x") " must be a number");
+            [self savePosition];
+            CGPoint pos = self.position;
+            pos.x = lua_tonumber(L, 3);
+            self.position = pos;
+        }
+        else if(!strcmp(key, "y"))
+        {
+            if(!lua_isnumber(L, 3)) return luaL_error(L, LUA_QL("y") " must be a number");
+            [self savePosition]; //TODO implement this and resetPosition.... prolly needa refactor some shit
+            CGPoint pos = self.position;
+            pos.y = lua_tonumber(L, 3);
+            self.position = pos;
+        }
+    }
+    return 0;
+}
+
+static int l_nsobject_setindex(lua_State *L)
+{
+    id self = (id)lua_touserdata(L, 1);
+    if([self isKindOfClass:UIView.class])
+        return l_uiview_setindex(L);
+    else if([self isKindOfClass:CALayer.class])
+        return l_calayer_setindex(L);
+
+    return 0;
+}
+
 static int l_uiview_len(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
     lua_pushnumber(L, self.subviews.count);
     return 1;
+}
+
+static int l_nsobject_len(lua_State *L)
+{
+    id self = (id)lua_touserdata(L, 1);
+    if([self isKindOfClass:UIView.class])
+        return l_uiview_len(L);
+
+    return 0;
 }
 
 

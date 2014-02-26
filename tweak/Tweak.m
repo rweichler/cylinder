@@ -47,10 +47,12 @@ static void did_scroll(UIScrollView *scrollView);
 void reset_everything(UIView *view)
 {
     view.layer.transform = CATransform3DIdentity;
+    [view.layer restorePosition];
     view.alpha = 1;
     for(UIView *v in view.subviews)
     {
         v.layer.transform = CATransform3DIdentity;
+        [v.layer restorePosition];
         v.alpha = 1;
     }
 }
@@ -79,6 +81,20 @@ void genscrol(UIScrollView *scrollView, UIView *view)
     }
 }
 
+void switch_pos(CALayer *layer)
+{
+    if(!layer.hasSavedPosition) return;
+
+    CGPoint pos = layer.position;
+    CGPoint savedPos = layer.savedPosition;
+
+    [layer restorePosition];
+    layer.position = pos;
+    [layer savePosition];
+    layer.position = savedPos;
+
+}
+
 //scrunch fix
 void SB_showAllIcons(UIView *self, SEL _cmd)
 {
@@ -89,11 +105,14 @@ void SB_showAllIcons(UIView *self, SEL _cmd)
     CATransform3D *iconTransforms = (CATransform3D *)malloc(count*sizeof(CATransform3D));
 
     self.layer.transform = CATransform3DIdentity;
+    switch_pos(self.layer);
+
     for(int i = 0; i < count; i++)
     {
         UIView *icon = [self.subviews objectAtIndex:i];
         iconTransforms[i] = icon.layer.transform;
         icon.layer.transform = CATransform3DIdentity;
+        switch_pos(icon.layer);
     }
 
     //call showAllIcons
@@ -101,10 +120,12 @@ void SB_showAllIcons(UIView *self, SEL _cmd)
 
     //set everything back to the way it was
     self.layer.transform = myTransform;
+    switch_pos(self.layer);
     for(int i = 0; i < count; i++)
     {
         UIView *icon = [self.subviews objectAtIndex:i];
-        self.layer.transform = iconTransforms[i];
+        icon.layer.transform = iconTransforms[i];
+        switch_pos(icon.layer);
     }
 
     free(iconTransforms);
