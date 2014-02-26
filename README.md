@@ -42,7 +42,9 @@ respring! This allows for rapid testing.
 ### Probably doesn't work
 
 * iOS 2
-* The first iOS (seriously - does anyone still run this one?)
+* The first iOS
+
+I'm probably never going to support these because a device that can run iOS 1 can run iOS 3.
 
 ## Todo list
 
