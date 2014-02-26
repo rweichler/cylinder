@@ -23,6 +23,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "macros.h"
 #import "UIView+Cylinder.h"
 
+void write_error(const char *error);
 
 static NSMutableArray *_folders;
 
@@ -36,6 +37,7 @@ static IMP original_SB_layerClass;
 static IMP original_SB_showAllIcons;
 static IMP original_SB_init;
 static IMP original_SB_dealloc;
+static IMP original_SB_insertIcon;
 
 static BOOL _enabled;
 
@@ -94,6 +96,7 @@ void switch_pos(CALayer *layer)
     layer.position = savedPos;
 
 }
+
 
 //scrunch fix
 void SB_showAllIcons(UIView *self, SEL _cmd)
@@ -245,6 +248,31 @@ void SB_dealloc(id self, SEL _cmd)
     original_SB_dealloc(self, _cmd);
 }
 
+void layout_icons(UIView *self)
+{
+    NSMutableArray *icons = self.subviews.mutableCopy;
+
+    [icons sortUsingComparator:^NSComparisonResult(UIView *icon1, UIView *icon2)
+    {
+        if(icon1.frame.origin.y != icon2.frame.origin.y)
+            return [[NSNumber numberWithFloat:icon1.frame.origin.y] compare:[NSNumber numberWithFloat:icon2.frame.origin.y]];
+        else
+            return [[NSNumber numberWithFloat:icon1.frame.origin.x] compare:[NSNumber numberWithFloat:icon2.frame.origin.x]];
+    }];
+
+    for(UIView *icon in icons)
+    {
+        [icon.superview bringSubviewToFront:icon];
+    }
+}
+
+id SB_insertIcon(UIView *self, SEL _cmd, UIView *icon, unsigned index, BOOL now, BOOL pop)
+{
+    id result = original_SB_insertIcon(self, _cmd, icon, index, now, pop);
+    layout_icons(self);
+    return result;
+}
+
 void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
@@ -330,6 +358,8 @@ static void initialize() {
     MSHookMessageEx(cls, @selector(dealloc), (IMP)SB_dealloc, (IMP *)&original_SB_dealloc);
     //fix icon scrunching in certain circumstances
     MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
+
+    MSHookMessageEx(SB_list_class, @selector(insertIcon:atIndex:moveNow:pop:), (IMP)SB_insertIcon, (IMP *)&original_SB_insertIcon);
 
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
