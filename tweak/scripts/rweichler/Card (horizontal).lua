@@ -2,7 +2,7 @@
 
 return function(page, offset, screen_width, screen_height)
 
-    page:translate(offset)
+    page.layer.x = page.layer.x + offset
 
     local percent = offset/page.width
 
@@ -10,11 +10,6 @@ return function(page, offset, screen_width, screen_height)
         page.alpha = 0
     end
 
-    local angle = math.pi
-    if offset ~= 0 then
-        angle = math.atan(PERSPECTIVE_DISTANCE/math.abs(offset))
-    end
-
-    page:rotate(angle*percent*2, 0, 1, 0)
+    page:rotate(-math.pi*percent, 0, 1, 0)
 
 end
