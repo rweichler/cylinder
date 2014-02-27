@@ -35,8 +35,6 @@ static IMP original_SB_wallpaperRelativeBounds;
 static IMP original_SB_showIconImages;
 static IMP original_SB_layerClass;
 static IMP original_SB_showAllIcons;
-static IMP original_SB_init;
-static IMP original_SB_dealloc;
 static IMP original_SB_insertIcon;
 
 static BOOL _enabled;
@@ -218,39 +216,7 @@ CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
 //special thanks to @noahd for this fix: https://github.com/rweichler/cylinder/issues/17
 Class SB_layerClass(id self, SEL _cmd)
 {
-    if(_enabled || IOS_VERSION < 4)
-        return [CATransformLayer class];
-    else
-        return original_SB_layerClass(self, _cmd);
-}
-
-void add_folder(id self)
-{
-    [_folders addObject:self];
-    [self release];
-}
-
-id SB_init(id self, SEL _cmd)
-{
-    add_folder(self);
-    return original_SB_init(self, _cmd);
-}
-
-id SB_initWithFolder(id self, SEL _cmd, id folder, int orientation, id viewMap)
-{
-    add_folder(self);
-    return original_SB_init(self, _cmd, folder, orientation, viewMap);
-}
-
-void SB_dealloc(id self, SEL _cmd)
-{
-    NSUInteger index = [_folders indexOfObject:self];
-    if(index != NSNotFound)
-    {
-        [self retain];
-        [_folders removeObjectAtIndex:index];
-    }
-    original_SB_dealloc(self, _cmd);
+    return [CATransformLayer class];
 }
 
 void layout_icons(UIView *self)
@@ -296,28 +262,6 @@ void load_that_shit()
         if(![effects isKindOfClass:NSArray.class]) effects = nil; //this is for backwards compatibility
         _enabled = init_lua(effects, random);
     }
-
-    if(enabled != _enabled)
-    {
-        //iOS 7
-        SEL first = @selector(resetIconListViews);
-        //iOS 5 and 4 (and probably 6)
-        SEL second1 = @selector(prepareToResetRootIconLists);
-        SEL second2 = @selector(resetRootIconLists);
-        for(id folder in _folders)
-        {
-            if([folder respondsToSelector:first])
-            {
-                [folder performSelector:first];
-            }
-            else if([folder respondsToSelector:second1] && [folder respondsToSelector:second2])
-            {
-                [folder performSelector:second1];
-                [folder performSelector:second2];
-            }
-
-        }
-    }
 }
 
 static inline void setSettingsNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
@@ -355,12 +299,6 @@ static void initialize()
     Class SBDockIconListView = NSClassFromString(@"SBDockIconListView");
     if(SBDockIconListView) MSHookMessageEx(object_getClass(SBDockIconListView), @selector(layerClass), original_SB_layerClass, NULL);
 
-    //make _enabled disable the CATransformLayer bit
-    if(IOS_VERSION < 7)
-        MSHookMessageEx(cls, @selector(init), (IMP)SB_init, (IMP *)&original_SB_init);
-    else
-        MSHookMessageEx(cls, @selector(initWithFolder:orientation:viewMap:), (IMP)SB_initWithFolder, (IMP *)&original_SB_init);
-    MSHookMessageEx(cls, @selector(dealloc), (IMP)SB_dealloc, (IMP *)&original_SB_dealloc);
     //fix icon scrunching in certain circumstances
     MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
 
