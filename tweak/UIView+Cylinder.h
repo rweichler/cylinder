@@ -21,5 +21,5 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 @interface UIView(Cylinder)
 @property (nonatomic, assign) BOOL isOnScreen;
-@property (nonatomic, readonly) BOOL hasDifferentSubviews;
+@property (nonatomic, assign) BOOL hasDifferentSubviews;
 @end

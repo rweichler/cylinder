@@ -48,4 +48,10 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     return different;
 }
 
+-(void)setHasDifferentSubviews:(BOOL)different
+{
+    NSNumber *count = different ? [NSNumber numberWithInt:(-1)] : nil;
+    objc_setAssociatedObject(self, @selector(hasDifferentSubviews), count, OBJC_ASSOCIATION_RETAIN);
+}
+
 @end
