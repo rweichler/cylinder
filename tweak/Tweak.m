@@ -259,7 +259,7 @@ void layout_icons(UIView *self)
 
     [icons sortUsingComparator:^NSComparisonResult(UIView *icon1, UIView *icon2)
     {
-        if(icon1.frame.origin.y != icon2.frame.origin.y)
+        if(fabs(icon1.frame.origin.y - icon2.frame.origin.y) > 0.01)
             return [[NSNumber numberWithFloat:icon1.frame.origin.y] compare:[NSNumber numberWithFloat:icon2.frame.origin.y]];
         else
             return [[NSNumber numberWithFloat:icon1.frame.origin.x] compare:[NSNumber numberWithFloat:icon2.frame.origin.x]];
