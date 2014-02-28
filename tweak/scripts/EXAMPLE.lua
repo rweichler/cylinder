@@ -41,6 +41,12 @@ end
 
 --available functions:
 
+
+print("blah blah blah") --> writes blah blah blah to ~mobile/Library/Logs/Cylinder/print.log
+popup("blah blah blah") --> makes a popup with the message: blah blah blah (for easy debugging)
+                        -- WARNING: if you aren't careful there will be 1,000,000 popups appearing,
+                        -- so make sure you only call this once
+
 dofile("file.lua") --> runs the lua file like a function and returns whatever it returns
 
 view:rotate(angle, pitch, yaw, roll) --> rotate the view by angle (in radians).
@@ -76,6 +82,34 @@ view.y
 view.width
 view.height
 
+-- view layer properties
+-- this is usually for when you want to do
+-- a translation, then a rotation
+-- but the perspective gets messed up.
+
+--you can set these
+view.layer.x
+view.layer.y
+
+--you can't set these
+view.layer.width
+view.layer.height
+
+--more on this later
+view.layer.transform
+
+--a typical use case would be:
+
+view.layer.x = view.layer.x + offset
+
+-- stuff added in 0.14.2.26.1 (READONLY)
+
+PERSPECTIVE_DISTANCE --distance from viewpoint to icons
+
+--these should be self-explanitory
+page.max_icons
+page.max_columns
+page.max_rows
 
 --builtin lua functions
 
@@ -91,8 +125,6 @@ math.floor(2.4328) ---> 2
 
 os.time() ---> number of seconds since January 1st, 1970
 
-print("blah blah blah") -----> writes to /var/mobile/Library/Logs/Cylinder/print.log
-
 -- ....yeah those are some basics,
 -- there are a ton more. just google
 -- "lua 5.2 standard library" or something
@@ -105,8 +137,9 @@ print("blah blah blah") -----> writes to /var/mobile/Library/Logs/Cylinder/print
 -- **** ADVANCED USERS *****
 -- *************************
 
-view.transform --> this is if you want to
-               --  manipulate the transformation matrix directly.
+view.layer.transform
+               --  this is if you want to manipulate
+               --  the transformation matrix directly.
                --  it will return an array like this:
                    [m11, m12, m13, m14,
                     m21, m22, m23, m24,
