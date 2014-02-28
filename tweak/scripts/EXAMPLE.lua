@@ -147,7 +147,7 @@ view.layer.transform
                --   NOTE: you have to set it back again, kinda like
                --   a view's frame. i.e.:
                     local transform = view.transform
-                    transform[12] = -0.002 ---> allow perspective (don't worry i already do this automatically when you rotate)
+                    transform[12] = -1/PERSPECTIVE_DISTANCE ---> allow perspective (don't worry i already do this automatically when you rotate)
                     view.transform = transform
 
 -- more will be added later
