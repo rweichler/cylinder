@@ -56,10 +56,6 @@ view:rotate(angle, pitch, yaw, roll) --> rotate the view by angle (in radians).
                                      --  roll is the flat one.
 view:rotate(angle) --> equivalent of view:rotate(angle, 0, 0, 1)
 
--- *****WARNING*******
--- DO NOT rotate the pitch or yaw of the page AND its icons. this
--- will make them blur and cause performance loss. roll only is fine.
-
 view:translate(x, y, z) --> this one should be obvious.
 
 view:scale(size) --> obvious
