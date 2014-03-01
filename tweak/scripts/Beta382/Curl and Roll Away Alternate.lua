@@ -18,12 +18,7 @@ return function(page, offset, screen_width, screen_height)
     if (stage2P > 1) then stage2P = 1
     elseif (stage2P < 0) then stage2P = 0 end
     
-    local i = 0
-    while true do
-        i = i + 1
-        local icon = page[i]
-        if not icon then break end
-        
+    for i, icon in subviews(page) do
         local iconAngle = theta*(i-1)
         if (offset < 0) then iconAngle = iconAngle + math.pi end
         
