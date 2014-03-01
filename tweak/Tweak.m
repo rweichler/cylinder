@@ -143,6 +143,7 @@ void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView
     original_SB_scrollViewDidEndDecelerating(self, _cmd, scrollView);
     for(UIView *view in scrollView.subviews)
         reset_everything(view);
+    _rand = arc4random();
 }
 
 //in iOS 6-, the dock is actually *BEHIND* the icon scroll view, so this fixes that
