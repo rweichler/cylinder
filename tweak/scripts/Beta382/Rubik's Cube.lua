@@ -39,8 +39,8 @@ return function(page, offset, screen_width, screen_height)
         
         cubeRow(page, i, percent, offset)
     end
-    
-    page.layer.x = page.layer.x + offset
+
+    page:translate(offset)
 end
 
 
