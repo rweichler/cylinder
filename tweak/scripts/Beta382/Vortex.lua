@@ -20,12 +20,7 @@ return function(page, offset, screen_width, screen_height)
     
     page:translate(offset, 0, 0)
     
-    local i = 0
-    while true do
-        i = i + 1
-        local icon = page[i]
-        if not icon then break end
-        
+    for i, icon in subviews(page) do
         local iconAngle = theta*(i-1) - math.pi/6
         
         local begX = icon.x+icon.width/2

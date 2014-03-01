@@ -26,12 +26,7 @@ return function (page, offset, screen_width, screen_height)
         end
     end
     
-    local i = 0
-    while true do
-        i = i + 1
-        local icon = page[i]
-        if not icon then break end
-        
+    for i, icon in subviews(page) do
         local iconIndex = i -- 1-indexed
         local iconRowNum = math.floor((iconIndex-1)/page.max_columns) -- 0-indexed
         if (iconRowNum%2 == 1) then
@@ -76,6 +71,8 @@ return function (page, offset, screen_width, screen_height)
         end
         if (direction < 0) then percentThroughRow = 1-percentThroughRow end
         
+        -- Removed because the icon_spacing binding wouldn't work on 64 bit devices
+        -- Kept in case that gets added back
         --local maxTravelDistanceX = (page[1].width+page.icon_spacing.x)*(page.max_columns-1)
         local maxTravelDistanceX = (page.width-iconWidth-(topLeftX*2))
         if (xToX) then
@@ -93,7 +90,10 @@ return function (page, offset, screen_width, screen_height)
         if (percentThroughColumn < 0) then percentThroughColumn = 0 end
         if (offset < 0) then percentThroughColumn = 1-percentThroughColumn end
         
+        -- Removed because the icon_spacing binding wouldn't work on 64 bit devices
+        -- Kept in case that gets added back
         --local maxTravelDistanceY = (page[1].height+page.icon_spacing.y)*(page.max_rows-1)
+        
         local maxTravelDistanceY = (page.height-iconHeight-(topLeftY*2))
         if (yToY) then
             maxTravelDistanceY = yToY*(page.max_rows-1)
@@ -104,5 +104,6 @@ return function (page, offset, screen_width, screen_height)
         
         icon:translate(endX-begX, endY-begY, 0)
     end
+    
     page:translate(offset, 0, 0)
 end
