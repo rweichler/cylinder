@@ -179,6 +179,7 @@ static CLEffectsController *sharedController = nil;
     sharedController = nil;
     self.selectedEffects = nil;
     self.effects = nil;
+    self.clearButton = nil;
     [super dealloc];
 }
 
