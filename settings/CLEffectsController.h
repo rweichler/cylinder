@@ -28,6 +28,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 }
 @property (nonatomic, retain) NSMutableDictionary *effects;
 @property (nonatomic, retain) NSMutableArray *selectedEffects;
+@property (nonatomic, strong) UIBarButtonItem *clearButton;
 // + (void)load;
 - (id)initForContentSize:(CGSize)size;
 - (id)view;

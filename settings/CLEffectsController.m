@@ -48,7 +48,7 @@ static CLEffectsController *sharedController = nil;
 
 
 @implementation CLEffectsController
-@synthesize effects = _effects, selectedEffects=_selectedEffects;
+@synthesize effects = _effects, selectedEffects=_selectedEffects, clearButton=_clearButton;
 
 - (id)initForContentSize:(CGSize)size
 {
@@ -67,7 +67,9 @@ static CLEffectsController *sharedController = nil;
 		}
 		
 		if ([self respondsToSelector:@selector(setView:)])
-			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];			
+			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];	
+
+        self.clearButton = [[UIBarButtonItem.alloc initWithTitle:@"Clear" style:UIBarButtonItemStyleBordered target:self action:@selector(clear:)] autorelease];
 	}
     sharedController = self;
 	return self;
@@ -144,6 +146,22 @@ static CLEffectsController *sharedController = nil;
     }
 }
 
+-(void)clear:(UIBarButtonItem *)clearButton
+{
+    if(clearButton != self.clearButton) return;
+
+    for(CLEffect *effect in self.selectedEffects)
+    {
+        effect.selected = false;
+        [self setCellIcon:effect.cell effect:effect];
+    }
+
+    self.selectedEffects = [NSMutableArray array];
+    [_tableView reloadData];
+
+    [self updateSettings];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     if(!_initialized)
@@ -152,6 +170,8 @@ static CLEffectsController *sharedController = nil;
         _initialized = true;
     }
     [super viewWillAppear:animated];
+
+    ((UINavigationItem *)self.navigationItem).rightBarButtonItem = self.clearButton;
 }
 
 - (void)dealloc
@@ -269,12 +289,15 @@ static CLEffectsController *sharedController = nil;
             cell.numberLabel.text = [NSString stringWithFormat:@"%d", (i + 1)];
         }
 
-        // make the title changes
-        CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
-
-        ctrl.selectedEffects = self.selectedEffects;
-
+        [self updateSettings];
     }
+}
+
+-(void)updateSettings
+{
+    // make the title changes
+    CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
+    ctrl.selectedEffects = self.selectedEffects;
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath
