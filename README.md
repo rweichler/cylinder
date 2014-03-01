@@ -16,6 +16,14 @@ your name in /Library/Cylinder on your phone (like
 and it should appear in settings. You don't even have to
 respring! This allows for rapid testing.
 
+# WARNING
+
+THIS IS DEVELOPMENT SOFTWARE. DO NOT HOST IT IN YOUR REPO. [USE THE LATEST STABLE BUILD INSTEAD](http://r333d.com/repo/cylinder.php).
+
+
+# WARNING WARNING
+
+SERIOUSLY. I'M NOT KIDDING. DON'T DO IT.
 
 ## Compatible devices
 
