@@ -1,230 +1,225 @@
-Desired=Unknown/Install/Remove/Purge/Hold
-| Status=Not/Inst/Cfg-files/Unpacked/Failed-cfg/Half-inst/trig-aWait/Trig-pend
-|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
-||/ Name                                                 Version         Description
-+++-====================================================-===============-============================================
-ii  adv-cmds                                             119-5           finger, fingerd, last, lsvfs, md, ps
-ii  applist                                              1.5.7           Allow extensions to read the list of install
-ii  apr-lib                                              1.3.3-2         just the /usr/lib folder from APR
-ii  apt                                                  1:0-23          any advanced packaging tool from Debian
-ii  apt7                                                 0.7.25.3-6      the advanced packaging tool from Debian
-ii  apt7-key                                             0.7.25.3-3      repository encryption key management tool
-ii  apt7-lib                                             0.7.25.3-11     the advanced packaging library from Debian
-ii  apt7-ssl                                             0.7.25.3-3      advanced packaging from Debian /via SSL/
-ii  base                                                 1-4             underlying system directory structure
-ii  bash                                                 4.0.17-13       the best shell ever, written by Brian Fox
-ii  berkeleydb                                           4.6.21-4p       Oracle's embeddable database engine
-ii  bzip2                                                1.0.5-7         compression that's slightly better than gzip
-ii  cc.tweak.statushud                                   2.0.0           Put volume HUD in status bar
-ii  com.a3tweaks.flipswitch                              1.0.3           Centralized toggle system for iOS
-ii  com.alexzielenski.tinybar                            0.0.4-1         Thins notification banners down to size!
-ii  com.alexzielenski.zeppelin                           2.0.2           Replaces carrier text with an image!
-ii  com.appliesinc.itunesradiounlimited                  1.1.0           Unlimited Skips & Ad-Free Radio
-ii  com.bensge.noadstoreopen                             0.0.1-3         prevent Cydia auto-opening AppStore
-ii  com.bytafont.bytafont2                               2.1.3           BytaFont 2 lets you apply fonts to your iDev
-ii  com.codethemed.iconbundles                           0.1-3           Theme icons by bundle identifier without ico
-ii  com.danyl.sicarius                                   1.0.1           Swipe SpringBoard page to quit all apps or r
-ii  com.dislick.typo5                                    0.1.1           the new typophone. but in pretty.
-ii  com.ericasadun.utilities                             1:0.4.2         A collection of command-line utilities for v
-ii  com.evad3rs.evasi0n7                                 0.3             untethered jailbreak based on evad3rs exploi
-ii  com.fortysixandtwo.alkaline                          1.3             Themeable status bar battery replacement for
-ii  com.funs.togglecontrolsagain                         0.1-1           switch b/w clock & media-controls on lockscr
-ii  com.ianb821.taptodayscalendar                        1.1.6           Launch the calendar appfrom the NC center.
-ii  com.jakej.huddismiss                                 1.0             dismiss the volume HUD when tapped
-ii  com.jcorbett.bigify                                  1.5.3           make icons bigger, smaller, rotated, transpa
-ii  com.jontelang.boover                                 2.1-3           Total control over your badges.
-ii  com.limesoft-solutions.bubblepoptone                 1.1             Cool Bubble Pop text/ringtone
-ii  com.linusyang.cve-2014-1266                          0.2-1           protects against known SSL verification expl
-ii  com.macciti.vagroundedios7                           1.1             Legible and stylish font for iOS 7 devices.
-ii  com.maxkatzmann.jellylock7                           1.0.0-4         pretty convenient lockscreen app launcher
-ii  com.modmyi.afternoondelightringtone                  1.0             Afternoon Delight Ringtone from anchorman
-ii  com.modmyi.dotsforalkaline                           1.1             Dots for Alkaline
-ii  com.modmyi.spaceblueberry                            1.5             Space BlueBerry
-ii  com.myrepospace.pwn24k.bootstrap                     3.1.1           Provides a Safe Bootstrap for mobile substra
-ii  com.n00neimp0rtant.opennotifier                      2.0~beta2-6     Show Notification Icons in the status bar
-ii  com.pnre.blurpaper                                   0.0.8-1         Blur, blur everywhere.
-ii  com.pnre.uniformity                                  0.0.1~beta4-1   Customize control center appearance.
-ii  com.ravirajm.ayna                                    1.0             Your pocket mirror.
-ii  com.rbt.batterylife                                  1.3.1           Displays useful information about your devic
-ii  com.robottom.readreceiptfs                           1.0.0-1         A read receipt flipswitch!
-ii  com.rpetrich.rocketbootstrap                         1.0.1           mach lookup support library for iOS 7
-ii  com.saurik.substrate.safemode                        0.9.4000        safe mode safety extension (safe)
-ii  com.skyfrost.samestatus                              1.0-1           makes ios7 lockscreen statusbar smaller
-ii  com.sull.animer7                                     1.0             customize animations of banners & switcher
-ii  com.sull.carlaios7                                   1.1.1           You old friend is back. Prettier than ever.
-ii  com.sull.ccmeters                                    1.1.0-1         System/Net Meters for the Control Center!
-ii  com.sull.eclipse                                     1.1.3-3         system-wide Night Mode for iOS
-ii  com.sull.fabiusutils                                 0.0.1-38        This is an tool used in several Fabius packa
-ii  com.sull.flex2                                       1.928a          Easily make your own tweaks, and share them 
-rc  com.sull.ikeywi                                      1.4.5           Customize your 5-Row keyboard
-ii  com.sull.ios7cydiaiconwowb                           1.0             Change the style of Cydia Icon to iOS 7 Styl
-ii  com.sull.mobilesubstratefixlaunchdconfenabler        1.2             NOW SUPPORTS EVASI0N 1.0! NOT FOR A7 DEVICES
-ii  com.sull.nitrous                                     2.3-2           Give JavaScript a speed boost with Nitro
-ii  com.sull.opennotifierpremiumpack                     1.3.1           The official premium pack for OpenNotifier
-ii  com.sull.pandoraskip                                 0.0.1-13        Pandora Skip hack with unlimited skips and n
-ii  com.sull.passwordpilotmodokiios7                     0.1-7           PasswordPilot for iOS 7!
-ii  com.sull.repoicons                                   1.5-21          Required Setup Configuration Files.
-ii  com.sull.safemodencfixerforios7                      2.0-26          Fixes notification center after safe mode, r
-ii  com.sull.springtomize3ios7                           1.1.0-2         Customize your device like never before.
-ii  com.sull.statusbarfix2                               0.1.0-1         Fix status bar not turning white.
-ii  com.sull.swipeselection                              1.3.2-33        Swipe along the keyboard to move the cursor 
-rc  com.tekwik.flaphack                                  1.1             Flappy Bird Hack!
-rc  com.tekwik.hiddensettings7                           0.3.2           Hidden SpringBoard Settings for all Devices!
-ii  com.tekwik.reposetup                                 1.1.1           This file is to setup the repo with all the 
-ii  com.unlimapps.toneenabler                            0.0.1-33        Restore ringtone folder use on iOS 7
-ii  coreutils                                            8.12-12p        core set of Unix shell utilities from GNU
-ii  coreutils-bin                                        8.12-7p         just the /bin folder from GNU coreutils
-ii  curl                                                 7.33.0-8        flexible multi-protocol file transfers
-ii  cy+cpu.arm                                           0               virtual CPU dependency
-ii  cy+kernel.darwin                                     14.0.0          virtual kernel dependency
-ii  cy+lib.corefoundation                                847.21          virtual corefoundation dependency
-ii  cy+model.iphone                                      5.2             virtual model dependency
-ii  cy+os.ios                                            7.0.4           virtual operating system dependency
-ii  cycript                                              0.9.501         runtime execution server and disassembler
-ii  cydia                                                1.1.9           graphical iPhone front-end for APT
-ii  cydia-lproj                                          1.1.8.1         languages and translations for Cydia
-ii  darwintools                                          1-4             startupfiletool, sw_vers
-ii  de.j-gessner.ccloader                                1.2.4           reorder/disable segments of Control Center
-ii  de.j-gessner.safemodeflipswitch                      0.9             Safe Mode Toggle for Flipswitch
-ii  debianutils                                          3.3.3ubuntu1-1p pretty much just run-parts. yep? run-parts
-ii  diffutils                                            2.8.1-6         compare two files for differences
-ii  diskdev-cmds                                         421.7-4         mount, quota, fsck, fstyp, fdisk, tunefs
-ii  dk.andreaslarsen.c8statusbar                         2.0             Alkaline, Wifi, Signal, Loaders
-ii  dpkg                                                 1.14.25-9       package maintainance tools from Debian
-ii  eu.heinelt.ifile                                     2.0.1-1         A File Manager and Viewer. iFile is a file m
-ii  file-cmds                                            220.7-3         chflags, compress, ipcrm, ipcs, pax
-ii  findutils                                            4.2.33-6        indexes and searches filesystems
-ii  firmware                                             7.0.4           almost impressive Apple frameworks
-ii  firmware-sbin                                        0-1             represents Telesphoreo / iPhoneOS conflicts
-ii  gettext                                              0.17-6          internationalization helper for strings
-ii  gnupg                                                1.4.8-4         older encryption compatible with OpenPGP
-ii  grep                                                 2.5.4-3         searches files for regular expressions
-ii  gsc.720p                                             1               virtual GraphicsServices dependency
-ii  gsc.accelerometer                                    1               virtual GraphicsServices dependency
-ii  gsc.accessibility                                    1               virtual GraphicsServices dependency
-ii  gsc.additional-text-tones                            1               virtual GraphicsServices dependency
-ii  gsc.all-features                                     1               virtual GraphicsServices dependency
-ii  gsc.allow-you-tube                                   1               virtual GraphicsServices dependency
-ii  gsc.allow-you-tube-plugin                            1               virtual GraphicsServices dependency
-ii  gsc.any-telephony                                    1               virtual GraphicsServices dependency
-ii  gsc.armv6                                            1               virtual GraphicsServices dependency
-ii  gsc.armv7                                            1               virtual GraphicsServices dependency
-ii  gsc.assistant                                        1               virtual GraphicsServices dependency
-ii  gsc.auto-focus-camera                                1               virtual GraphicsServices dependency
-ii  gsc.battery-current-capacity                         45              virtual GraphicsServices dependency
-ii  gsc.bluetooth                                        1               virtual GraphicsServices dependency
-ii  gsc.bluetooth-le                                     1               virtual GraphicsServices dependency
-ii  gsc.board-id                                         2               virtual GraphicsServices dependency
-ii  gsc.camera-flash                                     1               virtual GraphicsServices dependency
-ii  gsc.cellular-data                                    1               virtual GraphicsServices dependency
-ii  gsc.chip-i-d                                         35152           virtual GraphicsServices dependency
-ii  gsc.contains-cellular-radio                          1               virtual GraphicsServices dependency
-ii  gsc.device-class-number                              1               virtual GraphicsServices dependency
-ii  gsc.device-supports-face-time                        1               virtual GraphicsServices dependency
-ii  gsc.device-supports-navigation                       1               virtual GraphicsServices dependency
-ii  gsc.device-supports-simplistic-road-mesh             1               virtual GraphicsServices dependency
-ii  gsc.device-supports-tethering                        1               virtual GraphicsServices dependency
-ii  gsc.device-supports1080p                             1               virtual GraphicsServices dependency
-ii  gsc.device-supports3-d-imagery                       1               virtual GraphicsServices dependency
-ii  gsc.device-supports3-d-maps                          1               virtual GraphicsServices dependency
-ii  gsc.device-supports4-g                               1               virtual GraphicsServices dependency
-ii  gsc.device-supports720p                              1               virtual GraphicsServices dependency
-ii  gsc.device-supports9-pin                             1               virtual GraphicsServices dependency
-ii  gsc.dictation                                        1               virtual GraphicsServices dependency
-ii  gsc.display-mirroring                                1               virtual GraphicsServices dependency
-ii  gsc.displayport                                      1               virtual GraphicsServices dependency
-ii  gsc.encode-aac                                       1               virtual GraphicsServices dependency
-ii  gsc.encrypted-data-partition                         1               virtual GraphicsServices dependency
-ii  gsc.external-charge-capability                       1               virtual GraphicsServices dependency
-ii  gsc.fcc-logos-via-software                           1               virtual GraphicsServices dependency
-ii  gsc.forward-camera-capability                        1               virtual GraphicsServices dependency
-ii  gsc.front-facing-camera                              1               virtual GraphicsServices dependency
-ii  gsc.gamekit                                          1               virtual GraphicsServices dependency
-ii  gsc.gas-gauge-battery                                1               virtual GraphicsServices dependency
-ii  gsc.gps                                              1               virtual GraphicsServices dependency
-ii  gsc.gyroscope                                        1               virtual GraphicsServices dependency
-ii  gsc.h264-encoder                                     1               virtual GraphicsServices dependency
-ii  gsc.hardware-keyboard                                1               virtual GraphicsServices dependency
-ii  gsc.has-baseband                                     1               virtual GraphicsServices dependency
-ii  gsc.has-spring-board                                 1               virtual GraphicsServices dependency
-ii  gsc.hd-video-capture                                 1               virtual GraphicsServices dependency
-ii  gsc.hdr-image-capture                                1               virtual GraphicsServices dependency
-ii  gsc.hiccough-interval                                0.3             virtual GraphicsServices dependency
-ii  gsc.hidpi                                            1               virtual GraphicsServices dependency
-ii  gsc.homescreen-wallpaper                             1               virtual GraphicsServices dependency
-ii  gsc.hw-encode-snapshots                              1               virtual GraphicsServices dependency
-ii  gsc.i-tunes-family-i-d                               10020           virtual GraphicsServices dependency
-ii  gsc.international-settings                           1               virtual GraphicsServices dependency
-ii  gsc.io-surface-backed-images                         1               virtual GraphicsServices dependency
-ii  gsc.load-thumbnails-while-scrolling                  1               virtual GraphicsServices dependency
-ii  gsc.location-services                                1               virtual GraphicsServices dependency
-ii  gsc.magnetometer                                     1               virtual GraphicsServices dependency
-ii  gsc.main-screen-class                                5               virtual GraphicsServices dependency
-ii  gsc.main-screen-height                               1136            virtual GraphicsServices dependency
-ii  gsc.main-screen-pitch                                326             virtual GraphicsServices dependency
-ii  gsc.main-screen-scale                                2               virtual GraphicsServices dependency
-ii  gsc.main-screen-width                                640             virtual GraphicsServices dependency
-ii  gsc.microphone                                       1               virtual GraphicsServices dependency
-ii  gsc.mms                                              1               virtual GraphicsServices dependency
-ii  gsc.multitasking                                     1               virtual GraphicsServices dependency
-ii  gsc.nike-ipod                                        1               virtual GraphicsServices dependency
-ii  gsc.not-green-tea                                    1               virtual GraphicsServices dependency
-ii  gsc.opengles-1                                       1               virtual GraphicsServices dependency
-ii  gsc.opengles-2                                       1               virtual GraphicsServices dependency
-ii  gsc.panorama-camera-capability                       1               virtual GraphicsServices dependency
-ii  gsc.peer-peer                                        1               virtual GraphicsServices dependency
-ii  gsc.photo-adjustments                                1               virtual GraphicsServices dependency
-ii  gsc.photo-stream                                     1               virtual GraphicsServices dependency
-ii  gsc.proximity-sensor                                 1               virtual GraphicsServices dependency
-ii  gsc.ptp-large-files                                  1               virtual GraphicsServices dependency
-ii  gsc.rear-camera-capability                           1               virtual GraphicsServices dependency
-ii  gsc.regional-behavior-n-t-s-c                        1               virtual GraphicsServices dependency
-ii  gsc.required-battery-level-for-software-update       0.5             virtual GraphicsServices dependency
-ii  gsc.ringer-switch                                    1               virtual GraphicsServices dependency
-ii  gsc.signing-fuse                                     1               virtual GraphicsServices dependency
-ii  gsc.sms                                              1               virtual GraphicsServices dependency
-ii  gsc.stand-alone-contacts                             1               virtual GraphicsServices dependency
-ii  gsc.still-camera                                     1               virtual GraphicsServices dependency
-ii  gsc.telephony                                        1               virtual GraphicsServices dependency
-ii  gsc.telephony-maximum-generation                     3.5             virtual GraphicsServices dependency
-ii  gsc.tv-out-crossfade                                 1               virtual GraphicsServices dependency
-ii  gsc.unified-ipod                                     1               virtual GraphicsServices dependency
-ii  gsc.venice                                           1               virtual GraphicsServices dependency
-ii  gsc.video-camera                                     1               virtual GraphicsServices dependency
-ii  gsc.voice-control                                    1               virtual GraphicsServices dependency
-ii  gsc.voip                                             1               virtual GraphicsServices dependency
-ii  gsc.volume-buttons                                   1               virtual GraphicsServices dependency
-ii  gsc.wi-fi                                            1               virtual GraphicsServices dependency
-ii  gsc.wifi                                             1               virtual GraphicsServices dependency
-ii  gsc.youtube                                          1               virtual GraphicsServices dependency
-ii  gzip                                                 1.6-7           the standard Unix compression algorithm
-ii  kr.slak.cctoggles                                    0.1-15          iOS 7 ControlCenter Toggles and Quicklaunche
-ii  libhide                                              2.4.1-1         Library to hide icons.
-ii  libstatusbar                                         0.9.7.0         Statusbar icon support for 4.0+
-ii  lzma                                                 4.32.7-4        slower, but better, compression algorithm
-ii  me.devbug.sbcenterblurrr                             0.0.1-3         ControlCenter, NotificationCenter's blur rad
-ii  miktr.switch.mono                                    0.1-8           toggles Stereo/mono audio output
-ii  mobilesubstrate                                      0.9.5001        powerful code insertion platform
-ii  ncurses                                              5.7-13          feature-complete terminal library
-ii  openssl                                              0.9.8y-10       SSL library and cryptographic tools
-ii  org.thebigboss.assistantunrestrictor                 1.0             enables VoiceControl when Siri unavailable
-ii  org.thebigboss.repo.icons                            1.0             locally cached package icons from BigBoss
-ii  org.thebigboss.signalbarsios7theme                   1.0.1           Restore the old signal bars on iOS7
-ii  p7zip                                                4.57-3p         claims to be a good compressor
-ii  pam                                                  32.1-3          pluggable (comples) authentication modules
-ii  pam-modules                                          36.1-4          standard Apple authentication modules
-ii  pcre                                                 8.30-5p         Perl-compatible regular expressions
-ii  pincrush                                             0.9.2-1         optimize PNGs just like Apple does
-ii  preferenceloader                                     2.2.2           load preferences in style
-ii  profile.d                                            0-2             makes packaging for /etc/profile reasonable
-ii  readline                                             6.0-7           command-line history management
-ii  sed                                                  4.1.5-7         edits streams of text using patterns
-ii  shell-cmds                                           118-6           killall, mktemp, renice, time, which
-ii  system-cmds                                          433.4-12        iostat, login, passwd, sync, sysctl
-ii  tar                                                  1.19-8          tool for making tape archives
-ii  uikittools                                           1.1.8           UIKit/GraphicsServices command line access
-ii  unrar                                                3.6.8-2p        de-compresses files in rar format
-ii  unzip                                                5.52-5p         de-compesses files in zip format
-ii  wget                                                 1.11-3p         simple HTTP file transfer client
-ii  winterboard                                          0.9.3915        more powerful, open-source SummerBoard
-ii  zip                                                  2.32-5p         standard Windows compression tool
+adv-cmds
+applist
+apr-lib
+apt
+apt7
+apt7-key
+apt7-lib
+apt7-ssl
+base
+bash
+berkeleydb
+bzip2
+cc.tweak.statushud
+com.a3tweaks.flipswitch
+com.alexzielenski.tinybar
+com.alexzielenski.zeppelin
+com.appliesinc.itunesradiounlimited
+com.bensge.noadstoreopen
+com.bytafont.bytafont2
+com.codethemed.iconbundles
+com.danyl.sicarius
+com.dislick.typo5
+com.ericasadun.utilities
+com.evad3rs.evasi0n7
+com.fortysixandtwo.alkaline
+com.funs.togglecontrolsagain
+com.ianb821.taptodayscalendar
+com.jakej.huddismiss
+com.jcorbett.bigify
+com.jontelang.boover
+com.limesoft-solutions.bubblepoptone
+com.linusyang.cve-2014-1266
+com.macciti.vagroundedios7
+com.maxkatzmann.jellylock7
+com.modmyi.afternoondelightringtone
+com.modmyi.dotsforalkaline
+com.modmyi.spaceblueberry
+com.myrepospace.pwn24k.bootstrap
+com.n00neimp0rtant.opennotifier
+com.pnre.blurpaper
+com.pnre.uniformity
+com.ravirajm.ayna
+com.rbt.batterylife
+com.robottom.readreceiptfs
+com.rpetrich.rocketbootstrap
+com.saurik.substrate.safemode
+com.skyfrost.samestatus
+com.sull.animer7
+com.sull.carlaios7
+com.sull.ccmeters
+com.sull.eclipse
+com.sull.fabiusutils
+com.sull.flex2
+com.sull.ikeywi
+com.sull.ios7cydiaiconwowb
+com.sull.mobilesubstratefixlaunchdconfenabler
+com.sull.nitrous
+com.sull.opennotifierpremiumpack
+com.sull.pandoraskip
+com.sull.passwordpilotmodokiios7
+com.sull.repoicons
+com.sull.safemodencfixerforios7
+com.sull.springtomize3ios7
+com.sull.statusbarfix2
+com.sull.swipeselection
+com.tekwik.flaphack
+com.tekwik.hiddensettings7
+com.tekwik.reposetup
+com.unlimapps.toneenabler
+coreutils
+coreutils-bin
+curl
+cy+cpu.arm
+cy+kernel.darwin
+cy+lib.corefoundation
+cy+model.iphone
+cy+os.ios
+cycript
+cydia
+cydia-lproj
+darwintools
+de.j-gessner.ccloader
+de.j-gessner.safemodeflipswitch
+debianutils
+diffutils
+diskdev-cmds
+dk.andreaslarsen.c8statusbar
+dpkg
+eu.heinelt.ifile
+file-cmds
+findutils
+firmware
+firmware-sbin
+gettext
+gnupg
+grep
+gsc.720p
+gsc.accelerometer
+gsc.accessibility
+gsc.additional-text-tones
+gsc.all-features
+gsc.allow-you-tube
+gsc.allow-you-tube-plugin
+gsc.any-telephony
+gsc.armv6
+gsc.armv7
+gsc.assistant
+gsc.auto-focus-camera
+gsc.battery-current-capacity
+gsc.bluetooth
+gsc.bluetooth-le
+gsc.board-id
+gsc.camera-flash
+gsc.cellular-data
+gsc.chip-i-d
+gsc.contains-cellular-radio
+gsc.device-class-number
+gsc.device-supports-face-time
+gsc.device-supports-navigation
+gsc.device-supports-simplistic-road-mesh
+gsc.device-supports-tethering
+gsc.device-supports1080p
+gsc.device-supports3-d-imagery
+gsc.device-supports3-d-maps
+gsc.device-supports4-g
+gsc.device-supports720p
+gsc.device-supports9-pin
+gsc.dictation
+gsc.display-mirroring
+gsc.displayport
+gsc.encode-aac
+gsc.encrypted-data-partition
+gsc.external-charge-capability
+gsc.fcc-logos-via-software
+gsc.forward-camera-capability
+gsc.front-facing-camera
+gsc.gamekit
+gsc.gas-gauge-battery
+gsc.gps
+gsc.gyroscope
+gsc.h264-encoder
+gsc.hardware-keyboard
+gsc.has-baseband
+gsc.has-spring-board
+gsc.hd-video-capture
+gsc.hdr-image-capture
+gsc.hiccough-interval
+gsc.hidpi
+gsc.homescreen-wallpaper
+gsc.hw-encode-snapshots
+gsc.i-tunes-family-i-d
+gsc.international-settings
+gsc.io-surface-backed-images
+gsc.load-thumbnails-while-scrolling
+gsc.location-services
+gsc.magnetometer
+gsc.main-screen-class
+gsc.main-screen-height
+gsc.main-screen-pitch
+gsc.main-screen-scale
+gsc.main-screen-width
+gsc.microphone
+gsc.mms
+gsc.multitasking
+gsc.nike-ipod
+gsc.not-green-tea
+gsc.opengles-1
+gsc.opengles-2
+gsc.panorama-camera-capability
+gsc.peer-peer
+gsc.photo-adjustments
+gsc.photo-stream
+gsc.proximity-sensor
+gsc.ptp-large-files
+gsc.rear-camera-capability
+gsc.regional-behavior-n-t-s-c
+gsc.required-battery-level-for-software-update
+gsc.ringer-switch
+gsc.signing-fuse
+gsc.sms
+gsc.stand-alone-contacts
+gsc.still-camera
+gsc.telephony
+gsc.telephony-maximum-generation
+gsc.tv-out-crossfade
+gsc.unified-ipod
+gsc.venice
+gsc.video-camera
+gsc.voice-control
+gsc.voip
+gsc.volume-buttons
+gsc.wi-fi
+gsc.wifi
+gsc.youtube
+gzip
+kr.slak.cctoggles
+libhide
+libstatusbar
+lzma
+me.devbug.sbcenterblurrr
+miktr.switch.mono
+mobilesubstrate
+ncurses
+openssl
+org.thebigboss.assistantunrestrictor
+org.thebigboss.repo.icons
+org.thebigboss.signalbarsios7theme
+p7zip
+pam
+pam-modules
+pcre
+pincrush
+preferenceloader
+profile.d
+readline
+sed
+shell-cmds
+system-cmds
+tar
+uikittools
+unrar
+unzip
+wget
+winterboard
+zip
