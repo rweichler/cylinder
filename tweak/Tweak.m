@@ -293,7 +293,7 @@ static void initialize()
     if(SB_list_class) MSHookMessageEx(SB_list_class, @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:), (IMP)SB_showIconImages, (IMP *)&original_SB_showIconImages);
 
     //fix for https://github.com/rweichler/cylinder/issues/17
-    MSHookMessageEx(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
+    //MSHookMessageEx(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
 
     //the above fix hides the dock, so we needa fix dat shit YO
     Class SBDockIconListView = NSClassFromString(@"SBDockIconListView");
