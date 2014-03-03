@@ -17,14 +17,22 @@ You should have received a copy of the GNU General Public License
 along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#import <Preferences/PSListController.h>
+#import <Preferences/PSViewController.h>
 #import "CLEffect.h"
 
-@interface CylinderSettingsListController: PSListController
-@property (nonatomic, retain, readonly) NSDictionary *settings;
-- (void)setSelectedEffects:(NSArray *)effects;
--(void)setSelectedFormula:(NSString *)formula;
--(void)setFormulas:(NSDictionary *)formulas;
-- (void)writeSettings;
-- (void)sendSettings;
-@end
+@interface CLFormulasController : PSViewController <UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate> {
+	UITableView *_tableView;
+	NSMutableDictionary *_formulass;
+    NSString *_selectedFormula;
+    UIBarButtonItem *_newFormulaButton;
+    BOOL _initialized;
+}
+@property (nonatomic, retain) NSMutableDictionary *formulas;
+@property (nonatomic, retain) NSString *selectedFormula;
+@property (nonatomic, strong) UIBarButtonItem *createFormulaButton;
+// + (void)load;
+- (id)initForContentSize:(CGSize)size;
+- (id)view;
+- (NSString*)navigationTitle;
+- (void)refreshList;
+@end 

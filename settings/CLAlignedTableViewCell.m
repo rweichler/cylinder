@@ -46,9 +46,9 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     self.imageView.frame = CGRectMake(IMAGE_PADDING, IMAGE_PADDING, width - IMAGE_PADDING*2, cvs.height-1 - IMAGE_PADDING*2);
     //self.imageView.contentMode = UIViewContentModeCenter;//|UIViewContentModeScaleAspectFit;
 
-    CGSize size = [self.numberLabel.text sizeWithFont:self.numberLabel.font
+    CGSize size = _numberLabel ? [self.numberLabel.text sizeWithFont:self.numberLabel.font
                                         constrainedToSize:CGSizeMake(NUMBER_WIDTH,self.textLabel.frame.size.height)
-                                        lineBreakMode:self.numberLabel.lineBreakMode];
+                                            lineBreakMode:self.numberLabel.lineBreakMode] : CGSizeZero;
 
     size.width += NUMBER_PADDING*2;
 

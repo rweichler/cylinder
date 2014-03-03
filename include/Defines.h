@@ -24,6 +24,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 #define PrefsEffectKey        @"effect"
 #define PrefsEffectDirKey  @"effectFolder"
+#define PrefsFormulaKey @"formula"
+#define PrefsSelectedFormulaKey @"selectedFormula"
 #define PrefsCarrierTextKey  @"carrierText"
 #define PrefsUseTextKey      @"useText"
 #define PrefsEnabledKey      @"enabled"
@@ -49,7 +51,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define kEffectsDirectory     @"/Library/Cylinder"
 #define kPacksDirectory      @"/Library/Cylinder/Packs"
 #define DEFAULT_EFFECTS      [NSArray arrayWithObjects:[NSDictionary dictionaryWithObjectsAndKeys:DEFAULT_EFFECT, PrefsEffectKey, DEFAULT_DIRECTORY, PrefsEffectDirKey, nil], nil]
-#define DefaultPrefs         [NSMutableDictionary dictionaryWithObjectsAndKeys: DEFAULT_EFFECTS, PrefsEffectKey, [NSNumber numberWithBool:YES], PrefsEnabledKey, [NSNumber numberWithBool:false], PrefsRandomizedKey, nil]
+#define DEFAULT_FORMULAS    [NSArray array]
+#define DefaultPrefs         [NSMutableDictionary dictionaryWithObjectsAndKeys: DEFAULT_EFFECTS, PrefsEffectKey, DEFAULT_FORMULAS, PrefsFormulaKey, [NSNumber numberWithBool:YES], PrefsEnabledKey, [NSNumber numberWithBool:false], PrefsRandomizedKey, nil]
 
 @interface UIDevice (de)
 - (BOOL)iOSVersionIsAtLeast:(NSString *)vers;

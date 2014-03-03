@@ -46,6 +46,24 @@
 		</dict>
 		<dict>
 			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>default</key>
+			<string>lol</string>
+			<key>defaults</key>
+			<string>com.r333d.cylinder</string>
+			<key>detail</key>
+			<string>CLFormulasController</string>
+			<key>id</key>
+			<string>formula</string>
+			<key>key</key>
+			<string>formula</string>
+			<key>label</key>
+			<string>Formulas</string>
+			<key>name</key>
+			<string>Formula</string>
+		</dict>
+		<dict>
+			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
 			<false/>
