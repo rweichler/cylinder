@@ -329,7 +329,7 @@ static NSString *_theFormulaName;
 
         if(effects.count == 0)
         {
-            [[UIAlertView.alloc initWithTitle:@"You have no effects enabled!" message:@"Go back to the effects list, enable some effects, then come back here and create a new formula." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil] show];
+            [[UIAlertView.alloc initWithTitle:@"You have no effects enabled!" message:@"Go back to the effects list, enable some effects, then come back here and create a new formula." delegate:self cancelButtonTitle:@"Aight cool" otherButtonTitles:nil] show];
         }
         else
         {
