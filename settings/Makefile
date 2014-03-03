@@ -16,8 +16,6 @@
 # along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 NAME=Cylinder
-IPHONE_IP=iphone #root@192.168.1.7
-SCP=scp #-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
 CC=xcrun -sdk iphoneos clang
 ARCH=-arch armv7 -arch arm64
@@ -27,8 +25,9 @@ FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framewo
 FLAGS= -dynamiclib -undefined suppress -flat_namespace -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
 DYLIB=CylinderSettings
 
-COMP= CLAlignedTableViewCell.m CLEffect.m CLEffectsController.m CLDonateController.m CylinderSettings.m writeit.m
-REQ=$(COMP) CLAlignedTableViewCell.h CLEffect.h CLEffectsController.h CLDonateController.h CylinderSettings.h writeit.h
+#lol fuck it
+COMP= *.m
+REQ=$(COMP) *.h
 
 all: $(DYLIB).bundle
 

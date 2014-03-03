@@ -114,7 +114,31 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     cell.detailTextLabel.text = text;
 
     [_settings setObject:toWrite forKey:PrefsEffectKey];
+    self.selectedFormula = nil;
     [self sendSettings];
+}
+
+-(void)setFormulas:(NSDictionary *)formulas
+{
+    [_settings setObject:formulas forKey:PrefsFormulaKey];
+}
+
+-(void)setSelectedFormula:(NSString *)formula
+{
+    if(!formula)
+    {
+        [_settings removeObjectForKey:PrefsSelectedFormulaKey];
+        return;
+    }
+
+    [_settings setObject:formula forKey:PrefsSelectedFormulaKey];
+
+    NSDictionary *formulas = [_settings objectForKey:PrefsFormulaKey];
+    NSArray *effects = [formulas objectForKey:formula];
+
+    if(effects)
+        [_settings setObject:effects forKey:PrefsEffectKey];
+
 }
 
 - (NSNumber *)enabled {
