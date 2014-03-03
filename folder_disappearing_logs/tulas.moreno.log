@@ -1,0 +1,178 @@
+Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Inst/Cfg-files/Unpacked/Failed-cfg/Half-inst/trig-aWait/Trig-pend
+|/ Err?=(none)/Hold/Reinst-required/X=both-problems (Status,Err: uppercase=bad)
+||/ Name                                           Version         Description
++++-==============================================-===============-===================================================
+ii  applist                                        1.5.7           Allow extensions to read the list of installed apps
+ii  apr-lib                                        1.3.3-2         just the /usr/lib folder from APR
+ii  apt7-key                                       0.7.25.3-3      repository encryption key management tool
+ii  apt7-lib                                       0.7.25.3-11     the advanced packaging library from Debian
+ii  base                                           1-4             underlying system directory structure
+ii  bash                                           4.0.17-13       the best shell ever, written by Brian Fox
+ii  bitesms                                        8.0             Frustrated with the built-in Messages app? Want mor
+ii  bzip2                                          1.0.5-7         compression that's slightly better than gzip
+ii  ch.ringwald.btstack                            0.8-3           Portable User-Space Bluetooth Stack
+ii  ch.ringwald.springboardaccess                  0.3-5           Controls status bar icons from daemons
+ii  com.a3tweaks.flipswitch                        1.0.3           Centralized toggle system for iOS
+ii  com.aaronash.barrel                            1.7.2.0-1       3D and other effects on icon pages!
+ii  com.chpwn.iconsupport                          1.9.2-1         Support library for safe icon tweaks.
+ii  com.cunstuck.ccquick                           1.0-3           access settings in iOS 7 ControlCenter
+ii  com.danyl.sicarius                             1.0.1           Swipe SpringBoard page to quit all apps or respring
+ii  com.developersbliss.cchide                     1.1-3           Hide sections of Control Center.
+ii  com.evad3rs.evasi0n7                           0.3             untethered jailbreak based on evad3rs exploits
+ii  com.orikad.controllersforall                   1.1.2-1         PS3 controller support for a ton of games, no confi
+ii  com.r333d.cylinder                             0.14.2.26.1     Make your icons dance
+ii  com.rpetrich.rocketbootstrap                   1.0.1           mach lookup support library for iOS 7
+ii  com.rpetrich.videopane                         1.1.2           Picture-in-picture for video; multitask while playi
+ii  com.saurik.iphone.fid                          0.9.3381-1      fits even more stuff right down there
+ii  com.saurik.substrate.safemode                  0.9.4000        safe mode safety extension (safe)
+ii  com.tylr.mobius                                1.1             Scroll infinitely through your SpringBoard pages! W
+ii  com.xtm3x.blueboard                            0.0.3-12        makes the keyboard keys blue!
+ii  coreutils-bin                                  8.12-7p         just the /bin folder from GNU coreutils
+ii  cy+cpu.arm                                     0               virtual CPU dependency
+ii  cy+kernel.darwin                               14.0.0          virtual kernel dependency
+ii  cy+lib.corefoundation                          847.21          virtual corefoundation dependency
+ii  cy+model.iphone                                5.1             virtual model dependency
+ii  cy+os.ios                                      7.0.6           virtual operating system dependency
+ii  cydia                                          1.1.9           graphical iPhone front-end for APT
+ii  cydia-lproj                                    1.1.8.1         languages and translations for Cydia
+ii  darwintools                                    1-4             startupfiletool, sw_vers
+ii  de.ng.dockshift                                1.4-2           Change iOS 7 dock backgrounds
+ii  debianutils                                    3.3.3ubuntu1-1p pretty much just run-parts. yep? run-parts
+ii  diffutils                                      2.8.1-6         compare two files for differences
+ii  diskdev-cmds                                   421.7-4         mount, quota, fsck, fstyp, fdisk, tunefs
+ii  dpkg                                           1.14.25-9       package maintainance tools from Debian
+ii  eu.heinelt.ifile                               2.0.1-1         A File Manager and Viewer. iFile is a file manager 
+ii  file-cmds                                      220.7-3         chflags, compress, ipcrm, ipcs, pax
+ii  findutils                                      4.2.33-6        indexes and searches filesystems
+ii  firmware                                       7.0.6           almost impressive Apple frameworks
+ii  firmware-sbin                                  0-1             represents Telesphoreo / iPhoneOS conflicts
+ii  gnupg                                          1.4.8-4         older encryption compatible with OpenPGP
+ii  grep                                           2.5.4-3         searches files for regular expressions
+ii  gsc.720p                                       1               virtual GraphicsServices dependency
+ii  gsc.accelerometer                              1               virtual GraphicsServices dependency
+ii  gsc.accessibility                              1               virtual GraphicsServices dependency
+ii  gsc.additional-text-tones                      1               virtual GraphicsServices dependency
+ii  gsc.all-features                               1               virtual GraphicsServices dependency
+ii  gsc.allow-you-tube                             1               virtual GraphicsServices dependency
+ii  gsc.allow-you-tube-plugin                      1               virtual GraphicsServices dependency
+ii  gsc.any-telephony                              1               virtual GraphicsServices dependency
+ii  gsc.armv6                                      1               virtual GraphicsServices dependency
+ii  gsc.armv7                                      1               virtual GraphicsServices dependency
+ii  gsc.assistant                                  1               virtual GraphicsServices dependency
+ii  gsc.auto-focus-camera                          1               virtual GraphicsServices dependency
+ii  gsc.battery-current-capacity                   5               virtual GraphicsServices dependency
+ii  gsc.battery-is-charging                        1               virtual GraphicsServices dependency
+ii  gsc.bluetooth                                  1               virtual GraphicsServices dependency
+ii  gsc.bluetooth-le                               1               virtual GraphicsServices dependency
+ii  gsc.camera-flash                               1               virtual GraphicsServices dependency
+ii  gsc.cellular-data                              1               virtual GraphicsServices dependency
+ii  gsc.chip-i-d                                   35152           virtual GraphicsServices dependency
+ii  gsc.contains-cellular-radio                    1               virtual GraphicsServices dependency
+ii  gsc.device-class-number                        1               virtual GraphicsServices dependency
+ii  gsc.device-supports-face-time                  1               virtual GraphicsServices dependency
+ii  gsc.device-supports-navigation                 1               virtual GraphicsServices dependency
+ii  gsc.device-supports-simplistic-road-mesh       1               virtual GraphicsServices dependency
+ii  gsc.device-supports-tethering                  1               virtual GraphicsServices dependency
+ii  gsc.device-supports1080p                       1               virtual GraphicsServices dependency
+ii  gsc.device-supports3-d-imagery                 1               virtual GraphicsServices dependency
+ii  gsc.device-supports3-d-maps                    1               virtual GraphicsServices dependency
+ii  gsc.device-supports720p                        1               virtual GraphicsServices dependency
+ii  gsc.device-supports9-pin                       1               virtual GraphicsServices dependency
+ii  gsc.dictation                                  1               virtual GraphicsServices dependency
+ii  gsc.display-mirroring                          1               virtual GraphicsServices dependency
+ii  gsc.displayport                                1               virtual GraphicsServices dependency
+ii  gsc.encode-aac                                 1               virtual GraphicsServices dependency
+ii  gsc.encrypted-data-partition                   1               virtual GraphicsServices dependency
+ii  gsc.external-charge-capability                 1               virtual GraphicsServices dependency
+ii  gsc.external-power-source-connected            1               virtual GraphicsServices dependency
+ii  gsc.fcc-logos-via-software                     1               virtual GraphicsServices dependency
+ii  gsc.forward-camera-capability                  1               virtual GraphicsServices dependency
+ii  gsc.front-facing-camera                        1               virtual GraphicsServices dependency
+ii  gsc.gamekit                                    1               virtual GraphicsServices dependency
+ii  gsc.gas-gauge-battery                          1               virtual GraphicsServices dependency
+ii  gsc.gps                                        1               virtual GraphicsServices dependency
+ii  gsc.gyroscope                                  1               virtual GraphicsServices dependency
+ii  gsc.h264-encoder                               1               virtual GraphicsServices dependency
+ii  gsc.hardware-keyboard                          1               virtual GraphicsServices dependency
+ii  gsc.has-baseband                               1               virtual GraphicsServices dependency
+ii  gsc.has-spring-board                           1               virtual GraphicsServices dependency
+ii  gsc.hd-video-capture                           1               virtual GraphicsServices dependency
+ii  gsc.hdr-image-capture                          1               virtual GraphicsServices dependency
+ii  gsc.hiccough-interval                          0.3             virtual GraphicsServices dependency
+ii  gsc.hidpi                                      1               virtual GraphicsServices dependency
+ii  gsc.homescreen-wallpaper                       1               virtual GraphicsServices dependency
+ii  gsc.hw-encode-snapshots                        1               virtual GraphicsServices dependency
+ii  gsc.i-tunes-family-i-d                         10019           virtual GraphicsServices dependency
+ii  gsc.international-settings                     1               virtual GraphicsServices dependency
+ii  gsc.io-surface-backed-images                   1               virtual GraphicsServices dependency
+ii  gsc.load-thumbnails-while-scrolling            1               virtual GraphicsServices dependency
+ii  gsc.location-services                          1               virtual GraphicsServices dependency
+ii  gsc.magnetometer                               1               virtual GraphicsServices dependency
+ii  gsc.main-screen-class                          5               virtual GraphicsServices dependency
+ii  gsc.main-screen-height                         1136            virtual GraphicsServices dependency
+ii  gsc.main-screen-pitch                          326             virtual GraphicsServices dependency
+ii  gsc.main-screen-scale                          2               virtual GraphicsServices dependency
+ii  gsc.main-screen-width                          640             virtual GraphicsServices dependency
+ii  gsc.microphone                                 1               virtual GraphicsServices dependency
+ii  gsc.mms                                        1               virtual GraphicsServices dependency
+ii  gsc.multitasking                               1               virtual GraphicsServices dependency
+ii  gsc.nike-ipod                                  1               virtual GraphicsServices dependency
+ii  gsc.not-green-tea                              1               virtual GraphicsServices dependency
+ii  gsc.opengles-1                                 1               virtual GraphicsServices dependency
+ii  gsc.opengles-2                                 1               virtual GraphicsServices dependency
+ii  gsc.panorama-camera-capability                 1               virtual GraphicsServices dependency
+ii  gsc.peer-peer                                  1               virtual GraphicsServices dependency
+ii  gsc.photo-adjustments                          1               virtual GraphicsServices dependency
+ii  gsc.photo-stream                               1               virtual GraphicsServices dependency
+ii  gsc.proximity-sensor                           1               virtual GraphicsServices dependency
+ii  gsc.ptp-large-files                            1               virtual GraphicsServices dependency
+ii  gsc.rear-camera-capability                     1               virtual GraphicsServices dependency
+ii  gsc.regional-behavior-n-t-s-c                  1               virtual GraphicsServices dependency
+ii  gsc.required-battery-level-for-software-update 0.5             virtual GraphicsServices dependency
+ii  gsc.ringer-switch                              1               virtual GraphicsServices dependency
+ii  gsc.signing-fuse                               1               virtual GraphicsServices dependency
+ii  gsc.sms                                        1               virtual GraphicsServices dependency
+ii  gsc.stand-alone-contacts                       1               virtual GraphicsServices dependency
+ii  gsc.still-camera                               1               virtual GraphicsServices dependency
+ii  gsc.telephony                                  1               virtual GraphicsServices dependency
+ii  gsc.telephony-maximum-generation               3.5             virtual GraphicsServices dependency
+ii  gsc.tv-out-crossfade                           1               virtual GraphicsServices dependency
+ii  gsc.unified-ipod                               1               virtual GraphicsServices dependency
+ii  gsc.venice                                     1               virtual GraphicsServices dependency
+ii  gsc.video-camera                               1               virtual GraphicsServices dependency
+ii  gsc.voice-control                              1               virtual GraphicsServices dependency
+ii  gsc.voip                                       1               virtual GraphicsServices dependency
+ii  gsc.volume-buttons                             1               virtual GraphicsServices dependency
+ii  gsc.wi-fi                                      1               virtual GraphicsServices dependency
+ii  gsc.wifi                                       1               virtual GraphicsServices dependency
+ii  gsc.youtube                                    1               virtual GraphicsServices dependency
+ii  gzip                                           1.6-7           the standard Unix compression algorithm
+ii  jp.ashikase.multiiconmover                     1:1.1.2-1       Move multiple SpringBoard icons at a time.
+ii  ldid                                           1:1.1.1         pseudo-codesign Mach-O files
+ii  libactivator                                   1.8.4~beta7     Centralized gestures, button and shortcut managemen
+ii  libhide                                        2.4.1-1         Library to hide icons.
+ii  libstatusbar                                   0.9.7.0         Statusbar icon support for 4.0+
+ii  lzma                                           4.32.7-4        slower, but better, compression algorithm
+ii  mobilesubstrate                                0.9.5001        powerful code insertion platform
+ii  ncurses                                        5.7-13          feature-complete terminal library
+ii  odcctools                                      286-8           linker and assembler for the iPhone
+ii  openssl                                        0.9.8y-10       SSL library and cryptographic tools
+ii  org.thebigboss.callbar                         2.3-472         Don't let incoming calls interrupt you!
+ii  org.thebigboss.repo.icons                      1.0             locally cached package icons from BigBoss
+ii  p7zip                                          4.57-3p         claims to be a good compressor
+ii  pam                                            32.1-3          pluggable (comples) authentication modules
+ii  pam-modules                                    36.1-4          standard Apple authentication modules
+ii  pcre                                           8.30-5p         Perl-compatible regular expressions
+ii  preferenceloader                               2.2.2           load preferences in style
+ii  profile.d                                      0-2             makes packaging for /etc/profile reasonable
+ii  readline                                       6.0-7           command-line history management
+ii  sed                                            4.1.5-7         edits streams of text using patterns
+ii  shell-cmds                                     118-6           killall, mktemp, renice, time, which
+ii  system-cmds                                    433.4-12        iostat, login, passwd, sync, sysctl
+ii  tar                                            1.19-8          tool for making tape archives
+ii  uikittools                                     1.1.8           UIKit/GraphicsServices command line access
+ii  unrar                                          3.6.8-2p        de-compresses files in rar format
+ii  unzip                                          5.52-5p         de-compesses files in zip format
+ii  uuid                                           1.6.0-2p        universally unique identifiers
+ii  zip                                            2.32-5p         standard Windows compression tool
