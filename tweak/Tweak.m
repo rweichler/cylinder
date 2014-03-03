@@ -37,6 +37,9 @@ static IMP original_SB_layerClass;
 static IMP original_SB_showAllIcons;
 static IMP original_SB_insertIcon;
 
+static IMP original_SB_list_setFrame;
+static IMP original_SB_icon_setFrame;
+
 static BOOL _enabled;
 
 static u_int32_t _rand;
@@ -269,12 +272,49 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
     load_that_shit();
 }
 
+
+CGRect SB_frame(UIView *self, SEL _cmd)
+{
+    CGPoint pos = self.layer.savedPosition;
+    CGSize size = self.layer.bounds.size;
+
+    pos.x -= size.width/2;
+    pos.y -= size.height/2;
+
+    CGRect frame = {pos, size};
+    return frame;
+}
+
+void SB_list_setFrame(UIView *self, SEL _cmd, CGRect frame)
+{
+    CATransform3D transform = self.layer.transform;
+    self.layer.transform = CATransform3DIdentity;
+    [self.layer restorePosition];
+
+    original_SB_list_setFrame(self, _cmd, frame);
+
+    self.layer.transform = transform;
+}
+
+void SB_icon_setFrame(UIView *self, SEL _cmd, CGRect frame)
+{
+    CATransform3D transform = self.layer.transform;
+    self.layer.transform = CATransform3DIdentity;
+    [self.layer restorePosition];
+
+    original_SB_icon_setFrame(self, _cmd, frame);
+
+    self.layer.transform = transform;
+}
+
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
 static void initialize()
 {
     _folders = [NSMutableArray array];
 
+    Class SB_icon_class = NSClassFromString(@"SBIconView"); //iOS 4+
+    if(!SB_icon_class) SB_list_class = NSClassFromString(@"SBIcon"); //iOS 3
     SB_list_class = NSClassFromString(@"SBIconListView"); //iOS 4+
     if(!SB_list_class) SB_list_class = NSClassFromString(@"SBIconList"); //iOS 3
     load_that_shit();
@@ -301,6 +341,11 @@ static void initialize()
 
     //fix icon scrunching in certain circumstances
     MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
+    MSHookMessageEx(SB_list_class, @selector(frame), (IMP)SB_frame, nil);
+    MSHookMessageEx(SB_icon_class, @selector(frame), (IMP)SB_frame, nil);
+    MSHookMessageEx(SB_list_class, @selector(setFrame), (IMP)SB_list_setFrame, (IMP *)&original_SB_list_setFrame);
+    MSHookMessageEx(SB_icon_class, @selector(setFrame), (IMP)SB_icon_setFrame, (IMP *)&original_SB_icon_setFrame);
+
 
     MSHookMessageEx(SB_list_class, @selector(insertIcon:atIndex:moveNow:pop:), (IMP)SB_insertIcon, (IMP *)&original_SB_insertIcon);
 
