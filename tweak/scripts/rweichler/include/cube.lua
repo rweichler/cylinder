@@ -9,14 +9,14 @@ return function(page, offset, is_inside)
     page.layer.x = page.layer.x + offset
 
     local dx = math.sin(angle)*Rx
-    local dy = (math.cos(angle) - 1)*Rx
+    local dz = (math.cos(angle) - 1)*Rx
 
     if (is_inside) then
-        dy = -dy
+        dz = -dz
         angle = -angle
     end
 
-    page:translate(dx, 0, dy)
+    page:translate(dx, 0, dz)
     page:rotate(angle, 0, 1, 0)
 end
 
