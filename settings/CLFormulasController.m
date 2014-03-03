@@ -26,6 +26,9 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "CLAlignedTableViewCell.h"
 #include <objc/runtime.h>
 
+#define ADD_SECTION 0
+#define FORMULA_SECTION 1
+
 @implementation UIDevice (OSVersion)
 - (BOOL)iOSVersionIsAtLeast:(NSString*)version
 {
@@ -53,21 +56,23 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 	if ((self = [super initForContentSize:size]))
     {
 		_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) style:UITableViewStyleGrouped];
-		[_tableView setDataSource:self];
-		[_tableView setDelegate:self];
-		[_tableView setEditing:NO];
-		[_tableView setAllowsSelection:YES];
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+        //_tableView.allowsSelection = true;
+        //_tableView.allowsSelectionDuringEditing = true;
 
+        /*
 		if ([[UIDevice currentDevice] iOSVersionIsAtLeast: @"5.0"]) {
 			[_tableView setAllowsMultipleSelection:NO];
 			[_tableView setAllowsSelectionDuringEditing:YES];
 			[_tableView setAllowsMultipleSelectionDuringEditing:YES];
 		}
-		
+        */
+
 		if ([self respondsToSelector:@selector(setView:)])
 			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];	
 
-        self.createFormulaButton = [[UIBarButtonItem.alloc initWithTitle:@"New" style:UIBarButtonItemStyleBordered target:self action:@selector(createFormulaButtonPressed:)] autorelease];
+        self.createFormulaButton = [[UIBarButtonItem.alloc initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(createFormulaButtonPressed:)] autorelease];
 	}
 	return self;
 }
@@ -141,18 +146,17 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 {
     if(button != self.createFormulaButton) return;
 
-    CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
-
-    NSDictionary *effects = [ctrl.settings objectForKey:PrefsEffectKey];
-
-    if(effects.count == 0)
+    if(_tableView.editing)
     {
-        [[UIAlertView.alloc initWithTitle:@"You have no effects enabled!" message:@"Go back to the effects list, enable some effects, then come back here and create a new formula." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil] show];
+        [_tableView setEditing:false animated:true];
+        button.title = @"Edit";
     }
     else
     {
-        [self showAlertWithText:@"The new formula will have whatever effects you have enabled right now."];
+        [_tableView setEditing:true animated:true];
+        button.title = @"Done";
     }
+
 }
 
 static NSString *_theFormulaName;
@@ -198,6 +202,7 @@ static NSString *_theFormulaName;
         _initialized = true;
     }
     [super viewWillAppear:animated];
+    //_tableView.editing = true;
 
     ((UINavigationItem *)self.navigationItem).rightBarButtonItem = self.createFormulaButton;
 }
@@ -223,7 +228,7 @@ static NSString *_theFormulaName;
 /* UITableViewDelegate / UITableViewDataSource Methods {{{ */
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return 2;
 }
 
 -(NSString *)keyForIndex:(int)index
@@ -255,48 +260,98 @@ static NSString *_theFormulaName;
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.formulas.count;
+    if(section == ADD_SECTION)
+        return 1;
+    else if(section == FORMULA_SECTION)
+        return self.formulas.count;
+
+    return 0;
 }
+
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(indexPath.section == ADD_SECTION) return false;
+    // Return NO if you do not want the specified item to be editable.
+    return true;
+}
+
 
 -(id)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
     if (!cell)
     {
-        cell = [CLAlignedTableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"].autorelease;
+        cell = [UITableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"].autorelease;
         cell.textLabel.adjustsFontSizeToFitWidth = true;
+        //cell.editing = true;
+        //cell.shouldIndentWhileEditing = false;
     }
-
-    NSString *name = [self keyForIndex:indexPath.row];
-    BOOL selected = [name isEqualToString:self.selectedFormula];
-
-    cell.textLabel.text = name;
+    cell.accessoryType = UITableViewCellAccessoryNone;
     cell.selected = false;
-    cell.accessoryType = selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+
+    if(indexPath.section == ADD_SECTION)
+    {
+        cell.textLabel.text = @"Create new formula";
+        cell.imageView.image = [UIImage imageWithContentsOfFile:BUNDLE_PATH "plus.png"];
+    }
+    else if(indexPath.section == FORMULA_SECTION)
+    {
+        NSString *name = [self keyForIndex:indexPath.row];
+        BOOL selected = [name isEqualToString:self.selectedFormula];
+        cell.textLabel.text = name;
+        if(selected)
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        cell.imageView.image = nil;
+    }
 
     return cell;
 }
 
-- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (!tableView.isEditing)
+    if (editingStyle == UITableViewCellEditingStyleDelete)
     {
-        [tableView deselectRowAtIndexPath:indexPath animated:true];
+        NSString *key = [self keyForIndex:indexPath.row];
+        [self.formulas removeObjectForKey:key];
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self updateSettings];
+    }
+}
 
+-(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(indexPath.section == ADD_SECTION)
+    {
+        CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
+
+        NSDictionary *effects = [ctrl.settings objectForKey:PrefsEffectKey];
+
+        if(effects.count == 0)
+        {
+            [[UIAlertView.alloc initWithTitle:@"You have no effects enabled!" message:@"Go back to the effects list, enable some effects, then come back here and create a new formula." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil] show];
+        }
+        else
+        {
+            [self showAlertWithText:@"The new formula will have whatever effects you have enabled right now."];
+        }
+    }
+    else if(indexPath.section == FORMULA_SECTION)
+    {
         if(self.selectedFormula)
         {
             int index = [self indexForKey:self.selectedFormula];
-            UITableViewCell *cell = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+            UITableViewCell *cell = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:FORMULA_SECTION]];
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
 
         self.selectedFormula = [self keyForIndex:indexPath.row];
         UITableViewCell *cell = [_tableView cellForRowAtIndexPath:indexPath];
-
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
 
         [self updateSettings];
     }
+    [tableView deselectRowAtIndexPath:indexPath animated:true];
 }
 
 -(void)updateSettings
@@ -306,11 +361,6 @@ static NSString *_theFormulaName;
     ctrl.formulas = self.formulas;
     ctrl.selectedFormula = self.selectedFormula;
     [ctrl sendSettings];
-}
-
-- (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath
-{
-    return (UITableViewCellEditingStyle)3;
 }
 
 @end
