@@ -28,15 +28,19 @@ void write_error(const char *error);
 static NSMutableArray *_folders;
 
 static Class SB_list_class;
+static Class SB_icon_class;
 static IMP original_SB_scrollViewWillBeginDragging;
 static IMP original_SB_scrollViewDidScroll;
 static IMP original_SB_scrollViewDidEndDecelerating;
+static IMP original_SB_scrollViewDidEndScrollingAnimation;
 static IMP original_SB_wallpaperRelativeBounds;
 static IMP original_SB_showIconImages;
 static IMP original_SB_layerClass;
 static IMP original_SB_showAllIcons;
 static IMP original_SB_insertIcon;
 
+typedef CGRect (*yeah)(id, SEL);
+static yeah original_SB_icon_frame;
 static IMP original_SB_list_setFrame;
 static IMP original_SB_icon_setFrame;
 
@@ -53,6 +57,7 @@ void reset_everything(UIView *view)
     view.layer.transform = CATransform3DIdentity;
     [view.layer restorePosition];
     view.alpha = 1;
+    view.isOnScreen = false;
     for(UIView *v in view.subviews)
     {
         v.layer.transform = CATransform3DIdentity;
@@ -141,12 +146,23 @@ void SB_showAllIcons(UIView *self, SEL _cmd)
 
 }
 
+void end_scroll(UIScrollView *self)
+{
+    for(UIView *view in self.subviews)
+        reset_everything(view);
+    _rand = arc4random();
+}
+
 void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidEndDecelerating(self, _cmd, scrollView);
-    for(UIView *view in scrollView.subviews)
-        reset_everything(view);
-    _rand = arc4random();
+    end_scroll(scrollView);
+}
+
+void SB_scrollViewDidEndScrollingAnimation(id self, SEL _cmd, UIScrollView *scrollView)
+{
+    original_SB_scrollViewDidEndScrollingAnimation(self, _cmd, scrollView);
+    end_scroll(scrollView);
 }
 
 //in iOS 6-, the dock is actually *BEHIND* the icon scroll view, so this fixes that
@@ -275,6 +291,9 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
 
 CGRect SB_frame(UIView *self, SEL _cmd)
 {
+    if([self isKindOfClass:SB_icon_class] && !self.superview.isOnScreen)
+        return original_SB_icon_frame(self, _cmd);
+
     CGPoint pos = self.layer.savedPosition;
     CGSize size = self.layer.bounds.size;
 
@@ -313,7 +332,7 @@ static void initialize()
 {
     _folders = [NSMutableArray array];
 
-    Class SB_icon_class = NSClassFromString(@"SBIconView"); //iOS 4+
+    SB_icon_class = NSClassFromString(@"SBIconView"); //iOS 4+
     if(!SB_icon_class) SB_list_class = NSClassFromString(@"SBIcon"); //iOS 3
     SB_list_class = NSClassFromString(@"SBIconListView"); //iOS 4+
     if(!SB_list_class) SB_list_class = NSClassFromString(@"SBIconList"); //iOS 3
@@ -323,6 +342,7 @@ static void initialize()
 
     MSHookMessageEx(cls, @selector(scrollViewDidScroll:), (IMP)SB_scrollViewDidScroll, (IMP *)&original_SB_scrollViewDidScroll);
     MSHookMessageEx(cls, @selector(scrollViewDidEndDecelerating:), (IMP)SB_scrollViewDidEndDecelerating, (IMP *)&original_SB_scrollViewDidEndDecelerating);
+    MSHookMessageEx(cls, @selector(scrollViewDidEndScrollingAnimation:), (IMP)SB_scrollViewDidEndScrollingAnimation, (IMP *)&original_SB_scrollViewDidEndScrollingAnimation);
     MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
 
     //iOS 7 bug hotfix
@@ -342,7 +362,7 @@ static void initialize()
     //fix icon scrunching in certain circumstances
     MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
     MSHookMessageEx(SB_list_class, @selector(frame), (IMP)SB_frame, nil);
-    MSHookMessageEx(SB_icon_class, @selector(frame), (IMP)SB_frame, nil);
+    MSHookMessageEx(SB_icon_class, @selector(frame), (IMP)SB_frame, (IMP *)&original_SB_icon_frame);
     MSHookMessageEx(SB_list_class, @selector(setFrame), (IMP)SB_list_setFrame, (IMP *)&original_SB_list_setFrame);
     MSHookMessageEx(SB_icon_class, @selector(setFrame), (IMP)SB_icon_setFrame, (IMP *)&original_SB_icon_setFrame);
 
