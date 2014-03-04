@@ -164,6 +164,7 @@ static int l_uiview_index(lua_State *L)
         }
         else if(!strcmp(key, "layer"))
         {
+            self.isOnScreen = true;
             push_view(self.layer);
             return 1;
         }
@@ -231,6 +232,7 @@ static int l_uiview_setindex(lua_State *L)
                 return luaL_error(L, "alpha must be a number");
 
             self.alpha = lua_tonumber(L, 3);
+            self.isOnScreen = true;
         }
     }
     return 0;
@@ -303,6 +305,7 @@ static int l_transform_rotate(lua_State *L)
     CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
+    self.isOnScreen = true;
 
     CATransform3D transform = self.layer.transform;
     float pitch = 0, yaw = 0, roll = 0;
@@ -330,6 +333,7 @@ static int l_transform_translate(lua_State *L)
     CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
+    self.isOnScreen = true;
 
     CATransform3D transform = self.layer.transform;
     float x = lua_tonumber(L, 2), y = lua_tonumber(L, 3), z = lua_tonumber(L, 4);
@@ -349,6 +353,7 @@ static int l_transform_scale(lua_State *L)
     CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
+    self.isOnScreen = true;
 
     CATransform3D transform = self.layer.transform;
     float x = lua_tonumber(L, 2);
