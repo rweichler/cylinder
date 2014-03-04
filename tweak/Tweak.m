@@ -40,6 +40,7 @@ static IMP original_SB_showAllIcons;
 static IMP original_SB_insertIcon;
 
 typedef CGRect (*yeah)(id, SEL);
+static yeah original_SB_list_frame;
 static yeah original_SB_icon_frame;
 static IMP original_SB_list_setFrame;
 static IMP original_SB_icon_setFrame;
@@ -63,6 +64,7 @@ void reset_everything(UIView *view)
         v.layer.transform = CATransform3DIdentity;
         [v.layer restorePosition];
         v.alpha = 1;
+        v.isOnScreen = false;
     }
 }
 
@@ -79,17 +81,12 @@ void genscrol(UIScrollView *scrollView, UIView *view)
         _page = page;
     }
 
-    if(fabs(offset/size.width) >= 1)
-    {
-        view.isOnScreen = false;
-    }
-    else
+    if(fabs(offset/size.width) < 1)
     {
         if(view.hasDifferentSubviews)
         {
             layout_icons(view);
         }
-        view.isOnScreen = true;
         _enabled = manipulate(view, offset, _rand); //defined in luashit.m
     }
 }
@@ -288,12 +285,8 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
     load_that_shit();
 }
 
-
-CGRect SB_frame(UIView *self, SEL _cmd)
+CGRect SB_frame(UIView *self)
 {
-    if([self isKindOfClass:SB_icon_class] && !self.superview.isOnScreen)
-        return original_SB_icon_frame(self, _cmd);
-
     CGPoint pos = self.layer.savedPosition;
     CGSize size = self.layer.bounds.size;
 
@@ -302,6 +295,22 @@ CGRect SB_frame(UIView *self, SEL _cmd)
 
     CGRect frame = {pos, size};
     return frame;
+}
+
+CGRect SB_list_frame(UIView *self, SEL _cmd)
+{
+    if(!self.isOnScreen)
+        return original_SB_list_frame(self, _cmd);
+    else
+        return SB_frame(self);
+}
+
+CGRect SB_icon_frame(UIView *self, SEL _cmd)
+{
+    if(!self.isOnScreen)
+        return original_SB_icon_frame(self, _cmd);
+    else
+        return SB_frame(self);
 }
 
 void SB_list_setFrame(UIView *self, SEL _cmd, CGRect frame)
@@ -361,7 +370,7 @@ static void initialize()
 
     //fix icon scrunching in certain circumstances
     MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
-    MSHookMessageEx(SB_list_class, @selector(frame), (IMP)SB_frame, nil);
+    MSHookMessageEx(SB_list_class, @selector(frame), (IMP)SB_frame, (IMP *)&original_SB_list_frame);
     MSHookMessageEx(SB_icon_class, @selector(frame), (IMP)SB_frame, (IMP *)&original_SB_icon_frame);
     MSHookMessageEx(SB_list_class, @selector(setFrame), (IMP)SB_list_setFrame, (IMP *)&original_SB_list_setFrame);
     MSHookMessageEx(SB_icon_class, @selector(setFrame), (IMP)SB_icon_setFrame, (IMP *)&original_SB_icon_setFrame);
