@@ -18,5 +18,7 @@ return function(page, offset, is_inside)
 
     page:translate(dx, 0, dz)
     page:rotate(angle, 0, 1, 0)
+
+    return dx, dz, angle
 end
 
