@@ -256,8 +256,9 @@ void layout_icons(UIView *self)
 
 id SB_insertIcon(UIView *self, SEL _cmd, UIView *icon, unsigned index, BOOL now, BOOL pop)
 {
+    id result = original_SB_insertIcon(self, _cmd, icon, index, now, pop);
     self.hasDifferentSubviews = true;
-    return original_SB_insertIcon(self, _cmd, icon, index, now, pop);
+    return result;
 }
 
 void load_that_shit()
