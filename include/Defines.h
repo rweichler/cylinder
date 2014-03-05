@@ -22,6 +22,9 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 #define CLLog(format, ...) NSLog(@"Cylinder: %@", [NSString stringWithFormat: format, ## __VA_ARGS__])
 
+#define IOS_VERSION UIDevice.currentDevice.systemVersion.intValue
+#define SCREEN_SIZE UIScreen.mainScreen.bounds.size
+
 #define PrefsEffectKey        @"effect"
 #define PrefsEffectDirKey  @"effectFolder"
 #define PrefsFormulaKey @"formula"

@@ -67,7 +67,33 @@ static CLEffectsController *sharedController = nil;
 		}
 		
 		if ([self respondsToSelector:@selector(setView:)])
-			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];	
+			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];
+
+        NSString *text = @"WARNING: combining certain 3D effects may cause lag";
+        UIFont *font = [UIFont boldSystemFontOfSize:15];
+        NSLineBreakMode mode = NSLineBreakByWordWrapping;
+
+        CGSize size = {SCREEN_SIZE.width, 40};
+        size =[text sizeWithFont:font constrainedToSize:size lineBreakMode:mode];
+        size.width = SCREEN_SIZE.width;
+
+        UILabel *tableFooter = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
+        tableFooter.textColor = [UIColor blackColor];
+        tableFooter.backgroundColor = [_tableView backgroundColor];
+        tableFooter.opaque = YES;
+        tableFooter.lineBreakMode = mode;
+        tableFooter.numberOfLines = 0;
+        tableFooter.font = font;
+        tableFooter.textAlignment = NSTextAlignmentCenter;
+        tableFooter.text = text;
+
+
+        UIView *wrapperView = [[UIView alloc] initWithFrame:tableFooter.frame];
+        [wrapperView addSubview:tableFooter];
+
+        _tableView.tableFooterView = wrapperView;
+        [wrapperView release];
+        [tableFooter release];
 
         self.clearButton = [[UIBarButtonItem.alloc initWithTitle:@"Clear" style:UIBarButtonItemStyleBordered target:self action:@selector(clear:)] autorelease];
 	}

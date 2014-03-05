@@ -1,5 +1,13 @@
 # Changelog
 
+## BETA 0.14.3.5
+
+* Rubik's Cube and Explosion effects
+* Formulas tab (so you can save your favorite combos)
+* Folder background bug fixed for iOS 7
+* Icon alignment fixes
+* Put back lag warning
+
 ## BETA 0.14.2.26
 
 * 15 new effects
