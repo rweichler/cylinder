@@ -29,21 +29,6 @@ static NSMutableArray *_folders;
 
 static Class SB_list_class;
 static Class SB_icon_class;
-static IMP original_SB_scrollViewWillBeginDragging;
-static IMP original_SB_scrollViewDidScroll;
-static IMP original_SB_scrollViewDidEndDecelerating;
-static IMP original_SB_scrollViewDidEndScrollingAnimation;
-static IMP original_SB_wallpaperRelativeBounds;
-static IMP original_SB_showIconImages;
-static IMP original_SB_layerClass;
-static IMP original_SB_showAllIcons;
-static IMP original_SB_insertIcon;
-
-typedef CGRect (*yeah)(id, SEL);
-static yeah original_SB_list_frame;
-static yeah original_SB_icon_frame;
-static IMP original_SB_list_setFrame;
-static IMP original_SB_icon_setFrame;
 
 static BOOL _enabled;
 
@@ -107,6 +92,7 @@ void switch_pos(CALayer *layer)
 
 
 //scrunch fix
+static void(*original_SB_showAllIcons)(id, SEL);
 void SB_showAllIcons(UIView *self, SEL _cmd)
 {
     unsigned long count = self.subviews.count;
@@ -150,12 +136,14 @@ void end_scroll(UIScrollView *self)
     _rand = arc4random();
 }
 
+static void(*original_SB_scrollViewDidEndDecelerating)(id, SEL, id);
 void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidEndDecelerating(self, _cmd, scrollView);
     end_scroll(scrollView);
 }
 
+static void(*original_SB_scrollViewDidEndScrollingAnimation)(id, SEL, id);
 void SB_scrollViewDidEndScrollingAnimation(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidEndScrollingAnimation(self, _cmd, scrollView);
@@ -163,6 +151,7 @@ void SB_scrollViewDidEndScrollingAnimation(id self, SEL _cmd, UIScrollView *scro
 }
 
 //in iOS 6-, the dock is actually *BEHIND* the icon scroll view, so this fixes that
+static void(*original_SB_scrollViewWillBeginDragging)(id, SEL, id);
 void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewWillBeginDragging(self, _cmd, scrollView);
@@ -175,6 +164,7 @@ void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
 //since the animations are unpredictable we want to show all icons in a page
 //if it is visible on the screen. performance loss is pretty negligible
 static int biggestTo = 0;
+static void(*original_SB_showIconImages)(id, SEL, int, int, int, BOOL);
 void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL jittering)
 {
     if(to > biggestTo) biggestTo = to;
@@ -187,6 +177,7 @@ void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL
     original_SB_showIconImages(self, _cmd, from, to, total, jittering);
 }
 
+static void(*original_SB_scrollViewDidScroll)(id, SEL, id);
 void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
@@ -218,11 +209,10 @@ static void did_scroll(UIScrollView *scrollView)
 }
 
 //iOS 7 folder blur glitch hotfix for 3D effects.
-typedef CGRect (*wprb_func)(id, SEL);
+static CGRect(*original_SB_wallpaperRelativeBounds)(id, SEL);
 CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
 {
-    wprb_func func = (wprb_func)(original_SB_wallpaperRelativeBounds);
-    CGRect frame = func(self, _cmd);
+    CGRect frame = original_SB_wallpaperRelativeBounds(self, _cmd);
     if(frame.origin.x < 0) frame.origin.x = 0;
     if(frame.origin.x > SCREEN_SIZE.width - frame.size.width) frame.origin.x = SCREEN_SIZE.width - frame.size.width;
     if(frame.origin.y > SCREEN_SIZE.height - frame.size.height) frame.origin.y = SCREEN_SIZE.height - frame.size.height;
@@ -231,6 +221,7 @@ CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
 }
 
 //special thanks to @noahd for this fix: https://github.com/rweichler/cylinder/issues/17
+static Class(*original_SB_layerClass)(id, SEL);
 Class SB_layerClass(id self, SEL _cmd)
 {
     return [CATransformLayer class];
@@ -254,6 +245,7 @@ void layout_icons(UIView *self)
     }
 }
 
+static id(*original_SB_insertIcon)(id, SEL, id, unsigned, BOOL, BOOL);
 id SB_insertIcon(UIView *self, SEL _cmd, UIView *icon, unsigned index, BOOL now, BOOL pop)
 {
     id result = original_SB_insertIcon(self, _cmd, icon, index, now, pop);
@@ -298,6 +290,7 @@ CGRect SB_frame(UIView *self)
     return frame;
 }
 
+static CGRect(*original_SB_list_frame)(id, SEL);
 CGRect SB_list_frame(UIView *self, SEL _cmd)
 {
     if(!self.isOnScreen)
@@ -306,6 +299,7 @@ CGRect SB_list_frame(UIView *self, SEL _cmd)
         return SB_frame(self);
 }
 
+static CGRect(*original_SB_icon_frame)(id, SEL);
 CGRect SB_icon_frame(UIView *self, SEL _cmd)
 {
     if(!self.isOnScreen)
@@ -314,6 +308,7 @@ CGRect SB_icon_frame(UIView *self, SEL _cmd)
         return SB_frame(self);
 }
 
+static void(*original_SB_list_setFrame)(id, SEL, CGRect);
 void SB_list_setFrame(UIView *self, SEL _cmd, CGRect frame)
 {
     CATransform3D transform = self.layer.transform;
@@ -325,6 +320,7 @@ void SB_list_setFrame(UIView *self, SEL _cmd, CGRect frame)
     self.layer.transform = transform;
 }
 
+static void(*original_SB_icon_setFrame)(id, SEL, CGRect);
 void SB_icon_setFrame(UIView *self, SEL _cmd, CGRect frame)
 {
     CATransform3D transform = self.layer.transform;
@@ -366,8 +362,8 @@ static void initialize()
     //MSHookMessageEx(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
 
     //the above fix hides the dock, so we needa fix dat shit YO
-    Class SBDockIconListView = NSClassFromString(@"SBDockIconListView");
-    if(SBDockIconListView) MSHookMessageEx(object_getClass(SBDockIconListView), @selector(layerClass), original_SB_layerClass, NULL);
+    //Class SBDockIconListView = NSClassFromString(@"SBDockIconListView");
+    //if(SBDockIconListView) MSHookMessageEx(object_getClass(SBDockIconListView), @selector(layerClass), (IMP)original_SB_layerClass, NULL);
 
     //fix icon scrunching in certain circumstances
     MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
