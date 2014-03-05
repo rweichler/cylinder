@@ -370,8 +370,8 @@ static void initialize()
 
     //fix icon scrunching in certain circumstances
     MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
-    MSHookMessageEx(SB_list_class, @selector(frame), (IMP)SB_frame, (IMP *)&original_SB_list_frame);
-    MSHookMessageEx(SB_icon_class, @selector(frame), (IMP)SB_frame, (IMP *)&original_SB_icon_frame);
+    MSHookMessageEx(SB_list_class, @selector(frame), (IMP)SB_list_frame, (IMP *)&original_SB_list_frame);
+    MSHookMessageEx(SB_icon_class, @selector(frame), (IMP)SB_icon_frame, (IMP *)&original_SB_icon_frame);
     MSHookMessageEx(SB_list_class, @selector(setFrame), (IMP)SB_list_setFrame, (IMP *)&original_SB_list_setFrame);
     MSHookMessageEx(SB_icon_class, @selector(setFrame), (IMP)SB_icon_setFrame, (IMP *)&original_SB_icon_setFrame);
 
