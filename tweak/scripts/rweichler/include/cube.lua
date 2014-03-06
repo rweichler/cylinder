@@ -1,24 +1,27 @@
 return function(page, offset, is_inside)
 
     local percent = offset/page.width
-
-    local angle = -percent * (math.pi/2)
-
-    local Rx = page.width/2
-
     page.layer.x = page.layer.x + offset
 
-    local dx = math.sin(angle)*Rx
-    local dz = (math.cos(angle) - 1)*Rx
+    local angle = -percent*math.pi/2
 
-    if (is_inside) then
-        dz = -dz
+    local h = page.width/2
+    local x = h*math.cos(math.abs(angle)) - page.width/2
+    local z = -h*math.sin(math.abs(angle))
+
+    if percent > 0 then
+        x = -x
+    end
+
+    x = x - offset
+
+    if is_inside then
+        z = -z
         angle = -angle
     end
 
-    page:translate(dx, 0, dz)
+    page:translate(x, 0, z)
     page:rotate(angle, 0, 1, 0)
 
-    return dx, dz, angle
+    return x, z, angle
 end
-
