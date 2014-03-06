@@ -1,5 +1,9 @@
 # Changelog
 
+## BETA 0.14.3.6
+
+* Reverted Cube back to old (zoomy) behavior
+
 ## BETA 0.14.3.5
 
 * Rubik's Cube and Explosion effects
