@@ -18,10 +18,8 @@ return function(page, offset, screen_width, screen_height)
     if (stage2P > 1) then stage2P = 1
     elseif (stage2P < 0) then stage2P = 0 end
     
-    page:translate(offset, 0, 0)
-    
     for i, icon in subviews(page) do
-        local iconAngle = theta*(i-1) - math.pi/6
+        local iconAngle = theta*(i-1) - math.pi/6 + stage2P*(math.pi/3)
         
         local begX = icon.x+icon.width/2
         local begY = icon.y+icon.height/2
@@ -33,6 +31,6 @@ return function(page, offset, screen_width, screen_height)
         icon:rotate(-stage1P*((math.pi/2) + iconAngle))
     end
     
-    page:rotate(-stage2P*(math.pi/3))
     page.alpha = 1 - stage2P
+    page:translate(offset, 0, 0)
 end

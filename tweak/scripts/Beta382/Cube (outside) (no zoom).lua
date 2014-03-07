@@ -1,4 +1,4 @@
-local cube = dofile("include/cube.lua")
+local cube = dofile("include/pageCube.lua")
 
 return function (page, offset, screen_width, screen_height)
     local percent = math.abs(offset/page.width)
