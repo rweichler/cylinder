@@ -76,20 +76,6 @@ void genscrol(UIScrollView *scrollView, UIView *view)
     }
 }
 
-void switch_pos(CALayer *layer)
-{
-    if(!layer.hasSavedPosition) return;
-
-    CGPoint pos = layer.position;
-    CGPoint savedPos = layer.savedPosition;
-
-    [layer restorePosition];
-    layer.position = pos;
-    [layer savePosition];
-    layer.position = savedPos;
-
-}
-
 void end_scroll(UIScrollView *self)
 {
     for(UIView *view in self.subviews)
