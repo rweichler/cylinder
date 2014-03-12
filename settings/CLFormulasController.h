@@ -24,12 +24,11 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 	UITableView *_tableView;
 	NSMutableDictionary *_formulass;
     NSString *_selectedFormula;
-    UIBarButtonItem *_newFormulaButton;
     BOOL _initialized;
 }
 @property (nonatomic, retain) NSMutableDictionary *formulas;
 @property (nonatomic, retain) NSString *selectedFormula;
-@property (nonatomic, strong) UIBarButtonItem *createFormulaButton;
+@property (nonatomic, strong) UIBarButtonItem *editButton;
 // + (void)load;
 - (id)initForContentSize:(CGSize)size;
 - (id)view;
