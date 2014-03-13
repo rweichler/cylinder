@@ -10,7 +10,7 @@
 
 ## Available Effects
 
-* A lot, I don't feel like listing them all anymore.
+* A lot. I don't feel like listing them all anymore.
 
 If you want more, check out [/r/cylinder](http://reddit.com/r/cylinder)!
 
