@@ -1,6 +1,6 @@
 # Changelog
 
-# BETA 0.14.3.13
+## BETA 0.14.3.13
 
 * Added a few more effects
 * Fixed crash when creating a formula
