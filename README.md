@@ -2,7 +2,7 @@
 
 ![](https://raw2.github.com/rweichler/cylinder/master/code.png)
 
-## Latest version: 0.14.3.6
+## Latest version: 0.14.3.13
 
 [Here](http://github.com/rweichler/cylinder/tree/master/CHANGELOG.md)'s the changelog.
 
@@ -10,7 +10,7 @@
 
 ## Available Effects
 
-* A lot, I don't feel like listing them all anymore.
+* A lot. I don't feel like listing them all anymore.
 
 If you want more, check out [/r/cylinder](http://reddit.com/r/cylinder)!
 

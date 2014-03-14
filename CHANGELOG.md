@@ -1,5 +1,10 @@
 # Changelog
 
+## BETA 0.14.3.13
+
+* Added a few more effects
+* Fixed crash when creating a formula
+
 ## BETA 0.14.3.6
 
 * Reverted Cube back to old (zoomy) behavior
