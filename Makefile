@@ -39,7 +39,7 @@ $(PACKAGE): all
 	cp -r settings/CylinderSettings.bundle .tmp/Library/PreferenceBundles
 	cp settings/CylinderSettingsLoader.plist .tmp/Library/PreferenceLoader/Preferences/
 	cp -r DEBIAN .tmp/
-	dpkg-deb -b .tmp
+	dpkg-deb -Zgzip -b .tmp
 	mv .tmp.deb $(PACKAGE)
 	rm -rf .tmp
 
