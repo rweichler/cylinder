@@ -82,7 +82,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
 
     NSDictionary *formulas = [ctrl.settings objectForKey:PrefsFormulaKey];
-    if(!formulas)
+    if(!formulas || ![formulas isKindOfClass:NSDictionary.class])
     {
         self.formulas = [NSMutableDictionary dictionary];
     }
@@ -170,7 +170,7 @@ static NSString *_theFormulaName;
     else if(alertView.alertViewStyle == UIAlertViewStylePlainTextInput)
     {
         NSString *name = [alertView textFieldAtIndex:0].text;
-
+        
         if(name.length == 0)
         {
             [self showAlertWithText:@"You didn't type anything."];
