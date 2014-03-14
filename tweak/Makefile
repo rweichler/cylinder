@@ -21,7 +21,8 @@ SCP=scp #-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
 CC=xcrun -sdk iphoneos clang
 ARCH=-arch armv7 -arch arm64
-SDKS=-mios-version-min=3.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk
+DEVELOPER_DIR=`xcode-select --print-path`
+SDKS=-mios-version-min=3.0 -isysroot $(DEVELOPER_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7*.sdk
 #ARC=-fobjc-arc
 INCLUDES= -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework CoreGraphics

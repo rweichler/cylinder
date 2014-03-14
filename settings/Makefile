@@ -19,7 +19,8 @@ NAME=Cylinder
 
 CC=xcrun -sdk iphoneos clang
 ARCH=-arch armv7 -arch arm64
-SDKS=-mios-version-min=3.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk
+DEVELOPER_DIR=`xcode-select --print-path`
+SDKS=-mios-version-min=3.0 -isysroot $(DEVELOPER_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7*.sdk
 #ARC=-fobjc-arc
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework AVFoundation
 FLAGS= -dynamiclib -undefined suppress -flat_namespace -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
