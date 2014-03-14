@@ -90,6 +90,44 @@ void switch_pos(CALayer *layer)
 
 }
 
+//scrunch fix
+static void(*original_SB_showAllIcons)(id, SEL);
+void SB_showAllIcons(UIView *self, SEL _cmd)
+{
+    unsigned long count = self.subviews.count;
+
+    //store our transforms and set them to the identity before calling showAllIcons
+    CATransform3D myTransform = self.layer.transform;
+    CATransform3D *iconTransforms = (CATransform3D *)malloc(count*sizeof(CATransform3D));
+
+    self.layer.transform = CATransform3DIdentity;
+    switch_pos(self.layer);
+
+    for(int i = 0; i < count; i++)
+    {
+        UIView *icon = [self.subviews objectAtIndex:i];
+        iconTransforms[i] = icon.layer.transform;
+        icon.layer.transform = CATransform3DIdentity;
+        switch_pos(icon.layer);
+    }
+
+    //call showAllIcons
+    original_SB_showAllIcons(self, _cmd);
+
+    //set everything back to the way it was
+    self.layer.transform = myTransform;
+    switch_pos(self.layer);
+    for(int i = 0; i < count; i++)
+    {
+        UIView *icon = [self.subviews objectAtIndex:i];
+        icon.layer.transform = iconTransforms[i];
+        switch_pos(icon.layer);
+    }
+
+    free(iconTransforms);
+
+}
+
 void end_scroll(UIScrollView *self)
 {
     for(UIView *view in self.subviews)
@@ -327,6 +365,7 @@ static void initialize()
     //if(SBDockIconListView) MSHookMessageEx(object_getClass(SBDockIconListView), @selector(layerClass), (IMP)original_SB_layerClass, NULL);
 
     //fix icon scrunching in certain circumstances
+    MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
     MSHookMessageEx(SB_list_class, @selector(frame), (IMP)SB_list_frame, (IMP *)&original_SB_list_frame);
     MSHookMessageEx(SB_icon_class, @selector(frame), (IMP)SB_icon_frame, (IMP *)&original_SB_icon_frame);
     MSHookMessageEx(SB_list_class, @selector(setFrame), (IMP)SB_list_setFrame, (IMP *)&original_SB_list_setFrame);
