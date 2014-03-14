@@ -49,7 +49,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 
 @implementation CLFormulasController
-@synthesize formulas=_formulas,selectedFormula=_selectedFormula,createFormulaButton=_createFormulaButton;
+@synthesize formulas=_formulas,selectedFormula=_selectedFormula,editButton=_editButton;
 
 - (id)initForContentSize:(CGSize)size
 {
@@ -72,7 +72,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 		if ([self respondsToSelector:@selector(setView:)])
 			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];	
 
-        self.createFormulaButton = [[UIBarButtonItem.alloc initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(createFormulaButtonPressed:)] autorelease];
+        self.editButton = [[UIBarButtonItem.alloc initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editButtonPressed:)] autorelease];
 	}
 	return self;
 }
@@ -82,7 +82,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
 
     NSDictionary *formulas = [ctrl.settings objectForKey:PrefsFormulaKey];
-    if(!formulas)
+    if(!formulas || ![formulas isKindOfClass:NSDictionary.class])
     {
         self.formulas = [NSMutableDictionary dictionary];
     }
@@ -142,9 +142,9 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     [_tableView reloadData];
 }
 
--(void)createFormulaButtonPressed:(UIBarButtonItem *)button
+-(void)editButtonPressed:(UIBarButtonItem *)button
 {
-    if(button != self.createFormulaButton) return;
+    if(button != self.editButton) return;
 
     if(_tableView.editing)
     {
@@ -170,7 +170,7 @@ static NSString *_theFormulaName;
     else if(alertView.alertViewStyle == UIAlertViewStylePlainTextInput)
     {
         NSString *name = [alertView textFieldAtIndex:0].text;
-
+        
         if(name.length == 0)
         {
             [self showAlertWithText:@"You didn't type anything."];
@@ -204,14 +204,14 @@ static NSString *_theFormulaName;
     [super viewWillAppear:animated];
     //_tableView.editing = true;
 
-    ((UINavigationItem *)self.navigationItem).rightBarButtonItem = self.createFormulaButton;
+    ((UINavigationItem *)self.navigationItem).rightBarButtonItem = self.editButton;
 }
 
 - (void)dealloc
 {
     self.formulas = nil;
     self.selectedFormula = nil;
-    self.createFormulaButton = nil;
+    self.editButton = nil;
     [super dealloc];
 }
 

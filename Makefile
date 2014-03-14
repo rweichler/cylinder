@@ -12,7 +12,7 @@ all:
 	cd settings && $(MAKE)
 
 clean:
-	rm -f cylinder.deb
+	rm -f $(PACKAGE)
 	cd tweak && $(MAKE) clean
 	cd settings && $(MAKE) clean
 
