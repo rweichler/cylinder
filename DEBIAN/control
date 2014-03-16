@@ -1,6 +1,6 @@
 Package: com.r333d.cylinder
 Name: Cylinder
-Version: 0.14.3.13
+Version: 0.14.3.16
 Architecture: iphoneos-arm
 Depends: firmware (>= 3.0), mobilesubstrate, preferenceloader
 Depiction: https://raw2.github.com/rweichler/cylinder/master/CHANGELOG.md

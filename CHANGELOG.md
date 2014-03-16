@@ -1,5 +1,15 @@
 # Changelog
 
+## BETA 0.14.3.16
+
+* Fixed compatibility bugs from last update
+
+### Effects
+
+* Double Door and backwards by gertab
+* Bubble by r_idn
+* Hella far by rweichler
+
 ## BETA 0.14.3.13
 
 * Added a few more effects
