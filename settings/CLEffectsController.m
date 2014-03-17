@@ -20,7 +20,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import <Defines.h>
 #import "CLEffectsController.h"
 #import "CylinderSettings.h"
-#import "writeit.h"
 
 // #import "UDTableView.h"
 #import "CLAlignedTableViewCell.h"

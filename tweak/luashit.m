@@ -23,18 +23,10 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "macros.h"
 #import "lua_UIView.h"
 
-#define CHECK_UIVIEW(STATE, INDEX) \
-    if(!lua_isuserdata(STATE, INDEX) || ![(NSObject *)lua_touserdata(STATE, INDEX) isKindOfClass:UIView.class]) \
-        return luaL_error(STATE, "first argument must be a view")
 
 #define LOG_DIR @"/var/mobile/Library/Logs/Cylinder/"
 #define LOG_PATH "errors.log"
 #define PRINT_PATH "print.log"
-
-//this allows a 3D perspective, sometimes this value is needed
-//for transformations that translate, THEN rotate. (like cube,
-//page flip, etc)
-#define PERSPECTIVE_DISTANCE 500.0
 
 static lua_State *L = NULL;
 
@@ -389,20 +381,12 @@ void write_file(const char *msg, const char *filename)
     [fileHandle closeFile];
 }
 
-static void push_view(id view)
-{
-    lua_pushlightuserdata(L, view);
-    luaL_getmetatable(L, "nsobject");
-    lua_setmetatable(L, -2);
-}
-
-
 static BOOL manipulate_step(UIView *view, float offset, int funcIndex)
 {
     int func = [[_scripts objectAtIndex:funcIndex] intValue];
     lua_rawgeti(L, LUA_REGISTRYINDEX, func);
 
-    push_view(view);
+    l_push_view(L, view);
     lua_pushnumber(L, offset);
     lua_pushnumber(L, SCREEN_SIZE.width);
     lua_pushnumber(L, SCREEN_SIZE.height);
