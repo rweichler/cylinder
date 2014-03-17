@@ -60,20 +60,18 @@ int l_create_uiview_metatable(lua_State *L)
 
 //screw good practice, i dont have time for casting and
 //private header files
-typedef unsigned int (*maxicons_func)(id, SEL);
-typedef unsigned int (*maxrowcols_func)(id, SEL, UIDeviceOrientation);
-int invoke_int(id self, SEL selector, BOOL use_orientation)
+static int invoke_int(id self, SEL selector, BOOL use_orientation)
 {
     IMP imp = [self methodForSelector:selector];
     if(use_orientation)
     {
-        maxrowcols_func f = (maxrowcols_func)imp;
-        return (int)f(self, selector, UIDevice.currentDevice.orientation);
+        typedef int (*functype)(id, SEL, UIDeviceOrientation);
+        return ((functype)imp)(self, selector, UIDevice.currentDevice.orientation);
     }
     else
     {
-        maxicons_func f = (maxicons_func)imp;
-        return (int)f(self, selector);
+        typedef int (*functype)(id, SEL);
+        return ((functype)imp)(self, selector);
     }
 }
 

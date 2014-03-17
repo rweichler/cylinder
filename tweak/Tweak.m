@@ -36,9 +36,9 @@ static u_int32_t _rand;
 static int _page = -100;
 
 static void did_scroll(UIScrollView *scrollView);
-void layout_icons(UIView *self);
+static void layout_icons(UIView *self);
 
-void reset_everything(UIView *view)
+static void reset_everything(UIView *view)
 {
     view.layer.transform = CATransform3DIdentity;
     [view.layer restorePosition];
@@ -54,7 +54,7 @@ void reset_everything(UIView *view)
 }
 
 //view is an SBIconListView (or SBIconList on older iOS)
-void genscrol(UIScrollView *scrollView, UIView *view)
+static void genscrol(UIScrollView *scrollView, UIView *view)
 {
     CGSize size = scrollView.frame.size;
     float offset = scrollView.contentOffset.x - view.frame.origin.x;
@@ -76,7 +76,7 @@ void genscrol(UIScrollView *scrollView, UIView *view)
     }
 }
 
-void switch_pos(CALayer *layer)
+static void switch_pos(CALayer *layer)
 {
     if(!layer.hasSavedPosition) return;
 
@@ -92,7 +92,7 @@ void switch_pos(CALayer *layer)
 
 //scrunch fix
 static void(*original_SB_showAllIcons)(id, SEL);
-void SB_showAllIcons(UIView *self, SEL _cmd)
+static void SB_showAllIcons(UIView *self, SEL _cmd)
 {
     unsigned long count = self.subviews.count;
 
@@ -128,7 +128,7 @@ void SB_showAllIcons(UIView *self, SEL _cmd)
 
 }
 
-void end_scroll(UIScrollView *self)
+static void end_scroll(UIScrollView *self)
 {
     for(UIView *view in self.subviews)
         reset_everything(view);
@@ -136,14 +136,14 @@ void end_scroll(UIScrollView *self)
 }
 
 static void(*original_SB_scrollViewDidEndDecelerating)(id, SEL, id);
-void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView)
+static void SB_scrollViewDidEndDecelerating(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidEndDecelerating(self, _cmd, scrollView);
     end_scroll(scrollView);
 }
 
 static void(*original_SB_scrollViewDidEndScrollingAnimation)(id, SEL, id);
-void SB_scrollViewDidEndScrollingAnimation(id self, SEL _cmd, UIScrollView *scrollView)
+static void SB_scrollViewDidEndScrollingAnimation(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidEndScrollingAnimation(self, _cmd, scrollView);
     end_scroll(scrollView);
@@ -151,7 +151,7 @@ void SB_scrollViewDidEndScrollingAnimation(id self, SEL _cmd, UIScrollView *scro
 
 //in iOS 6-, the dock is actually *BEHIND* the icon scroll view, so this fixes that
 static void(*original_SB_scrollViewWillBeginDragging)(id, SEL, id);
-void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
+static void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewWillBeginDragging(self, _cmd, scrollView);
     if(IOS_VERSION < 7)
@@ -164,7 +164,7 @@ void SB_scrollViewWillBeginDragging(id self, SEL _cmd, UIScrollView *scrollView)
 //if it is visible on the screen. performance loss is pretty negligible
 static int biggestTo = 0;
 static void(*original_SB_showIconImages)(id, SEL, int, int, int, BOOL);
-void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL jittering)
+static void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL jittering)
 {
     if(to > biggestTo) biggestTo = to;
     if(self.isOnScreen)
@@ -177,7 +177,7 @@ void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int total, BOOL
 }
 
 static void(*original_SB_scrollViewDidScroll)(id, SEL, id);
-void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
+static void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
     did_scroll(scrollView);
@@ -209,7 +209,7 @@ static void did_scroll(UIScrollView *scrollView)
 
 //iOS 7 folder blur glitch hotfix for 3D effects.
 static CGRect(*original_SB_wallpaperRelativeBounds)(id, SEL);
-CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
+static CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
 {
     CGRect frame = original_SB_wallpaperRelativeBounds(self, _cmd);
     if(frame.origin.x < 0) frame.origin.x = 0;
@@ -221,12 +221,12 @@ CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
 
 //special thanks to @noahd for this fix: https://github.com/rweichler/cylinder/issues/17
 static Class(*original_SB_layerClass)(id, SEL);
-Class SB_layerClass(id self, SEL _cmd)
+static Class SB_layerClass(id self, SEL _cmd)
 {
     return [CATransformLayer class];
 }
 
-void layout_icons(UIView *self)
+static void layout_icons(UIView *self)
 {
     NSMutableArray *icons = self.subviews.mutableCopy;
 
@@ -245,14 +245,14 @@ void layout_icons(UIView *self)
 }
 
 static id(*original_SB_insertIcon)(id, SEL, id, unsigned, BOOL, BOOL);
-id SB_insertIcon(UIView *self, SEL _cmd, UIView *icon, unsigned index, BOOL now, BOOL pop)
+static id SB_insertIcon(UIView *self, SEL _cmd, UIView *icon, unsigned index, BOOL now, BOOL pop)
 {
     id result = original_SB_insertIcon(self, _cmd, icon, index, now, pop);
     self.hasDifferentSubviews = true;
     return result;
 }
 
-void load_that_shit()
+static void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
 
@@ -277,7 +277,7 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
     load_that_shit();
 }
 
-CGRect SB_frame(UIView *self)
+static CGRect SB_frame(UIView *self)
 {
     CGPoint pos = self.layer.savedPosition;
     CGSize size = self.layer.bounds.size;
@@ -290,7 +290,7 @@ CGRect SB_frame(UIView *self)
 }
 
 static CGRect(*original_SB_list_frame)(id, SEL);
-CGRect SB_list_frame(UIView *self, SEL _cmd)
+static CGRect SB_list_frame(UIView *self, SEL _cmd)
 {
     if(!self.isOnScreen)
         return original_SB_list_frame(self, _cmd);
@@ -299,7 +299,7 @@ CGRect SB_list_frame(UIView *self, SEL _cmd)
 }
 
 static CGRect(*original_SB_icon_frame)(id, SEL);
-CGRect SB_icon_frame(UIView *self, SEL _cmd)
+static CGRect SB_icon_frame(UIView *self, SEL _cmd)
 {
     if(!self.isOnScreen)
         return original_SB_icon_frame(self, _cmd);
@@ -308,7 +308,7 @@ CGRect SB_icon_frame(UIView *self, SEL _cmd)
 }
 
 static void(*original_SB_list_setFrame)(id, SEL, CGRect);
-void SB_list_setFrame(UIView *self, SEL _cmd, CGRect frame)
+static void SB_list_setFrame(UIView *self, SEL _cmd, CGRect frame)
 {
     CATransform3D transform = self.layer.transform;
     self.layer.transform = CATransform3DIdentity;
@@ -320,7 +320,7 @@ void SB_list_setFrame(UIView *self, SEL _cmd, CGRect frame)
 }
 
 static void(*original_SB_icon_setFrame)(id, SEL, CGRect);
-void SB_icon_setFrame(UIView *self, SEL _cmd, CGRect frame)
+static void SB_icon_setFrame(UIView *self, SEL _cmd, CGRect frame)
 {
     CATransform3D transform = self.layer.transform;
     self.layer.transform = CATransform3DIdentity;
