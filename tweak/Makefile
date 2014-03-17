@@ -16,8 +16,8 @@
 # along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 NAME=Cylinder
-IPHONE_IP=iphone #root@192.168.1.7
-SCP=scp #-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+IPHONE_IP=iphone
+SCP=scp
 
 CC=xcrun -sdk iphoneos clang
 ARCH=-arch armv7 -arch arm64
@@ -35,10 +35,6 @@ COMPILE=$(COMPILEO) $(FRAMEWORKS) $(FLAGS)
 MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
 CYLINDER_DIR=/Library/Cylinder/
 
-COMP=../include/libsubstrate.dylib CompileMe.m $(LIBLUA)
-REQ=$(COMP) Tweak.m luashit.h luashit.m lua_UIView.h lua_UIView.m macros.h Makefile UIView+Cylinder.m UIView+Cylinder.h CALayer+Cylinder.h CALayer+Cylinder.m
-
-
 all: $(DYLIB)
 
 tweak.o: Tweak.m
@@ -52,19 +48,12 @@ UIView_Cylinder.o: UIView+Cylinder.h UIView+Cylinder.m
 CALayer_Cylinder.o: CALayer+Cylinder.h CALayer+Cylinder.m
 	$(COMPILEO) -c -o CALayer_Cylinder.o CALayer+Cylinder.m
 
-copy: $(DYLIB)
-	$(SCP) $(DYLIB) $(IPHONE_IP):$(MS_DIR)
-	$(SCP) $(NAME).plist $(IPHONE_IP):$(MS_DIR)
-	$(SCP) -r scripts/* $(IPHONE_IP):$(CYLINDER_DIR)
-
 clean:
 	rm -f $(DYLIB)
 	cd ../include/lua && $(MAKE) clean
 
 $(DYLIB): tweak.o luashit.o lua_UIView.o UIView_Cylinder.o CALayer_Cylinder.o $(LIBLUA) ../include/libsubstrate.dylib
 	$(COMPILE) $^ -o $@
-#$(DYLIB): $(REQ)
-#	$(COMPILE) $(COMP) -o $@
 
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)
