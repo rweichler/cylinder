@@ -41,8 +41,8 @@ static int l_popup(lua_State *L);
 
 static const char * get_stack(lua_State *L, const char *strr);
 
-void write_error(const char *error);
-void write_file(const char *msg, const char *filename);
+static void write_error(const char *error);
+static void write_file(const char *msg, const char *filename);
 
 static const char *OS_DANGER[] = {
     "exit",
@@ -67,7 +67,7 @@ static void remove_script(int index)
     [_scriptNames removeObjectAtIndex:index];
 }
 
-NSDictionary *gen_error_dict(NSString *script, BOOL broken)
+static NSDictionary *gen_error_dict(NSString *script, BOOL broken)
 {
     NSArray *components = script.pathComponents;
     NSString *folder = [components objectAtIndex:0];
@@ -80,7 +80,7 @@ NSDictionary *gen_error_dict(NSString *script, BOOL broken)
         nil];
 }
 
-void error_notification(NSArray *errors)
+static void error_notification(NSArray *errors)
 {
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:errors format:NSPropertyListBinaryFormat_v1_0 errorDescription:NULL];
     if(data)
@@ -189,7 +189,7 @@ static void set_environment(const char *script)
 }
 
 
-int open_script(const char *script)
+static int open_script(const char *script)
 {
     int func = -1;
 
@@ -353,12 +353,12 @@ static int l_subviews(lua_State *L)
 }
 
 
-void write_error(const char *error)
+static void write_error(const char *error)
 {
     write_file(error, LOG_PATH);
 }
 
-void write_file(const char *msg, const char *filename)
+static void write_file(const char *msg, const char *filename)
 {
     NSString *path = [LOG_DIR stringByAppendingPathComponent:[NSString stringWithUTF8String:filename]];
 
