@@ -18,7 +18,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #import "UIView+Cylinder.h"
-#import <objc/objc.h>
+#import <objc/runtime.h>
 
 @implementation UIView(Cylinder)
 -(BOOL)isOnScreen

@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#import "UIView+Cylinder.h"
-#import <objc/objc.h>
+#import "CALayer+Cylinder.h"
+#import <objc/runtime.h>
 
 @implementation CALayer(Cylinder)
 -(void)setSavedValue:(NSValue *)value

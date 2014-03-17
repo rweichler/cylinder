@@ -29,6 +29,8 @@ FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framewo
 FLAGS= -dynamiclib #-undefined suppress -flat_namespace
 DYLIB=$(NAME).dylib
 LIBLUA=../include/lua/liblua.a
+COMPILEO=$(CC) $(ARCH) $(SDKS) $(INCLUDES) $(ARC)
+COMPILE=$(COMPILEO) $(FRAMEWORKS) $(FLAGS)
 
 MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
 CYLINDER_DIR=/Library/Cylinder/
@@ -36,7 +38,19 @@ CYLINDER_DIR=/Library/Cylinder/
 COMP=../include/libsubstrate.dylib CompileMe.m $(LIBLUA)
 REQ=$(COMP) Tweak.m luashit.h luashit.m lua_UIView.h lua_UIView.m macros.h Makefile UIView+Cylinder.m UIView+Cylinder.h CALayer+Cylinder.h CALayer+Cylinder.m
 
+
 all: $(DYLIB)
+
+tweak.o: Tweak.m
+	$(COMPILEO) -c -o tweak.o Tweak.m
+luashit.o: luashit.h luashit.m
+	$(COMPILEO) -c -o luashit.o luashit.m
+lua_UIView.o: lua_UIView.h lua_UIView.m
+	$(COMPILEO) -c -o lua_UIView.o lua_UIView.m
+UIView_Cylinder.o: UIView+Cylinder.h UIView+Cylinder.m
+	$(COMPILEO) -c -o UIView_Cylinder.o UIView+Cylinder.m
+CALayer_Cylinder.o: CALayer+Cylinder.h CALayer+Cylinder.m
+	$(COMPILEO) -c -o CALayer_Cylinder.o CALayer+Cylinder.m
 
 copy: $(DYLIB)
 	$(SCP) $(DYLIB) $(IPHONE_IP):$(MS_DIR)
@@ -47,8 +61,10 @@ clean:
 	rm -f $(DYLIB)
 	cd ../include/lua && $(MAKE) clean
 
-$(DYLIB): $(REQ)
-	$(CC) $(COMP) $(ARCH) $(SDKS) $(FRAMEWORKS) $(INCLUDES) $(ARC) $(FLAGS) -o $@
+$(DYLIB): tweak.o luashit.o lua_UIView.o UIView_Cylinder.o CALayer_Cylinder.o $(LIBLUA) ../include/libsubstrate.dylib
+	$(COMPILE) $^ -o $@
+#$(DYLIB): $(REQ)
+#	$(COMPILE) $(COMP) -o $@
 
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)
