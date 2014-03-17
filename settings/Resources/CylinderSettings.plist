@@ -108,7 +108,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>@rweichler</string>
+			<string>Twitter: @rweichler</string>
 		</dict>
 		<dict>
 			<key>action</key>

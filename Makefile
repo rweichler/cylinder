@@ -23,7 +23,6 @@ BUNDLE_IDENTIFIER=com.r333d.cylinder
 
 MOBSUB=.tmp/Library/MobileSubstrate/DynamicLibraries
 
-
 all:
 	cd tweak && $(MAKE)
 	cd settings && $(MAKE)
