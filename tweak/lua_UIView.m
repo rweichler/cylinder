@@ -123,22 +123,30 @@ static int l_uiview_index(lua_State *L)
         }
         else if(!strcmp(key, "x"))
         {
+            self.isOnScreen = false;
             lua_pushnumber(L, self.frame.origin.x);
+            self.isOnScreen = true;
             return 1;
         }
         else if(!strcmp(key, "y"))
         {
+            self.isOnScreen = false;
             lua_pushnumber(L, self.frame.origin.y);
+            self.isOnScreen = true;
             return 1;
         }
         else if(!strcmp(key, "width"))
         {
-            lua_pushnumber(L, self.frame.size.width/self.layer.transform.m11);
+            self.isOnScreen = false;
+            lua_pushnumber(L, self.frame.size.width);
+            self.isOnScreen = true;
             return 1;
         }
         else if(!strcmp(key, "height"))
         {
-            lua_pushnumber(L, self.frame.size.height/self.layer.transform.m22);
+            self.isOnScreen = false;
+            lua_pushnumber(L, self.frame.size.height);
+            self.isOnScreen = true;
             return 1;
         }
         else if(!strcmp(key, "max_icons"))
