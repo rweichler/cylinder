@@ -31,6 +31,7 @@ DYLIB=$(NAME).dylib
 LIBLUA=../include/lua/liblua.a
 COMPILEO=$(CC) $(ARCH) $(SDKS) $(INCLUDES) $(ARC)
 COMPILE=$(COMPILEO) $(FRAMEWORKS) $(FLAGS)
+OUTPUT=tweak.o luashit.o lua_UIView.o UIView_Cylinder.o CALayer_Cylinder.o
 
 MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
 CYLINDER_DIR=/Library/Cylinder/
@@ -50,9 +51,10 @@ CALayer_Cylinder.o: CALayer+Cylinder.h CALayer+Cylinder.m
 
 clean:
 	rm -f $(DYLIB)
+	rm -f $(OUTPUT)
 	cd ../include/lua && $(MAKE) clean
 
-$(DYLIB): tweak.o luashit.o lua_UIView.o UIView_Cylinder.o CALayer_Cylinder.o $(LIBLUA) ../include/libsubstrate.dylib
+$(DYLIB): $(OUTPUT) $(LIBLUA) ../include/libsubstrate.dylib
 	$(COMPILE) $^ -o $@
 
 $(LIBLUA):
