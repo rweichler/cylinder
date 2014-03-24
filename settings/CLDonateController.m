@@ -24,8 +24,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #include <objc/runtime.h>
 
 #define TEXT_SECTION 0
-#define BITCOIN_SECTION 1
-#define PAYPAL_SECTION 2
+#define PAYPAL_SECTION 1
+#define BITCOIN_SECTION 2
 #define BITCOIN_ADDRESS @"177JwbKv8msAQPVk8azEKMCuNBWHJbs1XT"
 #define PAYPAL_URL @"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=rweichler%40gmail%2ecom&lc=US&item_name=Reed%20Weichler&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"
 
@@ -108,7 +108,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 /* UITableViewDelegate / UITableViewDataSource Methods {{{ */
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 3;
+    return 2;
 }
 
 - (id) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
