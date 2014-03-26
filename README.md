@@ -8,9 +8,19 @@
 
 [Here](https://github.com/rweichler/cylinder/raw/master/cylinder.deb)'s the deb.
 
-## Available Effects
+## What!?!?!?!??!
 
-* A lot. I don't feel like listing them all anymore.
+This lets you animate your icons when you swipe pages on the SpringBoard.
+
+The kicker about this one is two things:
+
+1. Combining multiple effects
+2. Effects are written in [Lua](http://lua.org/about.html)
+
+This allows for unprecedented flexibility. Users do not have to depend on the developer
+to add new icon effects, as they can just code them in Lua with a simple text editor
+and copy to them to the phone. The existing scripts can also provide as a basis
+to help newbies make their own scripts if they so desire.
 
 If you want more, check out [/r/cylinder](http://reddit.com/r/cylinder)!
 
@@ -21,15 +31,6 @@ your name in /Library/Cylinder on your phone (like
 /Library/Cylinder/rweichler), drop your scripts in,
 and it should appear in settings. You don't even have to
 respring! This allows for rapid testing.
-
-## Compatible devices
-
-### Tested
-
-* iPod touch 4
-* iPod touch 5
-* iPhone 4S
-* iPhone 5S
 
 ## Compatible iOS versions
 
@@ -50,19 +51,6 @@ respring! This allows for rapid testing.
 * The first iOS
 
 I'm probably never going to support these because a device that can run iOS 1 can run iOS 3.
-
-## Todo list
-
-* ~~Make proof-of-concept cycript 'script'~~
-* ~~Port it to a Mobilesubstrate tweak~~
-* ~~Add Lua bindings~~
-* ~~Add preferences bundle~~
-* ~~Fix OS specific bugs~~ &lt;----- well, maybe not all of them but it is acceptable
-* ~~Add randomize switch~~
-* ~~Add more example Barrel thingies~~
-* ~~Code cleanup~~ &lt;-------- this is ongoing
-* Fix conflicts with popular tweaks
-* Put on BigBoss
 
 ##Building
 
