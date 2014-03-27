@@ -19,8 +19,7 @@ The kicker about this one is two things:
 
 This allows for unprecedented flexibility. Users do not have to depend on the developer
 to add new icon effects, as they can just code them in Lua with a simple text editor
-and copy to them to the phone. The existing scripts can also provide as a basis
-to help newbies make their own scripts if they so desire.
+and copy to them to the phone. The existing scripts can also serve to help newbies start making their own scripts if they so desire.
 
 If you want more, check out [/r/cylinder](http://reddit.com/r/cylinder)!
 
