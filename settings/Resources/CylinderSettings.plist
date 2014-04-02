@@ -78,14 +78,6 @@
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>footerText</key>
-            <string>hi</string>
-			<key>isStaticText</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>cell</key>
 			<string>PSLinkListCell</string>
 			<key>default</key>
 			<string></string>
