@@ -244,12 +244,11 @@ static void layout_icons(UIView *self)
     }
 }
 
-static id(*original_SB_insertIcon)(id, SEL, id, unsigned, BOOL, BOOL);
-static id SB_insertIcon(UIView *self, SEL _cmd, UIView *icon, unsigned index, BOOL now, BOOL pop)
+static void(*original_SB_addSubview)(id, SEL, id);
+static void SB_addSubview(UIView *self, SEL _cmd, UIView *view)
 {
-    id result = original_SB_insertIcon(self, _cmd, icon, index, now, pop);
-    self.hasDifferentSubviews = true;
-    return result;
+    objc_setAssociatedObject(self, @selector(hasDifferentSubviews), [NSNumber numberWithBool:true], OBJC_ASSOCIATION_RETAIN);
+    original_SB_addSubview(self, _cmd, view);
 }
 
 static void load_that_shit()
@@ -372,7 +371,7 @@ static void initialize()
     MSHookMessageEx(SB_icon_class, @selector(setFrame), (IMP)SB_icon_setFrame, (IMP *)&original_SB_icon_setFrame);
 
 
-    MSHookMessageEx(SB_list_class, @selector(insertIcon:atIndex:moveNow:pop:), (IMP)SB_insertIcon, (IMP *)&original_SB_insertIcon);
+    MSHookMessageEx(SB_list_class, @selector(addSubview:), (IMP)SB_addSubview, (IMP *)&original_SB_addSubview);
 
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
