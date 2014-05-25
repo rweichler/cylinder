@@ -35,14 +35,13 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 -(BOOL)hasDifferentSubviews
 {
-    NSNumber *count = objc_getAssociatedObject(self, @selector(hasDifferentSubviews));
+    NSNumber *num = objc_getAssociatedObject(self, @selector(hasDifferentSubviews));
 
-    BOOL different = self.subviews.count != count.intValue;
+    BOOL different = num.boolValue;
 
     if(different)
     {
-        count = [NSNumber numberWithInt:self.subviews.count];
-        objc_setAssociatedObject(self, @selector(hasDifferentSubviews), count, OBJC_ASSOCIATION_RETAIN);
+        objc_setAssociatedObject(self, @selector(hasDifferentSubviews), nil, OBJC_ASSOCIATION_RETAIN);
     }
 
     return different;
@@ -50,8 +49,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 -(void)setHasDifferentSubviews:(BOOL)different
 {
-    NSNumber *count = different ? nil : [NSNumber numberWithInt:self.subviews.count];
-    objc_setAssociatedObject(self, @selector(hasDifferentSubviews), count, OBJC_ASSOCIATION_RETAIN);
+    NSNumber *num = different ? nil : [NSNumber numberWithBool:true];
+    objc_setAssociatedObject(self, @selector(hasDifferentSubviews), num, OBJC_ASSOCIATION_RETAIN);
 }
 
 @end
