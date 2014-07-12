@@ -19,6 +19,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 #import "CylinderSettings.h"
 #import <Defines.h>
+#import "twitter.h"
 #import "CLEffect.h"
 
 @interface CylinderSettingsListController()
@@ -70,8 +71,13 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://r333d.com"]];
 }
 
+-(void)visitBarrel:(id)sender
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"cydia://package/com.aaronash.barrel"]];
+}
+
 - (void)visitTwitter:(id)sender {
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://twitter.com/rweichler"]];
+    open_twitter();
 }
 
 - (void)visitGithub:(id)sender {
