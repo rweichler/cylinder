@@ -337,7 +337,7 @@ static void initialize()
     _folders = [NSMutableArray array];
 
     SB_icon_class = NSClassFromString(@"SBIconView"); //iOS 4+
-    if(!SB_icon_class) SB_list_class = NSClassFromString(@"SBIcon"); //iOS 3
+    if(!SB_icon_class) SB_icon_class = NSClassFromString(@"SBIcon"); //iOS 3
     SB_list_class = NSClassFromString(@"SBIconListView"); //iOS 4+
     if(!SB_list_class) SB_list_class = NSClassFromString(@"SBIconList"); //iOS 3
     load_that_shit();
