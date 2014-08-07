@@ -330,6 +330,13 @@ static void SB_icon_setFrame(UIView *self, SEL _cmd, CGRect frame)
     self.layer.transform = transform;
 }
 
+static void(*original_SB_willRotate)(id, SEL, UIInterfaceOrientation, NSTimeInterval);
+static void SB_willRotate(id self, SEL _cmd, UIInterfaceOrientation orientation, NSTimeInterval duration)
+{
+    NSLog(@"Cylinder: LOL it gonna b ROTATING bruhhhh");
+    return original_SB_willRotate(self, _cmd, orientation, duration);
+}
+
 // The attribute forces this function to be called on load.
 __attribute__((constructor))
 static void initialize()
@@ -348,6 +355,8 @@ static void initialize()
     MSHookMessageEx(cls, @selector(scrollViewDidEndDecelerating:), (IMP)SB_scrollViewDidEndDecelerating, (IMP *)&original_SB_scrollViewDidEndDecelerating);
     MSHookMessageEx(cls, @selector(scrollViewDidEndScrollingAnimation:), (IMP)SB_scrollViewDidEndScrollingAnimation, (IMP *)&original_SB_scrollViewDidEndScrollingAnimation);
     MSHookMessageEx(cls, @selector(scrollViewWillBeginDragging:), (IMP)SB_scrollViewWillBeginDragging, (IMP *)&original_SB_scrollViewWillBeginDragging);
+    MSHookMessageEx(UIViewController.class, @selector(willRotateToInterfaceOrientation:duration:), (IMP)SB_willRotate, (IMP *)&original_SB_willRotate);
+    //MSHookMessageEx(cls, @selector(didRotateFromInterfaceOrientation:), (IMP)SB_didRotate, (IMP *)&original_SB_didRotate);
 
     //iOS 7 bug hotfix
     Class bg_cls = NSClassFromString(@"SBFolderIconBackgroundView");

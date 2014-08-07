@@ -28,7 +28,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 //this allows a 3D perspective, sometimes this value is needed
 //for transformations that translate, THEN rotate. (like cube,
 //page flip, etc)
-#define PERSPECTIVE_DISTANCE 500.0
+#define SCREEN_SIZE UIScreen.mainScreen.bounds.size
+#define PERSPECTIVE_DISTANCE ((SCREEN_SIZE.width +  SCREEN_SIZE.height)/2)
 
 int l_create_uiview_metatable(lua_State *L);
 int l_push_base_transform(lua_State *L);
