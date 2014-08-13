@@ -56,6 +56,8 @@ I'm probably never going to support these because a device that can run iOS 1 ca
 
 If you don't feel like building this, [here's a .deb of the latest stable build](http://r333d.com/repo/cylinder.php).
 
+And... [here's a deb of th latest *UNSTABLE* build](http://r333d.com/repo/cylinder.php?unstable=1).
+
 First, init the submodules:
 
 ```
