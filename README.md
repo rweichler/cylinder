@@ -1,6 +1,6 @@
 # Cylinder
 
-![](https://raw2.github.com/rweichler/cylinder/master/code.png)
+![](https://github.com/rweichler/cylinder/raw/master/code.png)
 
 ## Latest version: 0.14.3.16
 
