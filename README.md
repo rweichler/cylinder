@@ -23,7 +23,7 @@ and copy to them to the phone. The existing scripts can also serve to help newbi
 
 If you want more, check out [/r/cylinder](http://reddit.com/r/cylinder)!
 
-If you want to make your own effects, check out [any of the 45 scripts that are bundled with Cylinder](https://github.com/rweichler/cylinder/tree/master/tweak/scripts). If you need more in-depth documentation you can check out
+If you want to make your own effects, check out [any of the 58 scripts that are bundled with Cylinder](https://github.com/rweichler/cylinder/tree/master/tweak/scripts). If you need more in-depth documentation you can check out
 [EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua)
 as well.
 Once you've made your own effect, make a folder with
