@@ -22,11 +22,11 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 @interface CLEffectsController : PSViewController <UITableViewDelegate, UITableViewDataSource> {
 	UITableView *_tableView;
-	NSMutableDictionary *_effects;
+	NSMutableArray *_effects;
     NSMutableArray *_selectedEffects;
     BOOL _initialized;
 }
-@property (nonatomic, retain) NSMutableDictionary *effects;
+@property (nonatomic, retain) NSMutableArray *effects;
 @property (nonatomic, retain) NSMutableArray *selectedEffects;
 @property (nonatomic, strong) UIBarButtonItem *clearButton;
 // + (void)load;
