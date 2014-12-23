@@ -115,26 +115,30 @@ static CLEffectsController *sharedController = nil;
         NSArray *scripts = [manager contentsOfDirectoryAtPath:path error:nil];
         if(scripts.count == 0) continue;
 
-        NSMutableArray *effects = [NSMutableArray array];
+        //NSMutableArray *effects = [NSMutableArray array];
         for(NSString *script in scripts)
         {
             CLEffect *effect = [CLEffect effectWithPath:[path stringByAppendingPathComponent:script]];
             if(effect)
-                [effects addObject:effect];
+                [self.effects addObject:effect];
         }
-        if(effects.count > 0)
-            [self.effects setObject:effects forKey:dirName];
+        //if(effects.count > 0)
+        //    [self.effects setObject:effects forKey:dirName];
     }
+    [self.effects sortUsingComparator:^NSComparisonResult(CLEffect *effect1, CLEffect *effect2)
+    {
+        return [effect1.name compare:effect2.name];
+    }];
 }
 
 -(CLEffect *)effectWithName:(NSString *)name inDirectory:(NSString *)directory
 {
     if(!name || !directory) return nil;
 
-    NSArray *effects = [self.effects valueForKey:directory];
-    for(CLEffect *effect in effects)
+    //NSArray *effects = [self.effects valueForKey:directory];
+    for(CLEffect *effect in self.effects)
     {
-        if([effect.name isEqualToString:name])
+        if([effect.name isEqualToString:name] && [effect.directory isEqualToString:directory])
         {
             return effect;
         }
@@ -144,7 +148,8 @@ static CLEffectsController *sharedController = nil;
 
 - (void)refreshList
 {
-    self.effects = [NSMutableDictionary dictionary];
+    //self.effects = [NSMutableDictionary dictionary];
+    self.effects = [NSMutableArray array];
     CylinderSettingsListController *ctrl = (CylinderSettingsListController*)self.parentController;
     [self addEffectsFromDirectory:kEffectsDirectory];
 
@@ -221,7 +226,7 @@ static CLEffectsController *sharedController = nil;
 /* UITableViewDelegate / UITableViewDataSource Methods {{{ */
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return self.effects.count;
+    return 1;//self.effects.count;
 }
 
 -(NSString *)keyForIndex:(int)index
@@ -237,14 +242,15 @@ static CLEffectsController *sharedController = nil;
 
 - (id) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return [self keyForIndex:section];
+    return nil;//[self keyForIndex:section];
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if(section == self.effects.count) return 1;
+    return self.effects.count;
 
-    return [[self.effects valueForKey:[self keyForIndex:section]] count];
+    //return [[self.effects valueForKey:[self keyForIndex:section]] count];
 }
 
 -(void)setCellIcon:(UITableViewCell *)cell effect:(CLEffect *)effect
@@ -257,9 +263,9 @@ static CLEffectsController *sharedController = nil;
 
 -(CLEffect *)effectAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *key = [self keyForIndex:indexPath.section];
-    NSArray *effects = [self.effects valueForKey:key];
-    CLEffect *effect = [effects objectAtIndex:indexPath.row];
+    //NSString *key = [self keyForIndex:indexPath.section];
+    //NSArray *effects = [self.effects valueForKey:key];
+    CLEffect *effect = [self.effects objectAtIndex:indexPath.row];
     return effect;
 }
 
@@ -268,7 +274,7 @@ static CLEffectsController *sharedController = nil;
     CLAlignedTableViewCell *cell = (CLAlignedTableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"EffectCell"];
     if (!cell)
     {
-        cell = [CLAlignedTableViewCell.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"EffectCell"].autorelease;
+        cell = [CLAlignedTableViewCell.alloc initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"EffectCell"].autorelease;
         cell.textLabel.adjustsFontSizeToFitWidth = true;
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
@@ -280,6 +286,7 @@ static CLEffectsController *sharedController = nil;
     cell.effect = effect;
 
     cell.textLabel.text = effect.name;
+    cell.detailTextLabel.text = effect.directory;
     cell.selected = false;
     [self setCellIcon:cell effect:effect];
 
