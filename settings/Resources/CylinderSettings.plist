@@ -80,7 +80,13 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>footerText</key>
-            <string>© 2014 Reed Weichler</string>
+            <string>But for real tho, if you have the time it'd be cool if you could write some code to make this better. This tweak is open source and is completely free so anyone could contribute code to if it they see a problem with it.
+                
+Unfortunately nobody has yet. There are quite a few bugs with this tweak like the iPad/iPhone 6+ rotation overlap bug (which I can't fix cuz I don't have an iPad or iPhone 6+), and the 3D animation combination lag bug. It would be pretty sick if those could be fixed by someone else.
+            
+Also you don't need to know how to code to contibute. Only the core tweak is made in Objective-C. All of the effects in this tweak were coded in Lua. A lot of people who made these effects didn't even know how to code before making an effect. You just need a basic understanding of trig and you could finish an effect in a few hours. Go into into your device's filesystem and navigate to /Library/Cylinder to see the effects. You can just copy-paste an effect into a new script and change the value of a variable. It's kinda like editing a config file. That's how I got started. Lua was my first language.
+            
+Anyway regardless, enjoy the tweak.</string>
 			<key>isStaticText</key>
 			<true/>
 		</dict>
@@ -128,7 +134,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-            <string>/r/cylinder</string>
+            <string>More effects on /r/cylinder</string>
             <key>icon</key>
             <string>reddit.png</string>
 		</dict>
