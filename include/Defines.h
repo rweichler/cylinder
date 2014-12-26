@@ -21,6 +21,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import <substrate.h>
 
 #define CLLog(format, ...) NSLog(@"Cylinder: %@", [NSString stringWithFormat: format, ## __VA_ARGS__])
+#define Log CLLog
 
 #define IOS_VERSION UIDevice.currentDevice.systemVersion.intValue
 #define SCREEN_SIZE UIScreen.mainScreen.bounds.size
