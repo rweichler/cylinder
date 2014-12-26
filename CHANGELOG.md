@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0
+
+* iPad rotation bugs fixed
+* Made settings pane look nicer
+* Alphabetized effects
+* New effects by Qaanol, ViktorX11 and cylgom
+
 ## BETA 0.14.3.16
 
 * Fixed compatibility bugs from last update
