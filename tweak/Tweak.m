@@ -176,9 +176,32 @@ static void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int tota
     original_SB_showIconImages(self, _cmd, from, to, total, jittering);
 }
 
+static uintptr_t _scrollViewSizeKey;
+static uintptr_t _scrollViewJustSetKey;
+
 static void(*original_SB_scrollViewDidScroll)(id, SEL, id);
 static void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
+    NSValue *val = objc_getAssociatedObject(scrollView, &_scrollViewSizeKey);
+    if(val)
+    {
+        if(!CGSizeEqualToSize(val.CGSizeValue, scrollView.frame.size))
+        {
+            objc_setAssociatedObject(scrollView, &_scrollViewSizeKey, [NSValue valueWithCGSize:scrollView.frame.size], OBJC_ASSOCIATION_RETAIN);
+            objc_setAssociatedObject(scrollView, &_scrollViewJustSetKey, [NSNumber numberWithBool:true], OBJC_ASSOCIATION_RETAIN);
+            return;
+        }
+    }
+    else
+    {
+        objc_setAssociatedObject(scrollView, &_scrollViewSizeKey, [NSValue valueWithCGSize:scrollView.frame.size], OBJC_ASSOCIATION_RETAIN);
+    }
+    //weird stuff happens. when rotating, it sets the size to itself for some reason. causes the bug to happen when a folder is open. this fixes it.
+    if(objc_getAssociatedObject(scrollView, &_scrollViewJustSetKey))
+    {
+        objc_setAssociatedObject(scrollView, &_scrollViewJustSetKey, nil, OBJC_ASSOCIATION_RETAIN);
+        return;
+    }
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
     did_scroll(scrollView);
 }
@@ -333,7 +356,6 @@ static void SB_icon_setFrame(UIView *self, SEL _cmd, CGRect frame)
 static void(*original_SB_willRotate)(id, SEL, UIInterfaceOrientation, NSTimeInterval);
 static void SB_willRotate(id self, SEL _cmd, UIInterfaceOrientation orientation, NSTimeInterval duration)
 {
-    NSLog(@"Cylinder: LOL it gonna b ROTATING bruhhhh");
     return original_SB_willRotate(self, _cmd, orientation, duration);
 }
 
