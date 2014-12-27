@@ -16,46 +16,40 @@
 # along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 NAME=Cylinder
-IPHONE_IP=iphone
-SCP=scp
+DYLIB = $(NAME).dylib
 
-CC=xcrun -sdk iphoneos clang
-ARCH=-arch armv7 -arch arm64
 DEVELOPER_DIR=`xcode-select --print-path`
-SDKS=-mios-version-min=3.0 -isysroot $(DEVELOPER_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7*.sdk
-#ARC=-fobjc-arc
-INCLUDES= -I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
-FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework CoreGraphics
-FLAGS= -dynamiclib #-undefined suppress -flat_namespace
-DYLIB=$(NAME).dylib
-LIBLUA=../include/lua/liblua.a
-COMPILEO=$(CC) $(ARCH) $(SDKS) $(INCLUDES) $(ARC)
-COMPILE=$(COMPILEO) $(FRAMEWORKS) $(FLAGS)
-OUTPUT=tweak.o luashit.o lua_UIView.o UIView_Cylinder.o CALayer_Cylinder.o
+#SDK_PATH=$(DEVELOPER_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7*.sdk
+SDK_PATH=~/code/iPhoneOS7.1.sdk
+SDKS=-mios-version-min=3.0 -isysroot $(SDK_PATH)
+CFLAGS=-Wall
+ARCH=-arch armv7 -arch arm64
+INCLUDE=-I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
 
-MS_DIR=/Library/MobileSubstrate/DynamicLibraries/
-CYLINDER_DIR=/Library/Cylinder/
+CC=clang -g -O2 $(ARCH) $(SDKS) $(INCLUDE)
+
+FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework CoreGraphics
+LIBLUA=../include/lua/liblua.a
+OUTPUT=tweak.o luashit.o lua_UIView.o UIView+Cylinder.o CALayer+Cylinder.o
 
 all: $(DYLIB)
 
-tweak.o: Tweak.m
-	$(COMPILEO) -c -o tweak.o Tweak.m
-luashit.o: luashit.h luashit.m
-	$(COMPILEO) -c -o luashit.o luashit.m
-lua_UIView.o: lua_UIView.h lua_UIView.m
-	$(COMPILEO) -c -o lua_UIView.o lua_UIView.m
-UIView_Cylinder.o: UIView+Cylinder.h UIView+Cylinder.m
-	$(COMPILEO) -c -o UIView_Cylinder.o UIView+Cylinder.m
-CALayer_Cylinder.o: CALayer+Cylinder.h CALayer+Cylinder.m
-	$(COMPILEO) -c -o CALayer_Cylinder.o CALayer+Cylinder.m
-
 clean:
-	rm -f $(DYLIB)
-	rm -f $(OUTPUT)
-	cd ../include/lua && $(MAKE) clean
+	rm -f $(DYLIB) $(OUTPUT)
+
+.PHONY: all clean
+
+%.o: %.m
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(DYLIB): $(OUTPUT) $(LIBLUA) ../include/libsubstrate.dylib
-	$(COMPILE) $^ -o $@
+	$(CC) -dynamiclib -o $@ $^ $(FRAMEWORKS)
 
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)
+
+tweak.o: tweak.m
+luashit.o: luashit.h luashit.m
+lua_UIView.o: lua_UIView.h lua_UIView.m
+UIView+Cylinder.o: UIView+Cylinder.h UIView+Cylinder.m
+CALayer+Cylinder.o: CALayer+Cylinder.h CALayer+Cylinder.m

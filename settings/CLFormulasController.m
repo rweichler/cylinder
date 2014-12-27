@@ -177,7 +177,7 @@ static NSString *_theFormulaName;
         else if([self.formulas objectForKey:name])
         {
             _theFormulaName = [name retain];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:LOCALIZE(@"FORMULA_ALREADY_EXISTS", @"A formula with that name already exists.") delegate:self cancelButtonTitle:LOCALIZE(@"CANCEL", @"Cancel") otherButtonTitles:LOCALIZE(@"OVERWRITE IT", @"Overwrite it"), nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:LOCALIZE(@"FORMULA_ALREADY_EXISTS", @"A formula with that name already exists.") delegate:self cancelButtonTitle:LOCALIZE(@"CANCEL", @"Cancel") otherButtonTitles:LOCALIZE(@"OVERWRITE_IT", @"Overwrite it"), nil];
             [alert show];
         }
         else
