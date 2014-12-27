@@ -18,7 +18,7 @@
 			<key>default</key>
 			<true/>
 			<key>label</key>
-			<string>Enabled</string>
+			<string>ENABLED</string>
 			<key>set</key>
 			<string>setEnabled:</string>
 			<key>get</key>
@@ -40,7 +40,7 @@
 			<key>key</key>
 			<string>effect</string>
 			<key>label</key>
-			<string>Effects</string>
+			<string>EFFECTS</string>
 			<key>name</key>
 			<string>Effect</string>
 		</dict>
@@ -58,7 +58,7 @@
 			<key>key</key>
 			<string>formula</string>
 			<key>label</key>
-			<string>Formulas</string>
+			<string>FORMULAS</string>
 			<key>name</key>
 			<string>Formula</string>
 		</dict>
@@ -68,7 +68,7 @@
 			<key>default</key>
 			<false/>
 			<key>label</key>
-			<string>Randomize</string>
+			<string>RANDOMIZE</string>
 			<key>set</key>
 			<string>setRandomized:</string>
 			<key>get</key>
@@ -109,7 +109,7 @@ Anyway, regardless, enjoy the tweak :D
 			<key>key</key>
 			<string>donate</string>
 			<key>label</key>
-			<string>Donate</string>
+			<string>DONATE</string>
 			<key>name</key>
 			<string>Donate</string>
 		</dict>
@@ -129,7 +129,7 @@ Anyway, regardless, enjoy the tweak :D
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Source code</string>
+			<string>SOURCE_CODE</string>
             <key>icon</key>
             <string>github.png</string>
 		</dict>
@@ -139,7 +139,7 @@ Anyway, regardless, enjoy the tweak :D
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-            <string>More effects on /r/cylinder</string>
+            <string>R_CYLINDER</string>
             <key>icon</key>
             <string>reddit.png</string>
 		</dict>
@@ -149,7 +149,7 @@ Anyway, regardless, enjoy the tweak :D
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-            <string>Barrel (original tweak)</string>
+            <string>BARREL</string>
             <key>icon</key>
             <string>barrel.png</string>
 		</dict>
