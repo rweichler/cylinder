@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+* Revert formula behavior to before 0.14.3.16 (fixes broken formulas from the 1.0 update)
+
 ## 1.0
 
 * iPad rotation bugs fixed
