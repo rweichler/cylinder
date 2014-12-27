@@ -53,17 +53,18 @@ static CLEffectsController *sharedController = nil;
 {
 	if ((self = [super initForContentSize:size]))
     {
-		_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) style:UITableViewStyleGrouped];
-		[_tableView setDataSource:self];
-		[_tableView setDelegate:self];
-		[_tableView setEditing:NO];
-		[_tableView setAllowsSelection:YES];
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) style:UITableViewStyleGrouped];
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+        _tableView.editing = false;
+        _tableView.allowsSelection = true;
 
-		if ([[UIDevice currentDevice] iOSVersionIsAtLeast: @"5.0"]) {
-			[_tableView setAllowsMultipleSelection:NO];
-			[_tableView setAllowsSelectionDuringEditing:YES];
-			[_tableView setAllowsMultipleSelectionDuringEditing:YES];
-		}
+        if(IOS_VERSION >= 5)
+        {
+            _tableView.allowsMultipleSelection = false;
+            _tableView.allowsSelectionDuringEditing = true;
+            _tableView.allowsMultipleSelectionDuringEditing = true;
+        }
 		
 		if ([self respondsToSelector:@selector(setView:)])
 			[self performSelectorOnMainThread:@selector(setView:) withObject:_tableView waitUntilDone:YES];

@@ -39,7 +39,7 @@ static int l_print(lua_State *L);
 static int l_subviews(lua_State *L);
 static int l_popup(lua_State *L);
 
-static const char * get_stack(lua_State *L, const char *strr);
+//static const char * get_stack(lua_State *L, const char *strr);
 
 static void write_error(const char *error);
 static void write_file(const char *msg, const char *filename);
@@ -450,34 +450,36 @@ BOOL manipulate(UIView *view, float offset, u_int32_t rand)
     }
 }
 
+/*
 static const char * get_stack(lua_State *L, const char *strr)
 {
     NSMutableString *str = [NSMutableString stringWithFormat:@"%s{", strr];
     int i;
     int top = lua_gettop(L);
-    for (i = 1; i <= top; i++) {  /* repeat for each level */
+    for (i = 1; i <= top; i++) {  //repeat for each level
         int t = lua_type(L, i);
         switch (t) {
                 
-            case LUA_TSTRING:  /* strings */
+            case LUA_TSTRING:  //strings
                 [str appendFormat:@"\"%s\"", lua_tostring(L, i)];
                 break;
                 
-            case LUA_TBOOLEAN:  /* booleans */
+            case LUA_TBOOLEAN:  //booleans
                 [str appendString:lua_toboolean(L, i) ? @"true" : @"false"];
                 break;
                 
-            case LUA_TNUMBER:  /* numbers */
+            case LUA_TNUMBER:  //numbers
                 [str appendFormat:@"%g", lua_tonumber(L, i)];
                 break;
                 
-            default:  /* other values */
+            default:  //other values
                 [str appendFormat:@"<%s>", lua_typename(L, t)];
                 break;
                 
         }
         if(i < top)
-            [str appendString:@",  "];  /* put a separator */
+            [str appendString:@",  "];  //put a separator
     }
     return [NSString stringWithFormat:@"%@} %d", str, top].UTF8String;
 }
+*/

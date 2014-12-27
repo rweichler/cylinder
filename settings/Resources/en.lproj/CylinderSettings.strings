@@ -6,6 +6,8 @@
     FORMULAS = "Formulas";
     RANDOMIZE = "Randomize";
 
+    TRANSLATION = "Translations wanted! If you'd like to translate this tweak shoot me a tweet or an email";
+
     DONATE = "Donate";
     SOURCE_CODE = "Source code";
     R_CYLINDER = "More effects on /r/cylinder";

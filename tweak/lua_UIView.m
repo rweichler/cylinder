@@ -388,18 +388,6 @@ static int l_transform_scale(lua_State *L)
 
 const static char *ERR_MALFORMED = "malformed transformation matrix";
 
-static float POPA_T(lua_State *L, int index)
-{
-    lua_pushnumber(L, index);
-    lua_gettable(L, -2);
-    if(!lua_isnumber(L, -1))
-        return luaL_error(L, ERR_MALFORMED);
-
-    float result = lua_tonumber(L, -1);
-    lua_pop(L, 1);
-    return result;
-}
-
 #define CALL_TRANSFORM_MACRO(F, ...)\
     F(m11, ## __VA_ARGS__);\
     F(m12, ## __VA_ARGS__);\

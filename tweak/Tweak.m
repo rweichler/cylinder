@@ -242,13 +242,6 @@ static CGRect SB_wallpaperRelativeBounds(id self, SEL _cmd)
     return frame;
 }
 
-//special thanks to @noahd for this fix: https://github.com/rweichler/cylinder/issues/17
-static Class(*original_SB_layerClass)(id, SEL);
-static Class SB_layerClass(id self, SEL _cmd)
-{
-    return [CATransformLayer class];
-}
-
 static void layout_icons(UIView *self)
 {
     NSMutableArray *icons = self.subviews.mutableCopy;
@@ -277,8 +270,6 @@ static void SB_addSubview(UIView *self, SEL _cmd, UIView *view)
 static void load_that_shit()
 {
     NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:PREFS_PATH];
-
-    BOOL enabled = _enabled;
 
     if(settings && ![[settings valueForKey:PrefsEnabledKey] boolValue])
     {
@@ -386,13 +377,6 @@ static void initialize()
 
     //iOS 6- not-all-icons-showing hotfix
     if(SB_list_class) MSHookMessageEx(SB_list_class, @selector(showIconImagesFromColumn:toColumn:totalColumns:visibleIconsJitter:), (IMP)SB_showIconImages, (IMP *)&original_SB_showIconImages);
-
-    //fix for https://github.com/rweichler/cylinder/issues/17
-    //MSHookMessageEx(object_getClass(SB_list_class), @selector(layerClass), (IMP)SB_layerClass, (IMP *)&original_SB_layerClass);
-
-    //the above fix hides the dock, so we needa fix dat shit YO
-    //Class SBDockIconListView = NSClassFromString(@"SBDockIconListView");
-    //if(SBDockIconListView) MSHookMessageEx(object_getClass(SBDockIconListView), @selector(layerClass), (IMP)original_SB_layerClass, NULL);
 
     //fix icon scrunching in certain circumstances
     MSHookMessageEx(SB_list_class, @selector(showAllIcons), (IMP)SB_showAllIcons, (IMP *)&original_SB_showAllIcons);
