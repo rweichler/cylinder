@@ -141,14 +141,14 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     switch(indexPath.section)
     {
         case TEXT_SECTION:
-            cell.textLabel.text = @"\u2764\u2764\u2764\u2764 Thank you \u2764\u2764\u2764\u2764";
+            cell.textLabel.text = [NSString stringWithFormat:@"%@%@%@", @"\u2764\u2764\u2764\u2764 ", LOCALIZE(@"THANK_YOU", @"Thank you"), @" \u2764\u2764\u2764\u2764"];
             //cell.selectionStyle = UITableViewCellSelectionStyleNone;
         break;
         case BITCOIN_SECTION:
             cell.textLabel.text = BITCOIN_ADDRESS;
         break;
         case PAYPAL_SECTION:
-            cell.textLabel.text = @"Tap here to go to Safari and donate via Paypal";
+            cell.textLabel.text = LOCALIZE(@"PAYPAL", @"Tap here to go to Safari and donate via Paypal");
         break;
     }
     return cell;

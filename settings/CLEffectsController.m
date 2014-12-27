@@ -94,7 +94,7 @@ static CLEffectsController *sharedController = nil;
         [wrapperView release];
         [tableFooter release];
 
-        self.clearButton = [[UIBarButtonItem.alloc initWithTitle:@"Clear" style:UIBarButtonItemStyleBordered target:self action:@selector(clear:)] autorelease];
+        self.clearButton = [[UIBarButtonItem.alloc initWithTitle:LOCALIZE(@"RESET_EFFECTS", @"Clear") style:UIBarButtonItemStyleBordered target:self action:@selector(clear:)] autorelease];
 	}
     sharedController = self;
 	return self;

@@ -117,9 +117,9 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 -(void)showAlertWithText:(NSString *)text
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:text delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Create Formula", nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:text delegate:self cancelButtonTitle:LOCALIZE(@"CANCEL", @"Cancel") otherButtonTitles:LOCALIZE(@"CREATE_FORMULA", @"Create Formula"), nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [alert textFieldAtIndex:0].placeholder = @"Formula name";
+    [alert textFieldAtIndex:0].placeholder = LOCALIZE(@"FORMULA_NAME", @"Formula name");
     [alert show];
 
 }
@@ -177,7 +177,7 @@ static NSString *_theFormulaName;
         else if([self.formulas objectForKey:name])
         {
             _theFormulaName = [name retain];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"A formula with that name already exists." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Overwrite it", nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:LOCALIZE(@"FORMULA_ALREADY_EXISTS", @"A formula with that name already exists.") delegate:self cancelButtonTitle:LOCALIZE(@"CANCEL", @"Cancel") otherButtonTitles:LOCALIZE(@"OVERWRITE IT", @"Overwrite it"), nil];
             [alert show];
         }
         else
@@ -291,7 +291,7 @@ static NSString *_theFormulaName;
 
     if(indexPath.section == ADD_SECTION)
     {
-        cell.textLabel.text = @"Create new formula";
+        cell.textLabel.text = LOCALIZE(@"CREATE_NEW_FORMULA", @"Create new formula");
         cell.imageView.image = [UIImage imageWithContentsOfFile:BUNDLE_PATH "plus.png"];
     }
     else if(indexPath.section == FORMULA_SECTION)
@@ -328,11 +328,11 @@ static NSString *_theFormulaName;
 
         if(effects.count == 0)
         {
-            [[UIAlertView.alloc initWithTitle:@"You have no effects enabled!" message:@"Go back to the effects list, enable some effects, then come back here and create a new formula." delegate:self cancelButtonTitle:@"Aight cool" otherButtonTitles:nil] show];
+            [[UIAlertView.alloc initWithTitle:LOCALIZE(@"NO_EFFECTS_ENABLED_TITLE", @"You have no effects enabled!") message:LOCALIZE(@"NO_EFFECTS_ENABLED_DESC", @"Go back to the effects list, enable some effects, then come back here and create a new formula.") delegate:self cancelButtonTitle:LOCALIZE(@"NO_EFFECTS_ENABLED_OK", @"Aight cool") otherButtonTitles:nil] show];
         }
         else
         {
-            [self showAlertWithText:@"The new formula will have whatever effects you have enabled right now."];
+            [self showAlertWithText:LOCALIZE(@"CREATE_FORMULA_INFO", @"The new formula will have whatever effects you have enabled right now.")];
         }
     }
     else if(indexPath.section == FORMULA_SECTION)
