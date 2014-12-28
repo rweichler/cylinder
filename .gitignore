@@ -3,3 +3,5 @@ tweak/tmp
 settings/CylinderSettings.bundle
 *.o
 *.a
+Packages
+Packages.bz2

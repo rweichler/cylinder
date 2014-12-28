@@ -1,0 +1,21 @@
+#!/bin/bash
+
+repo_path="/var/web/private_repo/php"
+deb="UNSTABLE.deb"
+dl="equalizerr.deb"
+deb_out="CYLINDER.deb"
+
+make package && \
+\
+cp DEBIAN/control Packages && \
+echo "MD5sum: $(md5sum $deb | awk '{print $4}')" >> Packages && \
+echo "Size: $(wc -c $deb | awk '{print $1}')" >> Packages && \
+echo "Filename: ./debs/$deb_out" >> Packages && \
+rm -f Packages.bz2 #&& \
+#bzip2 Packages #&& \
+#\
+#scp Packages.bz2 reed:$repo_path/Packages.bz2/p && \
+#scp $deb reed:$repo_path/deb/ && \
+#ssh reed "mv $repo_path/Packages.bz2/p $repo_path/Packages.bz2/Packages.bz2 && mv $repo_path/deb/$deb $repo_path/deb/$dl"
+#ssh reed "mv $repo_path/Packages.bz2/p $repo_path/Packages.bz2/Packages.bz2 && mv $repo_path/deb/$deb /var/web/www/pub/repo/$dl"
+
