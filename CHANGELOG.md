@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2
+
+* Fix crash on iOS < 6
+* Fix 1/4 screen issue on iOS 6 (?)
+* Performance improvements
+
 ## 1.0.1
 
 * Revert formula behavior to before 0.14.3.16 (fixes broken formulas from the 1.0 update)
