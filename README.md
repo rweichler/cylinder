@@ -2,7 +2,7 @@
 
 ![](https://github.com/rweichler/cylinder/raw/master/code.png)
 
-## Latest version: 1.0.1
+## Latest version: 1.0.2
 
 [Here](http://github.com/rweichler/cylinder/tree/master/CHANGELOG.md)'s the changelog.
 
@@ -36,7 +36,7 @@ respring! This allows for rapid testing.
 
 ### Tested
 
-* iOS 4 (preference bundle crashes)
+* iOS 4
 * iOS 5
 * iOS 6
 * iOS 7
