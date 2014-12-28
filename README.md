@@ -40,6 +40,7 @@ respring! This allows for rapid testing.
 * iOS 5
 * iOS 6
 * iOS 7
+* iOS 8
 
 ### Not tested, but might work
 
