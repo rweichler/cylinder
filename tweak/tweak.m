@@ -23,9 +23,10 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "macros.h"
 #import "UIView+Cylinder.h"
 
-void write_error(const char *error);
 
-static NSMutableArray *_folders;
+int IOS_VERSION;
+
+void write_error(const char *error);
 
 static Class SB_list_class;
 static Class SB_icon_class;
@@ -176,30 +177,32 @@ static void SB_showIconImages(UIView *self, SEL _cmd, int from, int to, int tota
     original_SB_showIconImages(self, _cmd, from, to, total, jittering);
 }
 
-static uintptr_t _scrollViewSizeKey;
-static uintptr_t _scrollViewJustSetKey;
+static CGSize _scrollViewSize;
+static BOOL _setScrollViewSize = false;
+static BOOL _justSetScrollViewSize;
 
 static void(*original_SB_scrollViewDidScroll)(id, SEL, id);
 static void SB_scrollViewDidScroll(id self, SEL _cmd, UIScrollView *scrollView)
 {
-    NSValue *val = objc_getAssociatedObject(scrollView, &_scrollViewSizeKey);
-    if(val)
+    //if the scroll view size changed, then the we are rotating and not actually scrolling
+    if(_setScrollViewSize)
     {
-        if(!CGSizeEqualToSize(val.CGSizeValue, scrollView.frame.size))
+        if(!CGSizeEqualToSize(_scrollViewSize, scrollView.frame.size))
         {
-            objc_setAssociatedObject(scrollView, &_scrollViewSizeKey, [NSValue valueWithCGSize:scrollView.frame.size], OBJC_ASSOCIATION_RETAIN);
-            objc_setAssociatedObject(scrollView, &_scrollViewJustSetKey, [NSNumber numberWithBool:true], OBJC_ASSOCIATION_RETAIN);
+            _scrollViewSize = scrollView.frame.size;
+            _justSetScrollViewSize = true;
             return;
         }
     }
     else
     {
-        objc_setAssociatedObject(scrollView, &_scrollViewSizeKey, [NSValue valueWithCGSize:scrollView.frame.size], OBJC_ASSOCIATION_RETAIN);
+        _scrollViewSize = scrollView.frame.size;
+        _setScrollViewSize = true;
     }
     //weird stuff happens. when rotating, it sets the size to itself for some reason. causes the bug to happen when a folder is open. this fixes it.
-    if(objc_getAssociatedObject(scrollView, &_scrollViewJustSetKey))
+    if(_justSetScrollViewSize)
     {
-        objc_setAssociatedObject(scrollView, &_scrollViewJustSetKey, nil, OBJC_ASSOCIATION_RETAIN);
+        _justSetScrollViewSize = false;
         return;
     }
     original_SB_scrollViewDidScroll(self, _cmd, scrollView);
@@ -354,8 +357,9 @@ static void SB_willRotate(id self, SEL _cmd, UIInterfaceOrientation orientation,
 __attribute__((constructor))
 static void initialize()
 {
-    _folders = [NSMutableArray array];
-
+@autoreleasepool
+{
+    IOS_VERSION = UIDevice.currentDevice.systemVersion.intValue;
     SB_icon_class = NSClassFromString(@"SBIconView"); //iOS 4+
     if(!SB_icon_class) SB_icon_class = NSClassFromString(@"SBIcon"); //iOS 3
     SB_list_class = NSClassFromString(@"SBIconListView"); //iOS 4+
@@ -391,4 +395,5 @@ static void initialize()
     //listen to notification center (for settings change)
     CFNotificationCenterRef r = CFNotificationCenterGetDarwinNotifyCenter();
     CFNotificationCenterAddObserver(r, NULL, &setSettingsNotification, (CFStringRef)kCylinderSettingsChanged, NULL, 0);
+}
 }

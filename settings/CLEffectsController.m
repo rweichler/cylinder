@@ -59,7 +59,7 @@ static CLEffectsController *sharedController = nil;
         _tableView.editing = false;
         _tableView.allowsSelection = true;
 
-        if(IOS_VERSION >= 5)
+        if(UIDevice.currentDevice.systemVersion.intValue >= 5)
         {
             _tableView.allowsMultipleSelection = false;
             _tableView.allowsSelectionDuringEditing = true;

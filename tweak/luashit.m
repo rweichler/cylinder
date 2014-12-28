@@ -29,6 +29,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define PRINT_PATH "print.log"
 
 static lua_State *L = NULL;
+static BOOL set_perspective_distance = false;
 
 static NSMutableArray *_scripts = nil;
 static NSMutableArray *_scriptNames = nil;
@@ -137,9 +138,6 @@ static void create_state()
     l_push_base_transform(L);
     lua_setglobal(L, "BASE_TRANSFORM");
 
-    lua_pushnumber(L, PERSPECTIVE_DISTANCE);
-    lua_setglobal(L, "PERSPECTIVE_DISTANCE");
-
     lua_pushcfunction(L, l_subviews);
     lua_setglobal(L, "subviews");
 
@@ -229,6 +227,7 @@ BOOL init_lua(NSArray *scripts, BOOL random)
 
     _randomize = random;
     close_lua();
+    set_perspective_distance = false;
     create_state();
 
     _scripts = [NSMutableArray arrayWithCapacity:scripts.count].retain;
@@ -412,6 +411,18 @@ BOOL manipulate(UIView *view, float offset, u_int32_t rand)
     {
         close_lua();
         return false;
+    }
+    if(!set_perspective_distance)
+    {
+        //the reason why this is not initialized in create_state()
+        //is because create_state() is called when SpringBoard loads.
+        //unfortunately in lower versions of iOS,  calling
+        //UIScreen.mainScreen.bounds.size causes a bootloop.
+        //so instead of setting that global variable there, we set it when
+        //we know that everything in SpringBoard has already loaded
+        lua_pushnumber(L, PERSPECTIVE_DISTANCE);
+        lua_setglobal(L, "PERSPECTIVE_DISTANCE");
+        set_perspective_distance = true;
     }
 
     view.layer.transform = CATransform3DIdentity;
