@@ -31,6 +31,7 @@ CC=clang -g -O2 $(ARCH) $(SDKS) $(INCLUDE)
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework CoreGraphics
 LIBLUA=../include/lua/liblua.a
 OUTPUT=tweak.o luashit.o lua_UIView.o UIView+Cylinder.o CALayer+Cylinder.o
+SUBSTRATE=../include/libsubstrate.dylib
 
 all: $(DYLIB)
 
@@ -42,7 +43,7 @@ clean:
 %.o: %.m
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(DYLIB): $(OUTPUT) $(LIBLUA) ../include/libsubstrate.dylib
+$(DYLIB): $(OUTPUT) $(LIBLUA) $(SUBSTRATE)
 	$(CC) -dynamiclib -o $@ $^ $(FRAMEWORKS)
 
 $(LIBLUA):
