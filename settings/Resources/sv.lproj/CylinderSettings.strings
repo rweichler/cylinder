@@ -8,7 +8,7 @@
 
     TRANSLATION = "Översatt Av Sebastian (Grodda Da Lo)";
 
-    DONATE = "Donatera";
+    DONATE = "Donera";
     SOURCE_CODE = "Källkod";
     R_CYLINDER = "Mer effekter på /r/cylinder";
     BARREL = "Barrel (Original tweak)";
@@ -33,5 +33,5 @@
     //Donate subscreen
 
     THANK_YOU = "Tack så mycket";
-    PAYPAL = "Tryck här för att gå till safari och donatera via PayPal";
+    PAYPAL = "Tryck här för att gå till Safari och donera via PayPal";
 }
