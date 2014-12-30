@@ -6,7 +6,7 @@
     FORMULAS = "Formler";
     RANDOMIZE = "Slumpmässigt";
 
-    TRANSLATION = "Översättningar Sökes! Om du skulle vilja översätta Cylinder Skicka ett mail eller Ett Tweet. Översatt Av Sebastian (Grodda Da Lo)";
+    TRANSLATION = "Översatt Av Sebastian (Grodda Da Lo)";
 
     DONATE = "Donatera";
     SOURCE_CODE = "Källkod";
