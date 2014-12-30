@@ -6,6 +6,7 @@
     FORMULAS = "Formulas";
     RANDOMIZE = "Randomize";
 
+    //Don't translate this bit, credit yourself here (if you want)
     TRANSLATION = "Translations wanted! If you'd like to translate this tweak shoot me a tweet or an email";
 
     DONATE = "Donate";
