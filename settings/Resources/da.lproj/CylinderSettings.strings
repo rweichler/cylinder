@@ -6,7 +6,7 @@
     FORMULAS = "Formularer";
     RANDOMIZE = "Bland";
 
-    TRANSLATION = "Oversættere søges!! Hvis du har lyst til at oversætte denne tweak, så send mig en tweet eller Email";
+    TRANSLATION = "Denne tweak er oversat af Jonas Lindenskov Nielsen (@jlndk)";
 
     DONATE = "Donér";
     SOURCE_CODE = "Bundkode";
