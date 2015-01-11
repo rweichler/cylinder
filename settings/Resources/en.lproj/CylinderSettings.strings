@@ -35,4 +35,20 @@
 
     THANK_YOU = "Thank you";
     PAYPAL = "Tap here to go to Safari and donate via PayPal";
+
+    //Footer text
+
+    //You do not have to translate this part if you don't want to. I realize it's a lot of work.
+
+    FOOTER_TEXT = "In case you didn't know, the effects in this tweak weren't made by just one person. At this point it's been from the efforts of 10 different people. If you want, you can make your own page transition effects. You don't need any programing experience, nor do you need any expensive software or hardware to make them. Just the phone you have in your hand right now.
+
+The effects are coded in Lua, which is arguably the easiest language to learn if you never coded before. Lua was the first language I ever learned and it was what got me into all this (I made Garry's Mod weapons).
+
+Anyway to get to these effect scripts, open iFile (or Filza) and go to /Library/Cylinder. There you'll see a bunch of folders with people's usernames. In these folders you'll see a bunch of .lua files. If you open any of these with the text viewer you can see the code. For a start I'd recommend looking at the Backwards.lua file in the gertab folder to get an idea of how to do it. In there if you edit the 2*offset to 3*offset (don't forget to reload the effect after) you'll notice a kind of \"Backwards hella far\" effect. If you want, you can go and edit the values of the other scripts too.
+
+If you want to start making your own, make your own folder and put your .lua scripts in there. Cylinder will automatically detect them and put them in the effect list. EXAMPLE.lua goes a bit more in depth and tells you all of the functions you can use.
+
+If you make an effect you're proud of, you can put it on /r/cylinder (which I linked to above) for other people to enjoy.
+
+Anyway, regardless, enjoy the tweak :D";
 }
