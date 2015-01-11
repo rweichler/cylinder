@@ -25,6 +25,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 @interface CylinderSettingsListController()
 {
     NSMutableDictionary *_settings;
+    NSString *_defaultFooterText;
 }
 @property (nonatomic, retain, readwrite) NSMutableDictionary *settings;
 @end
@@ -37,6 +38,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     if ((self = [super initForContentSize:size])) {
         self.settings = [([NSMutableDictionary dictionaryWithContentsOfFile:PREFS_PATH] ?: DefaultPrefs) retain];
         if(![[_settings valueForKey:PrefsEffectKey] isKindOfClass:NSArray.class]) [_settings setValue:nil forKey:PrefsEffectKey];
+        _defaultFooterText = [[[NSDictionary dictionaryWithContentsOfFile:@"/Library/PreferenceBundles/CylinderSettings.bundle/en.lproj/CylinderSettings.strings"] objectForKey:@"FOOTER_TEXT"] retain];
     }
     return self;
 }
@@ -178,6 +180,14 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 	}
 }
 
+-(NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+    if(section == 1)
+        return LOCALIZE(@"FOOTER_TEXT", _defaultFooterText);
+    else
+        return [super tableView:tableView titleForFooterInSection:section];
+}
+
 - (void)sendSettings {
 	[self writeSettings];
 
@@ -194,6 +204,7 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 	[self writeSettings];
 
 	self.settings = nil;
+    [_defaultFooterText release];
 
 	[super dealloc];
 }
