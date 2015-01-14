@@ -96,7 +96,7 @@ All of your copies of the iPhone SDK are in that directory. So for example, if `
 
 DHowett has been nice enough to host them for us here: http://iphone.howett.net/sdks/
 
-Just download one of those (must be higher than iOS 3, and preferably higher than 7 for 64-bit support), unzip it somewhere, delete the original .tar.gz and paste wherever you unzipped it after the `SDK_PATH=` in the makefile.
+Just download one of those (must be >= iOS 4, and preferably >= 7 for 64-bit support), unzip it somewhere, delete the original .tar.gz and paste wherever you unzipped it after the `SDK_PATH=` in the makefile.
 
 
 ## Building
