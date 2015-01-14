@@ -76,7 +76,7 @@ git submodule update --init
 
 ### Then, modify the Makefiles to reflect where you have your iPhone SDK.
 
-Open `settings/Makefile` and `tweak/Makefile` and edit the line that says `SDK\_PATH=` to reflect where your copy of the iPhone SDK is (explained later).
+Open `settings/Makefile` and `tweak/Makefile` and edit the line that says `SDK_PATH=` to reflect where your copy of the iPhone SDK is (explained later).
 
 ### Where to get the iPhone SDK
 
@@ -90,13 +90,13 @@ You can find it by running the command:
 echo "$(xcode-select --print-path)/Platforms/iPhoneOS.platform/Developer/SDKs/"
 ```
 
-All of your copies of the iPhone SDK are in that directory. So for example, if `xcode-select --print-path` outputs `/Applications/Xcode.app/Contents/Developer` and you have `iPhoneOS5.1.sdk` in that directory, you'd put `SDK\_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk` in the two different Makefiles.
+All of your copies of the iPhone SDK are in that directory. So for example, if `xcode-select --print-path` outputs `/Applications/Xcode.app/Contents/Developer` and you have `iPhoneOS5.1.sdk` in that directory, you'd put `SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk` in the two different Makefiles.
 
 #### If you don't have Xcode or if you're building directly on-device instead of on a Mac
 
 DHowett has been nice enough to host them for us here: http://iphone.howett.net/sdks/
 
-Just download one of those (must be higher than iOS 3, and preferably higher than 7 for 64-bit support), unzip it somewhere, delete the original .tar.gz and paste wherever you unzipped it after the `SDK\_PATH=` in the makefile.
+Just download one of those (must be higher than iOS 3, and preferably higher than 7 for 64-bit support), unzip it somewhere, delete the original .tar.gz and paste wherever you unzipped it after the `SDK_PATH=` in the makefile.
 
 
 ## Building
