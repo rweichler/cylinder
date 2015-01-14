@@ -8,7 +8,7 @@
 
 [Here](https://github.com/rweichler/cylinder/raw/master/cylinder.deb)'s the deb.
 
-## What!?!?!?!??!
+## wat???
 
 This lets you animate your icons when you swipe pages on the SpringBoard.
 
@@ -44,34 +44,74 @@ respring! This allows for rapid testing.
 
 ### Not tested, but might work
 
-* iOS 3
+* iPhone OS 3
 
 ### Probably doesn't work
 
-* iOS 2
-* The first iOS
+* iPhone OS 2
+* iPhone OS
 
 I'm probably never going to support these because a device that can run iOS 1 can run iOS 3.
 
-##Building
+##.deb files
 
 If you don't feel like building this, [here's a .deb of the latest stable build](http://r333d.com/repo/cylinder.php).
 
 And... [here's a deb of the latest **UNSTABLE** build](http://r333d.com/repo/cylinder.php?unstable=1).
 
-First, init the submodules:
+## Setup
+
+First, clone the repository and cd into it
+
+```
+git clone https://github.com/rweichler/cylinder.git
+cd cylinder
+```
+
+Then, init the submodules:
 
 ```
 git submodule update --init
 ```
 
-And then make:
+### Then, modify the Makefiles to reflect where you have your iPhone SDK.
+
+Open `settings/Makefile` and `tweak/Makefile` and edit the line that says `SDK\_PATH=` to reflect where your copy of the iPhone SDK is (explained later).
+
+### Where to get the iPhone SDK
+
+#### If you have Xcode installed
+
+You already have it!
+
+You can find it by running the command:
+
+```
+echo "$(xcode-select --print-path)/Platforms/iPhoneOS.platform/Developer/SDKs/"
+```
+
+All of your copies of the iPhone SDK are in that directory. So for example, if `xcode-select --print-path` outputs `/Applications/Xcode.app/Contents/Developer` and you have `iPhoneOS5.1.sdk` in that directory, you'd put `SDK\_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk` in the two different Makefiles.
+
+#### If you don't have Xcode or if you're building directly on-device instead of on a Mac
+
+DHowett has been nice enough to host them for us here: http://iphone.howett.net/sdks/
+
+Just download one of those (must be higher than iOS 3, and preferably higher than 7 for 64-bit support), unzip it somewhere, delete the original .tar.gz and paste wherever you unzipped it after the `SDK\_PATH=` in the makefile.
+
+
+## Building
+
+If you just want a .deb, run this:
 
 ```
 make package
 ```
 
-Puts a freshly baked cylinder.deb in the root of the repository. :)
+If you want it to install on your device, run this:
+```
+make install IPHONE_IP=iphone_wifi_ip_here
+```
+You need OpenSSH installed in order for the installation to work.
 
 ## Pull request policy
 
