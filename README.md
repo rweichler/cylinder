@@ -10,7 +10,7 @@
 
 ## wat???
 
-This lets you animate your icons when you swipe pages on the SpringBoard.
+This is a jailbreak tweak that lets you animate your icons when you swipe pages on the SpringBoard.
 
 The kicker about this one is two things:
 
