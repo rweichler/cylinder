@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
+
+include base.mk
+
 IPHONE_IP=itouch
 #IPHONE_IP=root@192.168.1.7
 SSH_FLAGS=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
