@@ -32,26 +32,7 @@ your name in /Library/Cylinder on your phone (like
 and it should appear in settings. You don't even have to
 respring! This allows for rapid testing.
 
-## Compatible iOS versions
-
-### Tested
-
-* iOS 4
-* iOS 5
-* iOS 6
-* iOS 7
-* iOS 8
-
-### Not tested, but might work
-
-* iPhone OS 3
-
-### Probably doesn't work
-
-* iPhone OS 2
-* iPhone OS
-
-I'm probably never going to support these because a device that can run iOS 1 can run iOS 3.
+Compatible with iOS 4, 5, 6, 7 and 8.
 
 ##.deb files
 
@@ -74,22 +55,13 @@ Then, init the submodules:
 git submodule update --init
 ```
 
-### Then, modify the Makefiles to reflect where you have your iPhone SDK.
+#### For those who don't have Xcode installed
 
-Open `config.mk` and edit the line that says `SDK=` to reflect where your copy of the iPhone SDK.
-
-### Where to get the iPhone SDK
-
-#### If you have Xcode installed
-
-You already have it, and it's automatically detected! You don't have to worry about this part.
-
-#### If you don't have Xcode or if you're building directly on-device instead of on a Mac
+Open `config.mk` and edit the line that says `SDK=` to reflect where your copy of the iPhone SDK is.
 
 DHowett has been nice enough to host them for us here: http://iphone.howett.net/sdks/
 
 Just download one of those (must be >= iOS 4, and preferably >= 7 for 64-bit support), unzip it somewhere, delete the original .tar.gz and paste wherever you unzipped it after the `SDK=` in the config.mk.
-
 
 ## Building
 
