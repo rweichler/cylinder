@@ -29,11 +29,11 @@ XCODE=`xcrun --sdk iphoneos --show-sdk-path`
 SDK_ERROR="SDK not defined"
 
 ifdef SDK
+ifeq ("", "$(wildcard $(SDK))")
 ifeq (1, $(USE_XCODE_IF_AVAILABLE))
-SDK_ERROR= "SDK '$(SDK)' not found in filesystem"
+SDK_ERROR:=SDK '$(SDK)' not found in filesystem
 SDK=
 else
-ifeq ("", "$(wildcard $(SDK))")
 $(error SDK '$(SDK)' not found in filesystem)
 endif
 endif

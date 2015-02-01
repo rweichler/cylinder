@@ -76,7 +76,7 @@ git submodule update --init
 
 ### Then, modify the Makefiles to reflect where you have your iPhone SDK.
 
-Open `config.mk` and `tweak/Makefile` and edit the line that says `SDK=` to reflect where your copy of the iPhone SDK.
+Open `config.mk` and edit the line that says `SDK=` to reflect where your copy of the iPhone SDK.
 
 ### Where to get the iPhone SDK
 
