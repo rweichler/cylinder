@@ -19,14 +19,14 @@ $(error $(SDK_ERROR))
 endif
 endif
 else
-SDK_ERROR="SDK not defined in config.mk"
+SDK_ERROR=SDK not defined
 endif
 
 ifndef SDK
 ifneq ("", "$(wildcard /usr/bin/xcrun)")
 SDK=$(XCODE)
 else
-$(error $(SDK_ERROR) and Xcode is not installed. Please set the SDK environment variable (in config.mk) or install Xcode)
+$(error $(SDK_ERROR). Set the SDK (in config.mk) or install Xcode)
 endif
 endif
 
