@@ -9,17 +9,17 @@ include config.mk
 endif
 XCODE=`xcrun --sdk iphoneos --show-sdk-path`
 
-SDK_ERROR="SDK not defined"
-
 ifdef SDK
+SDK_ERROR:=SDK '$(SDK)' not found in filesystem
 ifeq ("", "$(wildcard $(SDK))")
 ifeq (1, $(USE_XCODE_IF_AVAILABLE))
-SDK_ERROR:=SDK '$(SDK)' not found in filesystem
 SDK=
 else
-$(error SDK '$(SDK)' not found in filesystem)
+$(error $(SDK_ERROR))
 endif
 endif
+else
+SDK_ERROR="SDK not defined in config.mk"
 endif
 
 ifndef SDK
