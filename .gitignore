@@ -5,3 +5,4 @@ settings/CylinderSettings.bundle
 *.a
 Packages
 Packages.bz2
+config.mk
