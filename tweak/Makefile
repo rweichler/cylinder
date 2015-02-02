@@ -20,7 +20,7 @@ $(DYLIB): $(OUTPUT) $(LIBLUA) $(SUBSTRATE)
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)
 
-tweak.o: tweak.x
+tweak.o: tweak.x tweak.h
 luashit.o: luashit.h luashit.m
 lua_UIView.o: lua_UIView.h lua_UIView.m
 UIView+Cylinder.o: UIView+Cylinder.h UIView+Cylinder.m
