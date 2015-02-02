@@ -3,6 +3,7 @@ tweak/tmp
 settings/CylinderSettings.bundle
 *.o
 *.a
+*.x.o.m
 Packages
 Packages.bz2
 config.mk
