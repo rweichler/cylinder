@@ -16,9 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#import <substrate.h>
-#import <UIKit/UIKit.h>
+#import "tweak.h"
 #import "luashit.h"
 #import "macros.h"
 #import "UIView+Cylinder.h"
@@ -26,17 +24,52 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 int IOS_VERSION;
 Class _listClass;
 
-void write_error(const char *error);
-
 static BOOL _enabled;
+static u_int32_t _randSeedForCurrentPage;
+static int _lastAnimatedPageIndex = -100;
 
-static u_int32_t _rand;
-static int _page = -100;
+static void page_swipe(UIScrollView *scrollView)
+{
+    if(!_enabled) return;
 
-static void did_scroll(UIScrollView *scrollView);
-static void layout_icons(UIView *self);
+    CGSize size = scrollView.frame.size;
+    CGRect eye = CGRectMake(scrollView.contentOffset.x, 0, size.width, size.height);
 
-static void reset_everything(UIView *view)
+    int i = 0;
+    for(UIView *view in scrollView.subviews)
+    {
+        if(![view isKindOfClass:_listClass]) continue;
+
+        if(view.isOnScreen)
+            reset_icon_layout(view);
+
+        if(CGRectIntersectsRect(eye, view.frame))
+        {
+            CGSize size = scrollView.frame.size;
+            float offset = scrollView.contentOffset.x - view.frame.origin.x;
+
+            int page = (int)(scrollView.contentOffset.x/size.width);
+            if(page != _lastAnimatedPageIndex)
+            {
+                _randSeedForCurrentPage = arc4random();
+                _lastAnimatedPageIndex = page;
+            }
+
+            if(fabs(offset/size.width) < 1)
+            {
+                if(view.hasDifferentSubviews)
+                {
+                    layout_icons(view);
+                }
+                _enabled = manipulate(view, offset, _randSeedForCurrentPage); //defined in luashit.m
+            }
+        }
+
+        i++;
+    }
+}
+
+static void reset_icon_layout(UIView *view)
 {
     view.layer.transform = CATransform3DIdentity;
     [view.layer restorePosition];
@@ -48,29 +81,6 @@ static void reset_everything(UIView *view)
         [v.layer restorePosition];
         v.alpha = 1;
         v.isOnScreen = false;
-    }
-}
-
-//view is an SBIconListView (or SBIconList on older iOS)
-static void genscrol(UIScrollView *scrollView, UIView *view)
-{
-    CGSize size = scrollView.frame.size;
-    float offset = scrollView.contentOffset.x - view.frame.origin.x;
-
-    int page = (int)(scrollView.contentOffset.x/size.width);
-    if(page != _page)
-    {
-        _rand = arc4random();
-        _page = page;
-    }
-
-    if(fabs(offset/size.width) < 1)
-    {
-        if(view.hasDifferentSubviews)
-        {
-            layout_icons(view);
-        }
-        _enabled = manipulate(view, offset, _rand); //defined in luashit.m
     }
 }
 
@@ -88,7 +98,7 @@ static void switch_pos(CALayer *layer)
 
 }
 
-static CGRect SB_frame(UIView *self)
+static CGRect get_untransformed_frame(UIView *self)
 {
     CGPoint pos = self.layer.savedPosition;
     CGSize size = self.layer.bounds.size;
@@ -139,7 +149,7 @@ static CGRect SB_frame(UIView *self)
     if(![self isOnScreen])
         return %orig;
     else
-        return SB_frame(self);
+        return get_untransformed_frame(self);
 }
 -(void)setFrame:(CGRect)frame
 {
@@ -181,7 +191,7 @@ static int biggestTo = 0;
     if(![self isOnScreen])
         return %orig;
     else
-        return SB_frame(self);
+        return get_untransformed_frame(self);
 }
 
 -(void)setFrame:(CGRect)frame
@@ -200,8 +210,8 @@ static int biggestTo = 0;
 static void end_scroll(UIScrollView *self)
 {
     for(UIView *view in [self subviews])
-        reset_everything(view);
-    _rand = arc4random();
+        reset_icon_layout(view);
+    _randSeedForCurrentPage = arc4random();
 }
 
 static CGSize _scrollViewSize;
@@ -233,7 +243,7 @@ static BOOL _justSetScrollViewSize;
         return;
     }
     %orig;
-    did_scroll(scrollView);
+    page_swipe(scrollView);
 }
 
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
@@ -254,33 +264,9 @@ static BOOL _justSetScrollViewSize;
     %orig;
     if(IOS_VERSION < 7)
         [scrollView.superview sendSubviewToBack:scrollView];
-    did_scroll(scrollView);
+    page_swipe(scrollView);
 }
 %end
-
-static void did_scroll(UIScrollView *scrollView)
-{
-    if(!_enabled) return;
-
-    CGSize size = scrollView.frame.size;
-
-    CGRect eye = CGRectMake(scrollView.contentOffset.x, 0, size.width, size.height);
-
-    int i = 0;
-    for(UIView *view in scrollView.subviews)
-    {
-        if(![view isKindOfClass:_listClass]) continue;
-
-        if(view.isOnScreen)
-            reset_everything(view);
-
-        if(CGRectIntersectsRect(eye, view.frame))
-            genscrol(scrollView, view);
-
-        i++;
-    }
-
-}
 
 //iOS 7 folder blur glitch hotfix for 3D effects.
 %hook SBFolderIconBackgroundView
@@ -342,11 +328,7 @@ static inline void setSettingsNotification(CFNotificationCenterRef center, void 
 
     Class iconClass = %c(SBIconView) ?: %c(SBIcon);
     _listClass = %c(SBIconListView) ?: %c(SBIconList);
-    Class folderClass;
-    if(IOS_VERSION >= 7)
-        folderClass = %c(SBFolderView);
-    else
-        folderClass = %c(SBIconController);
+    Class folderClass = IOS_VERSION >= 7 ? %c(SBFolderView) : %c(SBIconController);
 
     %init(SBIcon=iconClass, SBIconList=_listClass, SBFolderView=folderClass);
 
