@@ -42,6 +42,11 @@ And... [here's a deb of the latest **UNSTABLE** build](http://r333d.com/repo/cyl
 
 ## Setup
 
+### Prerequisites
+
+* Perl
+* Xcode (or, clang/make and a copy of the iPhone SDK (&gt;= iOS 4)
+
 First, clone the repository and cd into it
 
 ```
