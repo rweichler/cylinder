@@ -1,24 +1,26 @@
 include ../base.mk
 
-DYLIB=$(NAME)Settings
+NAME:=$(NAME)Settings
+BUNDLE=$(NAME).bundle
+DYLIB=$(BUNDLE)/$(NAME)
 
 PREFERENCES=$(SDK)/System/Library/PrivateFrameworks/Preferences.framework/Preferences
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework CoreGraphics -framework AVFoundation $(PREFERENCES)
 OUTPUT=CLAlignedTableViewCell.o CLDonateController.o CLEffect.o CLEffectsController.o CLFormulasController.o CylinderSettings.o
 
-all: $(DYLIB).bundle/$(DYLIB)
+all: $(DYLIB)
 
 clean:
-	rm -rf $(DYLIB).bundle
+	rm -rf $(BUNDLE)
 	rm -f $(OUTPUT)
 
 .PHONY: all clean
 
-$(DYLIB).bundle: Resources/* $(REQ)
-	mkdir -p $(DYLIB).bundle
-	cp -r Resources/* $(DYLIB).bundle/
+$(BUNDLE): Resources/* $(REQ)
+	mkdir -p $@
+	cp -r Resources/* $@/
 
-$(DYLIB).bundle/$(DYLIB): $(OUTPUT) $(DYLIB).bundle
+$(DYLIB): $(OUTPUT) $(BUNDLE)
 	$(CC) -dynamiclib -o $@ $(OUTPUT) $(FRAMEWORKS)
 
 CLAlignedTableViewCell.o: CLAlignedTableViewCell.h CLAlignedTableViewCell.m
