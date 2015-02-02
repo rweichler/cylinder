@@ -214,6 +214,9 @@ static void end_scroll(UIScrollView *self)
     _randSeedForCurrentPage = arc4random();
 }
 
+//these are for detecting if the scroll is actually just
+//a rotation. if its a rotation, then dont
+//cylinder-ize it.
 static CGSize _scrollViewSize;
 static BOOL _setScrollViewSize = false;
 static BOOL _justSetScrollViewSize;
@@ -281,6 +284,9 @@ static BOOL _justSetScrollViewSize;
 }
 %end
 
+//this is more for the Lua scripts. this ensures
+//that the icons are in the right order when you call
+//[page subviews].
 static void layout_icons(UIView *self)
 {
     NSMutableArray *icons = self.subviews.mutableCopy;
