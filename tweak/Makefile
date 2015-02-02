@@ -10,7 +10,7 @@ SUBSTRATE=../include/libsubstrate.dylib
 all: $(DYLIB)
 
 clean:
-	rm -f $(DYLIB) $(OUTPUT)
+	rm -f $(DYLIB) $(OUTPUT) tweak.x.o.m
 
 .PHONY: all clean
 
@@ -20,7 +20,7 @@ $(DYLIB): $(OUTPUT) $(LIBLUA) $(SUBSTRATE)
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)
 
-tweak.o: tweak.m
+tweak.o: tweak.x
 luashit.o: luashit.h luashit.m
 lua_UIView.o: lua_UIView.h lua_UIView.m
 UIView+Cylinder.o: UIView+Cylinder.h UIView+Cylinder.m
