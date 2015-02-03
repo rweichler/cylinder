@@ -2,7 +2,7 @@
 
 ![](https://github.com/rweichler/cylinder/raw/master/code.png)
 
-## Latest version: 1.0.2
+## Latest version: 1.0.3
 
 [Here](http://github.com/rweichler/cylinder/tree/master/CHANGELOG.md)'s the changelog.
 
