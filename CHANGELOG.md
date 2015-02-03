@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+* Italian, Czech, Russian, Chinese, Swedish, French, Danish and Turkish translations
+
 ## 1.0.2
 
 * Fix crash on iOS < 6
