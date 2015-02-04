@@ -10,12 +10,15 @@ SUBSTRATE=../include/libsubstrate.dylib
 all: $(DYLIB)
 
 clean:
-	rm -f $(DYLIB) $(OUTPUT) tweak.x.o.m
+	@echo cleaning tweak...
+	@rm -f $(DYLIB) $(OUTPUT) tweak.x.o.m
+	@echo done!
 
 .PHONY: all clean
 
 $(DYLIB): $(OUTPUT) $(LIBLUA) $(SUBSTRATE)
-	$(CC) -dynamiclib -o $@ $^ $(FRAMEWORKS)
+	@echo linking $@...
+	@$(CC) -dynamiclib -o $@ $^ $(FRAMEWORKS)
 
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)

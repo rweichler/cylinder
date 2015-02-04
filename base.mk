@@ -40,8 +40,10 @@ INCLUDE=-I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fall
 CC=clang -g -O2 $(ARCH) $(SDKFLAGS) $(INCLUDE)
 
 %.o: %.x
-	../bin/logos.pl $< > $(@:.o=.x.o.m)
-	$(CC) $(CFLAGS) -c -o $@ $(@:.o=.x.o.m)
+	@echo compiling $<...
+	@../bin/logos.pl $< > $(@:.o=.x.o.m)
+	@$(CC) $(CFLAGS) -c -o $@ $(@:.o=.x.o.m)
 
 %.o: %.m
-	$(CC) $(CFLAGS) -c -o $@ $<
+	@echo compiling $<...
+	@$(CC) $(CFLAGS) -c -o $@ $<

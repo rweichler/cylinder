@@ -22,6 +22,10 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "twitter.h"
 #import "CLEffect.h"
 
+@interface PSListController()
+-(id)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section;
+@end
+
 @interface CylinderSettingsListController()
 {
     NSMutableDictionary *_settings;

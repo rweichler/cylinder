@@ -11,17 +11,21 @@ OUTPUT=CLAlignedTableViewCell.o CLDonateController.o CLEffect.o CLEffectsControl
 all: $(DYLIB)
 
 clean:
-	rm -rf $(BUNDLE)
-	rm -f $(OUTPUT)
+	@echo cleaning settings...
+	@rm -rf $(BUNDLE)
+	@rm -f $(OUTPUT)
+	@echo clean!
 
 .PHONY: all clean
 
 $(BUNDLE): Resources/* $(REQ)
-	mkdir -p $@
-	cp -r Resources/* $@/
+	@echo copying resources to preference bundle...
+	@mkdir -p $@
+	@cp -r Resources/* $@/
 
 $(DYLIB): $(OUTPUT) $(BUNDLE)
-	$(CC) -dynamiclib -o $@ $(OUTPUT) $(FRAMEWORKS)
+	@echo linking $@
+	@$(CC) -dynamiclib -o $@ $(OUTPUT) $(FRAMEWORKS)
 
 CLAlignedTableViewCell.o: CLAlignedTableViewCell.h CLAlignedTableViewCell.m
 CLDonateController.o: CLDonateController.h CLDonateController.m

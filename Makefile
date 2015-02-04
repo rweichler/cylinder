@@ -26,54 +26,63 @@ BUNDLE_IDENTIFIER=com.r333d.cylinder
 
 MOBSUB=.tmp/Library/MobileSubstrate/DynamicLibraries
 
-all:
-	cd tweak && $(MAKE)
-	cd settings && $(MAKE)
+all: tweakk settingss
 
 clean:
-	rm -f $(PACKAGE)
-	cd tweak && $(MAKE) clean
-	cd settings && $(MAKE) clean
+	@rm -f $(PACKAGE)
+	@cd tweak && $(MAKE) clean
+	@cd settings && $(MAKE) clean
 
 package-dirs:
-	mkdir -p .tmp
-	mkdir -p .tmp/Library
-	mkdir -p .tmp/Library/Cylinder
-	mkdir -p .tmp/Library/MobileSubstrate
-	mkdir -p $(MOBSUB)
-	mkdir -p .tmp/Library/PreferenceBundles
-	mkdir -p .tmp/Library/PreferenceLoader/Preferences
+	@echo making directory structure...
+	@mkdir -p .tmp
+	@mkdir -p .tmp/Library
+	@mkdir -p .tmp/Library/Cylinder
+	@mkdir -p .tmp/Library/MobileSubstrate
+	@mkdir -p $(MOBSUB)
+	@mkdir -p .tmp/Library/PreferenceBundles
+	@mkdir -p .tmp/Library/PreferenceLoader/Preferences
 
-tweak:
-	cd tweak && $(MAKE)
+tweakk:
+	@echo === making tweak ===
+	@cd tweak && $(MAKE)
 
-settings:
-	cd settings && $(MAKE)
+settingss:
+	@echo === making settings ===
+	@cd settings && $(MAKE)
 
-$(PACKAGE): all
-	$(MAKE) package-dirs
-	cp tweak/Cylinder.dylib $(MOBSUB)
-	cp tweak/Cylinder.plist $(MOBSUB)
-	cp -r tweak/scripts/* .tmp/Library/Cylinder/
-	cp -r settings/CylinderSettings.bundle .tmp/Library/PreferenceBundles
-	cp settings/CylinderSettingsLoader.plist .tmp/Library/PreferenceLoader/Preferences/
-	cp -r DEBIAN .tmp/
-	dpkg-deb -Zgzip -b .tmp
-	mv .tmp.deb $(PACKAGE)
-	rm -rf .tmp
+$(PACKAGE): all package-dirs
+	@echo === making package ===
+	@echo copying resources...
+	@cp tweak/Cylinder.dylib $(MOBSUB)
+	@cp tweak/Cylinder.plist $(MOBSUB)
+	@cp -r tweak/scripts/* .tmp/Library/Cylinder/
+	@cp -r settings/CylinderSettings.bundle .tmp/Library/PreferenceBundles
+	@cp settings/CylinderSettingsLoader.plist .tmp/Library/PreferenceLoader/Preferences/
+	@cp -r DEBIAN .tmp/
+	@echo making .deb....
+	@dpkg-deb -Zgzip -b .tmp
+	@mv .tmp.deb $(PACKAGE)
+	@rm -rf .tmp
 
 package: $(PACKAGE)
 
 install: $(PACKAGE)
-	scp $(SSH_FLAGS) $(PACKAGE) $(IPHONE_IP):.
-	ssh $(SSH_FLAGS) $(IPHONE_IP) "dpkg -i $(PACKAGE)"
+	@echo copying to phone...
+	@scp $(SSH_FLAGS) $(PACKAGE) $(IPHONE_IP):.
+	@echo installing...
+	@ssh $(SSH_FLAGS) $(IPHONE_IP) "dpkg -i $(PACKAGE)"
 
 uninstall:
-	ssh $(SSH_FLAGS) $(IPHONE_IP) "apt-get remove $(BUNDLE_IDENTIFIER)"
+	@uninstalling...
+	@ssh $(SSH_FLAGS) $(IPHONE_IP) "apt-get remove $(BUNDLE_IDENTIFIER)"
 
 respring:
-	ssh $(SSH_FLAGS) $(IPHONE_IP) "killall SpringBoard"
+	@echo respringing...
+	@ssh $(SSH_FLAGS) $(IPHONE_IP) "killall SpringBoard"
 
 babies: $(PACKAGE)
-	scp $(SSH_FLAGS) $(PACKAGE) $(IPHONE_IP):.
-	ssh $(SSH_FLAGS) $(IPHONE_IP) "dpkg -i $(PACKAGE) && killall SpringBoard"
+	@echo copying to phone...
+	@scp $(SSH_FLAGS) $(PACKAGE) $(IPHONE_IP):.
+	@echo installing and respringing...
+	@ssh $(SSH_FLAGS) $(IPHONE_IP) "dpkg -i $(PACKAGE) && killall SpringBoard"
