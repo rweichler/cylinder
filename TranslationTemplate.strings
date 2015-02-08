@@ -1,38 +1,38 @@
 {
     //Main part
 
-    ENABLED = "Enabled";
-    EFFECTS = "Effects";
-    FORMULAS = "Formulas";
-    RANDOMIZE = "Randomize";
+    ENABLED = "aan";
+    EFFECTS = "Effecten";
+    FORMULAS = "Formules";
+    RANDOMIZE = "Willekeurig";
 
     //Credit yourself here (you don't have to if you don't want to)
-    TRANSLATION = "Translated by rweichler";
+    TRANSLATION = "Vertaald door Collin Smits";
 
-    DONATE = "Donate";
-    SOURCE_CODE = "Source code";
-    R_CYLINDER = "More effects on /r/cylinder";
-    BARREL = "Barrel (original tweak)";
+    DONATE = "Doneer";
+    SOURCE_CODE = "Project code";
+    R_CYLINDER = "Meer effecten /r/cylinder";
+    BARREL = "Barrel (originele tweak)";
 
     //Effects subscreen
 
-    RESET_EFFECTS = "Clear";
+    RESET_EFFECTS = "reset";
 
     //Formulas subscreen
 
-    CREATE_NEW_FORMULA = "Create new formula";
-    CREATE_FORMULA_INFO = "The new formula will have whatever effects you have enabled right now.";
-    FORMULA_NAME = "Formula name";
-    CREATE_FORMULA = "Create Formula";
-    CANCEL = "Cancel";
-    FORMULA_ALREADY_EXISTS = "A formula with that name already exists.";
-    OVERWRITE_IT = "Overwrite it";
-    NO_EFFECTS_ENABLED_TITLE = "You have no effects enabled!";
-    NO_EFFECTS_ENABLED_DESC = "Go back to the effects list, enable some effects, then come back here and create a new formula.";
-    NO_EFFECTS_ENABLED_OK = "Aight cool";
+    CREATE_NEW_FORMULA = "maak een nieuwe formule";
+    CREATE_FORMULA_INFO = "De nieuwe formule bevat alle effecten die u heeft geselecteerd.";
+    FORMULA_NAME = "Naam van de formule";
+    CREATE_FORMULA = "Maak een formule";
+    CANCEL = "Annuleer";
+    FORMULA_ALREADY_EXISTS = "Er is al een formule met deze naam.";
+    OVERWRITE_IT = "Vervangen";
+    NO_EFFECTS_ENABLED_TITLE = "Er zijn geen effecten geselecteerd!";
+    NO_EFFECTS_ENABLED_DESC = "Ga terug en selecteer een paar effecten en probeer het opnieuw.";
+    NO_EFFECTS_ENABLED_OK = "Oke cool";
 
     //Donate subscreen
 
-    THANK_YOU = "Thank you";
-    PAYPAL = "Tap here to go to Safari and donate via PayPal";
+    THANK_YOU = "Dank u";
+    PAYPAL = "Klik hier om safari te openen en te doneren";
 }
