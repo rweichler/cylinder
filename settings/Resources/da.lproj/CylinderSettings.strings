@@ -27,7 +27,7 @@
     FORMULA_ALREADY_EXISTS = "Der eksistere allerede en formular med dette navn.";
     OVERWRITE_IT = "Overskriv";
     NO_EFFECTS_ENABLED_TITLE = "Du har ingen effekter aktiveret!";
-    NO_EFFECTS_ENABLED_DESC = "Gå tilbage til effektlisten, aktiver nogle effekter, og kom tilbage her for at oprette en ny formular.";
+    NO_EFFECTS_ENABLED_DESC = "Gå tilbage til effektlisten, aktiver nogle effekter, og kom tilbage hertil for at oprette en ny formular.";
     NO_EFFECTS_ENABLED_OK = "Ok, cool";
 
     //Donate subscreen
