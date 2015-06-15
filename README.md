@@ -18,8 +18,8 @@ The kicker about this one is two things:
 2. Effects are written in [Lua](http://lua.org/about.html)
 
 This allows for unprecedented flexibility. Users do not have to depend on the developer
-to add new icon effects, as they can just code them in Lua with a simple text editor
-and copy to them to the phone.
+to add new icon effects, as they can just code them in Lua with a standard text editor
+and copy to them to the phone. No compilation or special programs required.
 
 If you want more, check out [/r/cylinder](http://reddit.com/r/cylinder)!
 
