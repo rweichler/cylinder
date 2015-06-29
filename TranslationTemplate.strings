@@ -6,8 +6,8 @@
     FORMULAS = "Formulas";
     RANDOMIZE = "Randomize";
 
-    //Credit yourself here (you don't have to if you don't want to)
-    TRANSLATION = "Translated by rweichler";
+    //credit yourself here (if you want)
+    TRANSLATION = "Translation by rweichler";
 
     DONATE = "Donate";
     SOURCE_CODE = "Source code";
@@ -35,4 +35,14 @@
 
     THANK_YOU = "Thank you";
     PAYPAL = "Tap here to go to Safari and donate via PayPal";
+
+    //Footer text
+
+    //You do not have to translate this part if you don't want to. I realize it's a lot of work.
+
+    FOOTER_TEXT = "HOW TO CODE YOUR OWN EFFECTS:
+
+Open iFile (or Filza) and go to /Library/Cylinder. There you'll see a bunch of folders with people's usernames. In these folders you'll see a bunch of .lua files. If you open any of these with the text viewer you can see the code. For a start I'd recommend looking at the Backwards.lua file in the gertab folder to get an idea of how to do it. In there if you edit the 2*offset to 3*offset (don't forget to reload the effect after) you'll notice a kind of \"Backwards hella far\" effect.
+
+Follow the pattern you see in order to add your own effects. If you get stuck, take a look at EXAMPLE.lua or search \"lua tutorial\" on YouTube.";
 }
