@@ -86,6 +86,10 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
     open_twitter();
 }
 
+- (void)visitWeibo:(id)sender {
+    [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"http://weibo.cn/r333d"]];
+}
+
 - (void)visitGithub:(id)sender {
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://github.com/rweichler/cylinder"]];
 }

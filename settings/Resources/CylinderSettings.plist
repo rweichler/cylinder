@@ -114,6 +114,16 @@
 		</dict>
 		<dict>
 			<key>action</key>
+			<string>visitWeibo:</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Weibo: r333d</string>
+            <key>icon</key>
+            <string>/Applications/Preferences.app/Weibo.png</string>
+		</dict>
+		<dict>
+			<key>action</key>
 			<string>visitGithub:</string>
 			<key>cell</key>
 			<string>PSButtonCell</string>
