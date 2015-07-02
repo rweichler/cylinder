@@ -21,6 +21,8 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import <lua/lauxlib.h>
 #import "lua_UIView.h"
 #import "UIView+Cylinder.h"
+#import "tweak.h"
+#import "icon_sort.h"
 
 static int l_transform_rotate(lua_State *L);
 static int l_transform_translate(lua_State *L);
@@ -80,10 +82,16 @@ static int l_uiview_index(lua_State *L)
     UIView *self = (UIView *)lua_touserdata(L, 1);
     if(lua_isnumber(L, 2)) //if it's a number, return the subview
     {
+        if(![self isKindOfClass:_listClass]) {
+            return luaL_error(L, "trying to get icon from object that is not a list");
+        }
         int index = lua_tonumber(L, 2) - 1;
-        if(index >= 0 && index < self.subviews.count)
+        if(index >= 0 && index < get_max_icons_for_list(self))
         {
-            return l_push_view(L, [self.subviews objectAtIndex:index]);
+            UIView *view = get_sorted_icons_from_list(self)[index];
+            if(view != NULL) {
+                return l_push_view(L, view);
+            }
         }
     }
     else if(lua_isstring(L, 2))
@@ -92,11 +100,15 @@ static int l_uiview_index(lua_State *L)
 
         if(!strcmp(key, "subviews"))
         {
+            if(![self isKindOfClass:_listClass]) {
+                return luaL_error(L, "trying to get icon from object that is not a list");
+            }
+            UIView **views = get_sorted_icons_from_list(self);
             lua_newtable(L);
-            for(int i = 0; i < self.subviews.count; i++)
+            for(int i = 0; views[i] != NULL; i++)
             {
                 lua_pushnumber(L, i+1);
-                l_push_view(L, [self.subviews objectAtIndex:i]);
+                l_push_view(L, views[i]);
                 lua_settable(L, -3);
             }
             return 1;
@@ -123,30 +135,34 @@ static int l_uiview_index(lua_State *L)
         }
         else if(!strcmp(key, "x"))
         {
-            self.isOnScreen = false;
+            BOOL old = self.wasModifiedByCylinder;
+            self.wasModifiedByCylinder = false;
             lua_pushnumber(L, self.frame.origin.x);
-            self.isOnScreen = true;
+            self.wasModifiedByCylinder = old;
             return 1;
         }
         else if(!strcmp(key, "y"))
         {
-            self.isOnScreen = false;
+            BOOL old = self.wasModifiedByCylinder;
+            self.wasModifiedByCylinder = false;
             lua_pushnumber(L, self.frame.origin.y);
-            self.isOnScreen = true;
+            self.wasModifiedByCylinder = old;
             return 1;
         }
         else if(!strcmp(key, "width"))
         {
-            self.isOnScreen = false;
+            BOOL old = self.wasModifiedByCylinder;
+            self.wasModifiedByCylinder = false;
             lua_pushnumber(L, self.frame.size.width/self.layer.transform.m11);
-            self.isOnScreen = true;
+            self.wasModifiedByCylinder = old;
             return 1;
         }
         else if(!strcmp(key, "height"))
         {
-            self.isOnScreen = false;
+            BOOL old = self.wasModifiedByCylinder;
+            self.wasModifiedByCylinder = false;
             lua_pushnumber(L, self.frame.size.height/self.layer.transform.m22);
-            self.isOnScreen = true;
+            self.wasModifiedByCylinder = old;
             return 1;
         }
         else if(!strcmp(key, "max_icons"))
@@ -178,7 +194,7 @@ static int l_uiview_index(lua_State *L)
         }
         else if(!strcmp(key, "layer"))
         {
-            self.isOnScreen = true;
+            self.wasModifiedByCylinder = true;
             return l_push_view(L, self.layer);
         }
     }
@@ -245,7 +261,7 @@ static int l_uiview_setindex(lua_State *L)
                 return luaL_error(L, "alpha must be a number");
 
             self.alpha = lua_tonumber(L, 3);
-            self.isOnScreen = true;
+            self.wasModifiedByCylinder = true;
         }
     }
     return 0;
@@ -254,6 +270,12 @@ static int l_uiview_setindex(lua_State *L)
 static int l_calayer_setindex(lua_State *L)
 {
     CALayer *self = (CALayer *)lua_touserdata(L, 1);
+    UIView *view = (UIView *)self.delegate;
+    if(![view isKindOfClass:UIView.class])
+    {
+        view = nil;
+    }
+
     if(lua_isstring(L, 2))
     {
         const char *key = lua_tostring(L, 2);
@@ -265,6 +287,7 @@ static int l_calayer_setindex(lua_State *L)
             CGPoint pos = self.position;
             pos.x = lua_tonumber(L, 3);
             self.position = pos;
+            view.wasModifiedByCylinder = true;
         }
         else if(!strcmp(key, "y"))
         {
@@ -273,6 +296,7 @@ static int l_calayer_setindex(lua_State *L)
             CGPoint pos = self.position;
             pos.y = lua_tonumber(L, 3);
             self.position = pos;
+            view.wasModifiedByCylinder = true;
         }
         else if(!strcmp(key, "transform"))
         {
@@ -280,6 +304,7 @@ static int l_calayer_setindex(lua_State *L)
             int result = l_set_transform(L, self);
             lua_pop(L, 1);
             return result;
+            view.wasModifiedByCylinder = true;
         }
     }
     return 0;
@@ -318,7 +343,7 @@ static int l_transform_rotate(lua_State *L)
     CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
-    self.isOnScreen = true;
+    self.wasModifiedByCylinder = true;
 
     CATransform3D transform = self.layer.transform;
     float pitch = 0, yaw = 0, roll = 0;
@@ -346,7 +371,7 @@ static int l_transform_translate(lua_State *L)
     CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
-    self.isOnScreen = true;
+    self.wasModifiedByCylinder = true;
 
     CATransform3D transform = self.layer.transform;
     float x = lua_tonumber(L, 2), y = lua_tonumber(L, 3), z = lua_tonumber(L, 4);
@@ -366,7 +391,7 @@ static int l_transform_scale(lua_State *L)
     CHECK_UIVIEW(L, 1);
 
     UIView *self = (UIView *)lua_touserdata(L, 1);
-    self.isOnScreen = true;
+    self.wasModifiedByCylinder = true;
 
     CATransform3D transform = self.layer.transform;
     float x = lua_tonumber(L, 2);
