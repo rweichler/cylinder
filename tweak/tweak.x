@@ -20,9 +20,9 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "luashit.h"
 #import "macros.h"
 #import "UIView+Cylinder.h"
+#import "icon_sort.h"
 
 int IOS_VERSION;
-Class _listClass;
 
 static BOOL _enabled;
 static u_int32_t _randSeedForCurrentPage;
@@ -32,56 +32,56 @@ static void page_swipe(UIScrollView *scrollView)
 {
     if(!_enabled) return;
 
-    CGSize size = scrollView.frame.size;
-    CGRect eye = CGRectMake(scrollView.contentOffset.x, 0, size.width, size.height);
+    CGRect eye = {scrollView.contentOffset, scrollView.frame.size};
+
+    //random
+    int page = (int)(scrollView.contentOffset.x/eye.size.width);
+    if(page != _lastAnimatedPageIndex)
+    {
+        _randSeedForCurrentPage = arc4random();
+        _lastAnimatedPageIndex = page;
+    }
 
     int i = 0;
     for(UIView *view in scrollView.subviews)
     {
         if(![view isKindOfClass:_listClass]) continue;
 
-        if(view.isOnScreen)
-            reset_icon_layout(view);
-
         if(CGRectIntersectsRect(eye, view.frame))
         {
             CGSize size = scrollView.frame.size;
             float offset = scrollView.contentOffset.x - view.frame.origin.x;
 
-            int page = (int)(scrollView.contentOffset.x/size.width);
-            if(page != _lastAnimatedPageIndex)
-            {
-                _randSeedForCurrentPage = arc4random();
-                _lastAnimatedPageIndex = page;
-            }
-
             if(fabs(offset/size.width) < 1)
             {
-                if(view.hasDifferentSubviews)
-                {
-                    layout_icons(view);
+                if(!view.wasModifiedByCylinder) {
+                    sort_icons_for_list(view);
                 }
                 _enabled = manipulate(view, offset, _randSeedForCurrentPage); //defined in luashit.m
+                view.wasModifiedByCylinder = true;
             }
+        } else if (view.wasModifiedByCylinder) {
+            reset_icon_layout(view);
         }
 
         i++;
     }
 }
 
-static void reset_icon_layout(UIView *view)
+static void reset_icon_layout(UIView *self)
 {
-    view.layer.transform = CATransform3DIdentity;
-    [view.layer restorePosition];
-    view.alpha = 1;
-    view.isOnScreen = false;
-    for(UIView *v in view.subviews)
+    self.layer.transform = CATransform3DIdentity;
+    [self.layer restorePosition];
+    self.alpha = 1;
+    self.wasModifiedByCylinder = false;
+    for(UIView *v in self.subviews)
     {
         v.layer.transform = CATransform3DIdentity;
         [v.layer restorePosition];
         v.alpha = 1;
-        v.isOnScreen = false;
+        v.wasModifiedByCylinder = false;
     }
+    objc_setAssociatedObject(self, @selector(hasDifferentSubviews), [NSNumber numberWithBool:true], OBJC_ASSOCIATION_RETAIN);
 }
 
 static void switch_pos(CALayer *layer)
@@ -146,7 +146,7 @@ static CGRect get_untransformed_frame(UIView *self)
 }
 -(CGRect)frame
 {
-    if(![self isOnScreen])
+    if(![self wasModifiedByCylinder])
         return %orig;
     else
         return get_untransformed_frame(self);
@@ -174,7 +174,7 @@ static int biggestTo = 0;
 -(void)showIconImagesFromColumn:(int)from toColumn:(int)to totalColumns:(int)total visibleIconsJitter:(BOOL)jittering
 {
     if(to > biggestTo) biggestTo = to;
-    if([self isOnScreen])
+    if([self wasModifiedByCylinder])
     {
         from = 0;
         to = biggestTo;
@@ -182,13 +182,19 @@ static int biggestTo = 0;
     }
     %orig(from, to, total, jittering);
 }
+
+-(void)dealloc
+{
+    dealloc_sorted_icon_array_for_list(self);
+    %orig;
+}
 %end
 
 %hook SBIcon //SBIconView
 
 -(CGRect)frame
 {
-    if(![self isOnScreen])
+    if(![self wasModifiedByCylinder])
         return %orig;
     else
         return get_untransformed_frame(self);

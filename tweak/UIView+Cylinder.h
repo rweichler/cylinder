@@ -20,6 +20,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import <UIKit/UIKit.h>
 
 @interface UIView(Cylinder)
-@property (nonatomic, assign) BOOL isOnScreen;
+@property (nonatomic, assign) BOOL wasModifiedByCylinder;
 @property (nonatomic, assign) BOOL hasDifferentSubviews;
 @end

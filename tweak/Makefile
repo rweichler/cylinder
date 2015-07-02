@@ -4,7 +4,7 @@ DYLIB = $(NAME).dylib
 
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework CoreGraphics
 LIBLUA=../include/lua/liblua.a
-OUTPUT=tweak.o luashit.o lua_UIView.o UIView+Cylinder.o CALayer+Cylinder.o
+OUTPUT=tweak.o luashit.o lua_UIView.o UIView+Cylinder.o CALayer+Cylinder.o icon_sort.o
 SUBSTRATE=../include/libsubstrate.dylib
 
 all: $(DYLIB)
@@ -24,6 +24,7 @@ $(LIBLUA):
 	cd ../include/lua && $(MAKE)
 
 tweak.o: tweak.x tweak.h
+icon_sort.o: icon_sort.m icon_sort.h
 luashit.o: luashit.h luashit.m
 lua_UIView.o: lua_UIView.h lua_UIView.m
 UIView+Cylinder.o: UIView+Cylinder.h UIView+Cylinder.m
