@@ -23,11 +23,9 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 // #import "UDTableView.h"
 #include <objc/runtime.h>
 
-#define TEXT_SECTION 0
-#define PAYPAL_SECTION 1
-#define BITCOIN_SECTION 2
 #define BITCOIN_ADDRESS @"177JwbKv8msAQPVk8azEKMCuNBWHJbs1XT"
 #define PAYPAL_URL @"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=rweichler%40gmail%2ecom&lc=US&item_name=Reed%20Weichler&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"
+#define VENMO_URL @"venmosdk://venmo.com?recipients=reedles&txn=pay&note=Cylinder%20Donation"
 
 @implementation UIDevice (OSVersion)
 - (BOOL)iOSVersionIsAtLeast:(NSString*)version
@@ -113,19 +111,20 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 
 - (id) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    switch(section)
-    {
-        case BITCOIN_SECTION:
-            return @"Bitcoin (tap to copy address)";
-        case PAYPAL_SECTION:
-            return @"Paypal";
-    }
     return nil;
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    if(section == 0) {
+        return 1;
+    } else {//if section == 1
+        if([UIApplication.sharedApplication canOpenURL:[NSURL URLWithString:@"venmo://"]]) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
 }
 
 -(id)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -138,18 +137,17 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
         cell.selectionStyle = UITableViewCellSelectionStyleBlue;
     }
     //cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-    switch(indexPath.section)
-    {
-        case TEXT_SECTION:
-            cell.textLabel.text = [NSString stringWithFormat:@"%@%@%@", @"\u2764\u2764\u2764\u2764 ", LOCALIZE(@"THANK_YOU", @"Thank you"), @" \u2764\u2764\u2764\u2764"];
-            //cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        break;
-        case BITCOIN_SECTION:
-            cell.textLabel.text = BITCOIN_ADDRESS;
-        break;
-        case PAYPAL_SECTION:
-            cell.textLabel.text = LOCALIZE(@"PAYPAL", @"Tap here to go to Safari and donate via Paypal");
-        break;
+    if(indexPath.section == 0) {
+        cell.imageView.image = nil;
+        cell.textLabel.text = [NSString stringWithFormat:@"%@%@%@", @"\u2764\u2764\u2764\u2764 ", LOCALIZE(@"THANK_YOU", @"Thank you"), @" \u2764\u2764\u2764\u2764"];
+    } else {
+        if(indexPath.row == 0) {
+            cell.textLabel.text = @"PayPal";
+            cell.imageView.image = [UIImage imageWithContentsOfFile:@"/Applications/Preferences.app/Weibo.png"];
+        } else {
+            cell.textLabel.text = @"Venmo";
+            cell.imageView.image = [UIImage imageWithContentsOfFile:@"/Applications/Preferences.app/Twitter.png"];
+        }
     }
     return cell;
 }
@@ -157,20 +155,23 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:true];
-    if(indexPath.section == BITCOIN_SECTION)
-    {
-        UIPasteboard.generalPasteboard.string = BITCOIN_ADDRESS;
-        [[UIAlertView.alloc initWithTitle:@"Address copied!" message:nil delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil].autorelease show];
-    }
-    else if(indexPath.section == PAYPAL_SECTION)
-    {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:PAYPAL_URL]];
-    }
-    else
-    {
+    if(indexPath.section == 0) {
         _player.currentTime = 0;
         [_player prepareToPlay];
         [_player play];
+    } else {
+        if(indexPath.row == 0) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:PAYPAL_URL]];
+        } else {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:VENMO_URL]];
+        } /* else if(BITCOIN) {
+            UIPasteboard.generalPasteboard.string = BITCOIN_ADDRESS;
+            [[UIAlertView.alloc initWithTitle:@"Address copied!"
+                                message:nil
+                                delegate:nil
+                                cancelButtonTitle:@"Okay"
+                                otherButtonTitles:nil].autorelease show];
+        } */
     }
 }
 
