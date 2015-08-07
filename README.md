@@ -19,7 +19,7 @@ Distinguishing characteristics:
 
 With Lua, the effects can be modified and created using just
 a text editor (scripts are stored in /Library/Cylinder). No knowledge of C or
-Objective-C is necessary. A noob-friendly tutorial can be found [here](https://github.com/rweichler/cylinder/wiki/Creating-and-modifying-Lua-scripts).
+Objective-C is necessary. A noob-friendly tutorial can be found [here](https://github.com/rweichler/cylinder/wiki/Installing-and-modifying-Lua-scripts).
 
 Custom scripts can be submitted to [/r/cylinder](http://reddit.com/r/cylinder).
 
