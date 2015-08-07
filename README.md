@@ -12,35 +12,32 @@
 
 This is a jailbreak tweak that lets you animate your icons when you swipe pages on the SpringBoard.
 
-The kicker about this one is two things:
+Distinguishing characteristics:
 
 1. Combining multiple effects
 2. Effects are written in [Lua](http://lua.org/about.html)
 
-This allows for unprecedented flexibility. Users do not have to depend on the developer
-to add new icon effects, as they can just code them in Lua with a standard text editor
-and copy to them to the phone. No compilation or special programs required.
+With Lua, the effects can be modified and created using just
+a text editor (scripts are stored in /Library/Cylinder). No knowledge of C or
+Objective-C is necessary. A noob-friendly tutorial can be found [here](https://github.com/rweichler/cylinder/wiki/Creating-and-modifying-Lua-scripts).
 
-If you want more, check out [/r/cylinder](http://reddit.com/r/cylinder)!
+Custom scripts can be submitted to [/r/cylinder](http://reddit.com/r/cylinder).
 
 If you want to make your own effects, check out [any of the 53 scripts that are bundled with Cylinder](https://github.com/rweichler/cylinder/tree/master/tweak/scripts). If you need more in-depth documentation you can check out
 [EXAMPLE.lua](https://github.com/rweichler/cylinder/blob/master/tweak/scripts/EXAMPLE.lua)
 as well.
 Once you've made your own effect, make a folder with
-your name in /Library/Cylinder on your phone (like 
+your name in /Library/Cylinder on your phone (like
 /Library/Cylinder/rweichler), drop your scripts in,
-and it should appear in settings. You don't even have to
-respring! This allows for rapid testing.
+and it should appear in settings (no respring required).
 
 Compatible with iOS 4, 5, 6, 7 and 8.
 
-##.deb files
-
-If you don't feel like building this, [here's a .deb of the latest stable build](http://r333d.com/repo/cylinder.php).
-
-And... [here's a deb of the latest **UNSTABLE** build](http://r333d.com/repo/cylinder.php?unstable=1).
-
 ## Setup
+
+This is for people that would like to contribute to the core (C / Objective-C) framework.
+If you would like to create your own scripts, no extra setup is necessary. Just install Cylinder
+on Cydia and follow the instructions above.
 
 ### Prerequisites
 
@@ -85,9 +82,10 @@ You need OpenSSH installed in order for the installation to work.
 
 ## Pull request policy
 
-Pull requests are only for changes and improvements to the core framework. Not custom Lua scripts.
+Pull requests here are only for changes and improvements to the core framework. Not Lua scripts.
 
-Feel free to post them to [/r/cylinder](http://reddit.com/r/cylinder). Once this is on BigBoss there will also be an easy way for you to submit your scripts there too.
+I regularly check [/r/cylinder](http://reddit.com/r/cylinder). If I see a script there I'd like
+to include by default, I'll PM you.
 
 ## License
 
