@@ -89,4 +89,4 @@ to include by default, I'll PM you.
 
 ## License
 
-[GNU GPL](https://github.com/rweichler/cylinder/blob/master/LICENSE), unless otherwise stated in the files themselves.
+[GPLv3](https://github.com/rweichler/cylinder/blob/master/LICENSE), unless otherwise stated in the files themselves.
