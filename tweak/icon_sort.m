@@ -14,12 +14,17 @@ static BOOL compare(UIView *a, UIView *b)
 static void insertion_sort(NSArray *subviews, UIView **arr, int max)
 {
     int count = 0;
-    for(UIView *view in subviews) {
+    for(UIView *view in subviews)
+    {
         int i;
-        for(i = count - 1; i >= 0; i--) {
-            if(compare(arr[i], view)) {
+        for(i = count - 1; i >= 0; i--)
+        {
+            if(compare(arr[i], view))
+            {
                 break;
-            } else {
+            }
+            else
+            {
                 arr[i + 1] = arr[i];
             }
         }
@@ -51,7 +56,8 @@ void sort_icons_for_list(UIView *self)
     int max = get_max_icons_for_list(self);
 
     UIView **arr = get_sorted_icons_from_list(self);
-    if(arr == NULL) {
+    if(arr == NULL)
+    {
         arr = malloc(max*sizeof(UIView *));
         set_obj(self, [NSValue valueWithPointer:arr]);
     }
@@ -61,7 +67,8 @@ void sort_icons_for_list(UIView *self)
 void dealloc_sorted_icon_array_for_list(UIView *self)
 {
     void *val = get_sorted_icons_from_list(self);
-    if(val != NULL) {
+    if(val != NULL)
+    {
         free(val);
         set_obj(self, nil);
     }
