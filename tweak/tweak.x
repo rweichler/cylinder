@@ -54,13 +54,16 @@ static void page_swipe(UIScrollView *scrollView)
 
             if(fabs(offset/size.width) < 1)
             {
-                if(!view.wasModifiedByCylinder) {
+                if(!view.wasModifiedByCylinder)
+                {
                     sort_icons_for_list(view);
                 }
                 _enabled = manipulate(view, offset, _randSeedForCurrentPage); //defined in luashit.m
                 view.wasModifiedByCylinder = true;
             }
-        } else if (view.wasModifiedByCylinder) {
+        }
+        else if (view.wasModifiedByCylinder)
+        {
             reset_icon_layout(view);
         }
 
