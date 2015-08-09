@@ -8,3 +8,4 @@ Packages
 Packages.bz2
 config.mk
 *.db
+.last_ip
