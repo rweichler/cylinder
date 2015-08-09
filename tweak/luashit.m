@@ -375,8 +375,8 @@ static void write_file(const char *msg, const char *filename)
     NSString *dateStr = [dateFormatter stringFromDate:NSDate.date];
 
     [fileHandle writeData:[dateStr dataUsingEncoding:NSUTF8StringEncoding]];
-    [fileHandle writeData:[NSData dataWithBytes:msg length:(strlen(msg) + 1)]];
-    [fileHandle writeData:[NSData dataWithBytes:"\n" length:2]];
+    [fileHandle writeData:[NSData dataWithBytes:msg length:strlen(msg)]];
+    [fileHandle writeData:[NSData dataWithBytes:"\n" length:1]];
     [fileHandle closeFile];
 }
 

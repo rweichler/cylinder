@@ -258,7 +258,12 @@ static int l_uiview_setindex(lua_State *L)
         if(!strcmp(key, "alpha"))
         {
             if(!lua_isnumber(L, 3))
-                return luaL_error(L, "alpha must be a number");
+                return luaL_error(L, LUA_QL("alpha")" must be a number");
+
+            float alpha = lua_tonumber(L, 3);
+
+            if(alpha < 0 || alpha > 1)
+                return luaL_error(L, LUA_QL("alpha")" must be between 0 and 1");
 
             self.alpha = lua_tonumber(L, 3);
             self.wasModifiedByCylinder = true;
@@ -266,6 +271,10 @@ static int l_uiview_setindex(lua_State *L)
     }
     return 0;
 }
+
+#define CHECK_NAN(NUM, STR)\
+    if(isnan(NUM))\
+        return luaL_error(L, STR" is NaN. It is either too large or is imaginary")
 
 static int l_calayer_setindex(lua_State *L)
 {
@@ -283,18 +292,26 @@ static int l_calayer_setindex(lua_State *L)
         if(!strcmp(key, "x"))
         {
             if(!lua_isnumber(L, 3)) return luaL_error(L, LUA_QL("x") " must be a number");
+
+            float x = lua_tonumber(L, 3);
+            CHECK_NAN(x, LUA_QL("x"));
+
             [self savePosition];
             CGPoint pos = self.position;
-            pos.x = lua_tonumber(L, 3);
+            pos.x = x;
             self.position = pos;
             view.wasModifiedByCylinder = true;
         }
         else if(!strcmp(key, "y"))
         {
             if(!lua_isnumber(L, 3)) return luaL_error(L, LUA_QL("y") " must be a number");
+
+            float y = lua_tonumber(L, 3);
+            CHECK_NAN(y, LUA_QL("y"));
+
             [self savePosition]; //TODO implement this and resetPosition.... prolly needa refactor some shit
             CGPoint pos = self.position;
-            pos.y = lua_tonumber(L, 3);
+            pos.y = y;
             self.position = pos;
             view.wasModifiedByCylinder = true;
         }
@@ -356,6 +373,10 @@ static int l_transform_rotate(lua_State *L)
         roll = lua_tonumber(L, 5);
     }
 
+    CHECK_NAN(pitch, "the pitch of the rotation");
+    CHECK_NAN(yaw, "the yaw of the rotation");
+    CHECK_NAN(roll, "the roll of the rotation");
+
     if(fabs(pitch) > 0.01 || fabs(yaw) > 0.01)
         transform.m34 = -1/PERSPECTIVE_DISTANCE;
 
@@ -375,6 +396,11 @@ static int l_transform_translate(lua_State *L)
 
     CATransform3D transform = self.layer.transform;
     float x = lua_tonumber(L, 2), y = lua_tonumber(L, 3), z = lua_tonumber(L, 4);
+
+    CHECK_NAN(x, "the x value for the translation");
+    CHECK_NAN(y, "the y value for the translation");
+    CHECK_NAN(z, "the z value for the translation");
+
     float oldm34 = transform.m34;
     if(fabs(z) > 0.01)
         transform.m34 = -1/PERSPECTIVE_DISTANCE;
@@ -395,12 +421,13 @@ static int l_transform_scale(lua_State *L)
 
     CATransform3D transform = self.layer.transform;
     float x = lua_tonumber(L, 2);
-    float y = x;
-    float z = 1;
-    if(lua_isnumber(L, 3))
-        y = lua_tonumber(L, 3);
-    if(lua_isnumber(L, 4))
-        z = lua_tonumber(L, 4);
+    float y = lua_isnumber(L, 3) ? lua_tonumber(L, 3) : x;
+    float z = lua_isnumber(L, 4) ? lua_tonumber(L, 4) : 1;
+
+    CHECK_NAN(x, "the x value for the scale");
+    CHECK_NAN(y, "the y value for the scale");
+    CHECK_NAN(z, "the z value for the scale");
+
     float oldm34 = transform.m34;
     transform.m34 = -1/PERSPECTIVE_DISTANCE;
     transform = CATransform3DScale(transform, x, y, z);
@@ -413,7 +440,7 @@ static int l_transform_scale(lua_State *L)
 
 const static char *ERR_MALFORMED = "malformed transformation matrix";
 
-#define CALL_TRANSFORM_MACRO(F, ...)\
+#define CALL_TRANSFORM_MACRO(F, ...) do {\
     F(m11, ## __VA_ARGS__);\
     F(m12, ## __VA_ARGS__);\
     F(m13, ## __VA_ARGS__);\
@@ -429,12 +456,14 @@ const static char *ERR_MALFORMED = "malformed transformation matrix";
     F(m41, ## __VA_ARGS__);\
     F(m42, ## __VA_ARGS__);\
     F(m43, ## __VA_ARGS__);\
-    F(m44, ## __VA_ARGS__)
+    F(m44, ## __VA_ARGS__);\
+} while(0)
 
-#define BASE_TRANSFORM_STEP(M, LUASTATE, I, TRANSFORM)\
+#define BASE_TRANSFORM_STEP(M, LUASTATE, I, TRANSFORM) do{\
     lua_pushnumber(LUASTATE, ++I);\
     lua_pushnumber(LUASTATE, TRANSFORM.M);\
-    lua_settable(LUASTATE, -3)
+    lua_settable(LUASTATE, -3);\
+} while(0)
 
 int l_push_base_transform(lua_State *L)
 {
@@ -443,13 +472,15 @@ int l_push_base_transform(lua_State *L)
     return 1;
 }
 
-#define FILL_TRANSFORM(M, LUASTATE, I, TRANSFORM)\
+#define FILL_TRANSFORM(M, LUASTATE, I, TRANSFORM) do{\
     lua_pushnumber(LUASTATE, ++I);\
     lua_gettable(LUASTATE, -3);\
     if(!lua_isnumber(LUASTATE, -1))\
         return luaL_error(LUASTATE, ERR_MALFORMED);\
     TRANSFORM.M = lua_tonumber(LUASTATE, -1);\
-    lua_pop(LUASTATE, 1)
+    CHECK_NAN(TRANSFORM.M, "the "#M" of the transform");\
+    lua_pop(LUASTATE, 1);\
+} while(0)
 
 static int l_set_transform(lua_State *L, CALayer *self) //-1 = transform
 {

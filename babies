@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# I have a lot of devices I test on, and constantly editing the Makefile
+# depending on what device I'm currently testing on got old.
+
+# I have this script automaticaly build it and remember what the last
+# device I deployed to was.
+
+if [ "$#" -ne 0 ]; then
+    echo "$1" > .last_ip
+fi
+
+make babies IPHONE_IP="$(cat .last_ip)"
