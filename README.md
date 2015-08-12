@@ -12,7 +12,7 @@
 
 This is a jailbreak tweak that lets you animate your icons when you swipe pages on the SpringBoard.
 
-Distinguishing characteristics:
+Differences to Barrel:
 
 1. Combining multiple effects
 2. Effects are written in [Lua](http://lua.org/about.html)
