@@ -22,17 +22,16 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "lua_UIView.h"
 #import "UIView+Cylinder.h"
 #import "tweak.h"
-#import "icon_sort.h"
+#import "lua_UIView_index.h"
 
-static int l_transform_rotate(lua_State *L);
-static int l_transform_translate(lua_State *L);
-static int l_transform_scale(lua_State *L);
 static int l_set_transform(lua_State *L, CALayer *self); //-1 = transform
 static int l_get_transform(lua_State *L, CALayer *self); //pushes transform to top of stack
 
 static int l_nsobject_index(lua_State *L);
 static int l_nsobject_setindex(lua_State *L);
 static int l_nsobject_len(lua_State *L);
+
+static int  _layerIndexTable;
 
 int l_push_view(lua_State *L, id view)
 {
@@ -57,150 +56,11 @@ int l_create_uiview_metatable(lua_State *L)
 
     lua_pop(L, 1);
 
-    return 0;
-}
-
-//screw good practice, i dont have time for casting and
-//private header files
-static int invoke_int(id self, SEL selector, BOOL use_orientation)
-{
-    IMP imp = [self methodForSelector:selector];
-    if(use_orientation)
-    {
-        typedef int (*functype)(id, SEL, UIDeviceOrientation);
-        return ((functype)imp)(self, selector, UIDevice.currentDevice.orientation);
-    }
-    else
-    {
-        typedef int (*functype)(id, SEL);
-        return ((functype)imp)(self, selector);
-    }
-}
-
-static int l_uiview_index(lua_State *L)
-{
-    UIView *self = (UIView *)lua_touserdata(L, 1);
-    if(lua_isnumber(L, 2)) //if it's a number, return the subview
-    {
-        if(![self isKindOfClass:_listClass]) {
-            return luaL_error(L, "trying to get icon from object that is not a list");
-        }
-        int index = lua_tonumber(L, 2) - 1;
-        if(index >= 0 && index < get_max_icons_for_list(self))
-        {
-            UIView *view = get_sorted_icons_from_list(self)[index];
-            if(view != NULL) {
-                return l_push_view(L, view);
-            }
-        }
-    }
-    else if(lua_isstring(L, 2))
-    {
-        const char *key = lua_tostring(L, 2);
-
-        if(!strcmp(key, "subviews"))
-        {
-            if(![self isKindOfClass:_listClass]) {
-                return luaL_error(L, "trying to get icon from object that is not a list");
-            }
-            UIView **views = get_sorted_icons_from_list(self);
-            lua_newtable(L);
-            for(int i = 0; views[i] != NULL; i++)
-            {
-                lua_pushnumber(L, i+1);
-                l_push_view(L, views[i]);
-                lua_settable(L, -3);
-            }
-            return 1;
-        }
-        else if(!strcmp(key, "alpha"))
-        {
-            lua_pushnumber(L, self.alpha);
-            return 1;
-        }
-        else if(!strcmp(key, "rotate"))
-        {
-            lua_pushcfunction(L, l_transform_rotate);
-            return 1;
-        }
-        else if(!strcmp(key, "translate"))
-        {
-            lua_pushcfunction(L, l_transform_translate);
-            return 1;
-        }
-        else if(!strcmp(key, "scale"))
-        {
-            lua_pushcfunction(L, l_transform_scale);
-            return 1;
-        }
-        else if(!strcmp(key, "x"))
-        {
-            BOOL old = self.wasModifiedByCylinder;
-            self.wasModifiedByCylinder = false;
-            lua_pushnumber(L, self.frame.origin.x);
-            self.wasModifiedByCylinder = old;
-            return 1;
-        }
-        else if(!strcmp(key, "y"))
-        {
-            BOOL old = self.wasModifiedByCylinder;
-            self.wasModifiedByCylinder = false;
-            lua_pushnumber(L, self.frame.origin.y);
-            self.wasModifiedByCylinder = old;
-            return 1;
-        }
-        else if(!strcmp(key, "width"))
-        {
-            BOOL old = self.wasModifiedByCylinder;
-            self.wasModifiedByCylinder = false;
-            lua_pushnumber(L, self.frame.size.width/self.layer.transform.m11);
-            self.wasModifiedByCylinder = old;
-            return 1;
-        }
-        else if(!strcmp(key, "height"))
-        {
-            BOOL old = self.wasModifiedByCylinder;
-            self.wasModifiedByCylinder = false;
-            lua_pushnumber(L, self.frame.size.height/self.layer.transform.m22);
-            self.wasModifiedByCylinder = old;
-            return 1;
-        }
-        else if(!strcmp(key, "max_icons"))
-        {
-            SEL selector = @selector(maxIcons);
-            if([self.class respondsToSelector:selector])
-            {
-                lua_pushnumber(L, invoke_int(self.class, selector, false));
-                return 1;
-            }
-        }
-        else if(!strcmp(key, "max_columns"))
-        {
-            SEL selector = @selector(iconColumnsForInterfaceOrientation:);
-            if([self.class respondsToSelector:selector])
-            {
-                lua_pushnumber(L, invoke_int(self.class, selector, true));
-                return 1;
-            }
-        }
-        else if(!strcmp(key, "max_rows"))
-        {
-            SEL selector = @selector(iconRowsForInterfaceOrientation:);
-            if([self.class respondsToSelector:selector])
-            {
-                lua_pushnumber(L, invoke_int(self.class, selector, true));
-                return 1;
-            }
-        }
-        else if(!strcmp(key, "layer"))
-        {
-            self.wasModifiedByCylinder = true;
-            return l_push_view(L, self.layer);
-        }
-    }
+    l_create_viewindextable(L);
 
     return 0;
 }
+
 
 static int l_calayer_index(lua_State *L)
 {
@@ -271,10 +131,6 @@ static int l_uiview_setindex(lua_State *L)
     }
     return 0;
 }
-
-#define CHECK_NAN(NUM, STR)\
-    if(isnan(NUM))\
-        return luaL_error(L, STR" is NaN. It is either too large or is imaginary")
 
 static int l_calayer_setindex(lua_State *L)
 {
@@ -350,90 +206,6 @@ static int l_nsobject_len(lua_State *L)
     id self = (id)lua_touserdata(L, 1);
     if([self isKindOfClass:UIView.class])
         return l_uiview_len(L);
-
-    return 0;
-}
-
-
-static int l_transform_rotate(lua_State *L)
-{
-    CHECK_UIVIEW(L, 1);
-
-    UIView *self = (UIView *)lua_touserdata(L, 1);
-    self.wasModifiedByCylinder = true;
-
-    CATransform3D transform = self.layer.transform;
-    float pitch = 0, yaw = 0, roll = 0;
-    if(!lua_isnumber(L, 3))
-        roll = 1;
-    else
-    {
-        pitch = lua_tonumber(L, 3);
-        yaw = lua_tonumber(L, 4);
-        roll = lua_tonumber(L, 5);
-    }
-
-    CHECK_NAN(pitch, "the pitch of the rotation");
-    CHECK_NAN(yaw, "the yaw of the rotation");
-    CHECK_NAN(roll, "the roll of the rotation");
-
-    if(fabs(pitch) > 0.01 || fabs(yaw) > 0.01)
-        transform.m34 = -1/PERSPECTIVE_DISTANCE;
-
-    transform = CATransform3DRotate(transform, lua_tonumber(L, 2), pitch, yaw, roll);
-
-    self.layer.transform = transform;
-
-    return 0;
-}
-
-static int l_transform_translate(lua_State *L)
-{
-    CHECK_UIVIEW(L, 1);
-
-    UIView *self = (UIView *)lua_touserdata(L, 1);
-    self.wasModifiedByCylinder = true;
-
-    CATransform3D transform = self.layer.transform;
-    float x = lua_tonumber(L, 2), y = lua_tonumber(L, 3), z = lua_tonumber(L, 4);
-
-    CHECK_NAN(x, "the x value for the translation");
-    CHECK_NAN(y, "the y value for the translation");
-    CHECK_NAN(z, "the z value for the translation");
-
-    float oldm34 = transform.m34;
-    if(fabs(z) > 0.01)
-        transform.m34 = -1/PERSPECTIVE_DISTANCE;
-    transform = CATransform3DTranslate(transform, x, y, z);
-    transform.m34 = oldm34;
-
-    self.layer.transform = transform;
-
-    return 0;
-}
-
-static int l_transform_scale(lua_State *L)
-{
-    CHECK_UIVIEW(L, 1);
-
-    UIView *self = (UIView *)lua_touserdata(L, 1);
-    self.wasModifiedByCylinder = true;
-
-    CATransform3D transform = self.layer.transform;
-    float x = lua_tonumber(L, 2);
-    float y = lua_isnumber(L, 3) ? lua_tonumber(L, 3) : x;
-    float z = lua_isnumber(L, 4) ? lua_tonumber(L, 4) : 1;
-
-    CHECK_NAN(x, "the x value for the scale");
-    CHECK_NAN(y, "the y value for the scale");
-    CHECK_NAN(z, "the z value for the scale");
-
-    float oldm34 = transform.m34;
-    transform.m34 = -1/PERSPECTIVE_DISTANCE;
-    transform = CATransform3DScale(transform, x, y, z);
-    transform.m34 = oldm34;
-
-    self.layer.transform = transform;
 
     return 0;
 }

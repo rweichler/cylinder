@@ -40,7 +40,6 @@ static int l_print(lua_State *L);
 static int l_subviews(lua_State *L);
 static int l_popup(lua_State *L);
 
-//static const char * get_stack(lua_State *L, const char *strr);
 
 static void write_error(const char *error);
 static void write_file(const char *msg, const char *filename);
@@ -359,6 +358,8 @@ static void write_error(const char *error)
 
 static void write_file(const char *msg, const char *filename)
 {
+    Log(@"wrote to file %s: %s", filename, msg);
+
     NSString *path = [LOG_DIR stringByAppendingPathComponent:[NSString stringWithUTF8String:filename]];
 
     if(![NSFileManager.defaultManager fileExistsAtPath:path isDirectory:nil])
@@ -461,8 +462,7 @@ BOOL manipulate(UIView *view, float offset, u_int32_t rand)
     }
 }
 
-/*
-static const char * get_stack(lua_State *L, const char *strr)
+const char * get_stack(lua_State *L, const char *strr)
 {
     NSMutableString *str = [NSMutableString stringWithFormat:@"%s{", strr];
     int i;
@@ -493,4 +493,3 @@ static const char * get_stack(lua_State *L, const char *strr)
     }
     return [NSString stringWithFormat:@"%@} %d", str, top].UTF8String;
 }
-*/

@@ -25,3 +25,4 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 void close_lua();
 BOOL init_lua(NSArray *scripts, BOOL random);
 BOOL manipulate(UIView *view, float offset, u_int32_t rand);
+const char * get_stack(lua_State *L, const char *strr);
