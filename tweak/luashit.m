@@ -40,7 +40,6 @@ static int l_print(lua_State *L);
 static int l_subviews(lua_State *L);
 static int l_popup(lua_State *L);
 
-
 static void write_error(const char *error);
 static void write_file(const char *msg, const char *filename);
 
@@ -462,7 +461,8 @@ BOOL manipulate(UIView *view, float offset, u_int32_t rand)
     }
 }
 
-const char * get_stack(lua_State *L, const char *strr)
+/*
+static const char * get_stack(lua_State *L, const char *strr)
 {
     NSMutableString *str = [NSMutableString stringWithFormat:@"%s{", strr];
     int i;
@@ -493,3 +493,4 @@ const char * get_stack(lua_State *L, const char *strr)
     }
     return [NSString stringWithFormat:@"%@} %d", str, top].UTF8String;
 }
+*/

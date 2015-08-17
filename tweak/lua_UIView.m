@@ -57,10 +57,8 @@ int l_create_uiview_metatable(lua_State *L)
     lua_pop(L, 1);
 
     l_create_viewindextable(L);
-
     return 0;
 }
-
 
 static int l_calayer_index(lua_State *L)
 {
