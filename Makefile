@@ -18,7 +18,7 @@
 
 include base.mk
 
-IPHONE_IP=itouch
+IPHONE_IP=5s
 #IPHONE_IP=root@192.168.1.7
 SSH_FLAGS=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 PACKAGE=UNSTABLE.deb

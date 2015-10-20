@@ -36,6 +36,7 @@ SDKFLAGS=-mios-version-min=3.0 -isysroot $(SDK)
 CFLAGS=-Wall
 ARCH=-arch armv7 -arch arm64
 INCLUDE=-I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
+LDFLAGS=-Wl,-segalign,4000
 
 CC=clang -g -O2 $(ARCH) $(SDKFLAGS) $(INCLUDE)
 

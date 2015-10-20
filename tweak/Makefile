@@ -18,7 +18,7 @@ clean:
 
 $(DYLIB): $(OUTPUT) $(LIBLUA) $(SUBSTRATE)
 	@echo linking $@...
-	@$(CC) -dynamiclib -o $@ $^ $(FRAMEWORKS)
+	@$(CC) -dynamiclib -o $@ $^ $(FRAMEWORKS) $(LDFLAGS)
 
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)

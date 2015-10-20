@@ -25,7 +25,7 @@ $(BUNDLE): Resources/* $(REQ)
 
 $(DYLIB): $(OUTPUT) $(BUNDLE)
 	@echo linking $@
-	@$(CC) -dynamiclib -o $@ $(OUTPUT) $(FRAMEWORKS)
+	@$(CC) -dynamiclib -o $@ $(OUTPUT) $(FRAMEWORKS) $(LDFLAGS)
 
 CLAlignedTableViewCell.o: CLAlignedTableViewCell.h CLAlignedTableViewCell.m
 CLDonateController.o: CLDonateController.h CLDonateController.m
