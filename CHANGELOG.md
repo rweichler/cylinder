@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.4
+
+* iOS 9 compatibility
+* Japanese, Portuguese, Hebrew, Spanish, Dutch Translations
+* Fix icon out-of-order-sometimes bugs
+* Performance improvements
+* Add Hyperspace effect (by cylgom)
+* Add Burst, Focus, Helix, and Radar effects (by KnifeOfPi)
+
 ## 1.0.3
 
 * Italian, Czech, Russian, Chinese, Swedish, French, Danish and Turkish translations
