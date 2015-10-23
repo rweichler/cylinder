@@ -1,6 +1,8 @@
+UNSTABLE.deb
 Cylinder.dylib
 tweak/tmp
 settings/CylinderSettings.bundle
+settings/CylinderSettings.dylib
 *.o
 *.a
 *.x.o.m

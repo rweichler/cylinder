@@ -6,6 +6,7 @@ FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framewo
 LIBLUA=../include/lua/liblua.a
 OUTPUT=tweak.o luashit.o lua_UIView.o UIView+Cylinder.o CALayer+Cylinder.o icon_sort.o lua_UIView_index.o
 SUBSTRATE=../include/libsubstrate.dylib
+LINK_US=$(OUTPUT) $(LIBLUA) $(SUBSTRATE)
 
 all: $(DYLIB)
 
@@ -16,9 +17,7 @@ clean:
 
 .PHONY: all clean
 
-$(DYLIB): $(OUTPUT) $(LIBLUA) $(SUBSTRATE)
-	@echo linking $@...
-	@$(CC) -dynamiclib -o $@ $^ $(FRAMEWORKS) $(LDFLAGS)
+$(DYLIB): $(LINK_US)
 
 $(LIBLUA):
 	cd ../include/lua && $(MAKE)

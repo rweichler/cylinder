@@ -4,6 +4,8 @@ NAME:=$(NAME)Settings
 BUNDLE=$(NAME).bundle
 DYLIB=$(BUNDLE)/$(NAME)
 
+TMP_DYLIB=$(NAME).dylib
+
 PREFERENCES=$(SDK)/System/Library/PrivateFrameworks/Preferences.framework/Preferences
 FRAMEWORKS=-framework Foundation -framework UIKit -framework QuartzCore -framework CoreGraphics -framework AVFoundation $(PREFERENCES)
 OUTPUT=CLAlignedTableViewCell.o CLDonateController.o CLEffect.o CLEffectsController.o CLFormulasController.o CylinderSettings.o
@@ -23,9 +25,12 @@ $(BUNDLE): Resources/* $(REQ)
 	@mkdir -p $@
 	@cp -r Resources/* $@/
 
-$(DYLIB): $(OUTPUT) $(BUNDLE)
-	@echo linking $@
-	@$(CC) -dynamiclib -o $@ $(OUTPUT) $(FRAMEWORKS) $(LDFLAGS)
+$(DYLIB): $(TMP_DYLIB) $(BUNDLE)
+	rm -f $@
+	ln $(TMP_DYLIB) $@
+
+LINK_ME=$(OUTPUT)
+$(TMP_DYLIB): $(LINK_ME)
 
 CLAlignedTableViewCell.o: CLAlignedTableViewCell.h CLAlignedTableViewCell.m
 CLDonateController.o: CLDonateController.h CLDonateController.m

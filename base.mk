@@ -33,10 +33,13 @@ endif
 #flags and shit
 
 SDKFLAGS=-mios-version-min=3.0 -isysroot $(SDK)
-CFLAGS=-Wall
-ARCH=-arch armv7 -arch arm64
+CFLAGS=-Wall -Wno-unused-function -Wno-unused-variable
+ARMV7=-arch armv7
+ARM64=-arch arm64
+ARCH=$(ARMV7) $(ARM64)
 INCLUDE=-I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
-LDFLAGS=-Wl,-segalign,4000
+IOS9_SHIT=-Wl,-segalign,4000
+LDFLAGS=$(IOS9_SHIT)
 
 CC=clang -g -O2 $(ARCH) $(SDKFLAGS) $(INCLUDE)
 
@@ -48,3 +51,9 @@ CC=clang -g -O2 $(ARCH) $(SDKFLAGS) $(INCLUDE)
 %.o: %.m
 	@echo compiling $<...
 	@$(CC) $(CFLAGS) -c -o $@ $<
+
+%.dylib:
+	@echo linking $@...
+	@$(CC) -dynamiclib -o $@ $(LINK_US) $(FRAMEWORKS) $(LDFLAGS)
+	@echo signing $@...
+	@ldid -S $@
