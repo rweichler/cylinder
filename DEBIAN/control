@@ -2,7 +2,7 @@ Package: com.r333d.cylinder
 Name: Cylinder
 Version: 1.0.4
 Architecture: iphoneos-arm
-Depends: firmware (>= 3.0), mobilesubstrate, preferenceloader
+Depends: firmware (>= 3.0), mobilesubstrate (>= 0.9.6011), preferenceloader
 Icon: file:///Library/PreferenceBundles/CylinderSettings.bundle/Icon@2x.png
 Depiction: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=cylinderDp
 Description: Make your icons dance
