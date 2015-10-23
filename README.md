@@ -31,7 +31,7 @@ your name in /Library/Cylinder on your phone (like
 /Library/Cylinder/rweichler), drop your scripts in,
 and it should appear in settings (no respring required).
 
-Compatible with iOS 4, 5, 6, 7 and 8.
+Compatible with iOS 4-9.
 
 ## Setup
 
@@ -39,11 +39,13 @@ This is for people that would like to contribute to the core (C / Objective-C) f
 If you would like to create your own scripts, no extra setup is necessary. Just install Cylinder
 on Cydia and follow the instructions above.
 
-### Prerequisites
+### Dependencies
 
 * Mac OS X, Linux or jailbroken iOS
 * Perl (for Logos. This project *does not* use Theos! And Logos is included already.)
 * Xcode (or, clang/make and a copy of the iPhone SDK &gt;= iOS 4)
+
+### Setup
 
 First, clone the repository and cd into it
 
