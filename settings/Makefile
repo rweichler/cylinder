@@ -29,8 +29,8 @@ $(DYLIB): $(TMP_DYLIB) $(BUNDLE)
 	rm -f $@
 	ln $(TMP_DYLIB) $@
 
-LINK_ME=$(OUTPUT)
-$(TMP_DYLIB): $(LINK_ME)
+LINK_US=$(OUTPUT)
+$(TMP_DYLIB): $(LINK_US)
 
 CLAlignedTableViewCell.o: CLAlignedTableViewCell.h CLAlignedTableViewCell.m
 CLDonateController.o: CLDonateController.h CLDonateController.m
