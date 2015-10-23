@@ -33,19 +33,17 @@ and it should appear in settings (no respring required).
 
 Compatible with iOS 4-9.
 
-## Setup
-
 This is for people that would like to contribute to the core (C / Objective-C) framework.
 If you would like to create your own scripts, no extra setup is necessary. Just install Cylinder
 on Cydia and follow the instructions above.
 
-### Dependencies
+## Dependencies
 
 * Mac OS X, Linux or jailbroken iOS
 * Perl (for Logos. This project *does not* use Theos! And Logos is included already.)
 * Xcode (or, clang/make and a copy of the iPhone SDK &gt;= iOS 4)
 
-### Setup
+## Setup
 
 First, clone the repository and cd into it
 
@@ -60,7 +58,7 @@ Then, init the submodules:
 git submodule update --init
 ```
 
-#### For those who don't have Xcode installed
+### For those who don't have Xcode installed
 
 Open `config.mk` and edit the line that says `SDK=` to reflect where your copy of the iPhone SDK is.
 
