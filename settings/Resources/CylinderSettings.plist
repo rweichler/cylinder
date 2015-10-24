@@ -110,7 +110,7 @@
 			<key>label</key>
 			<string>@rweichler</string>
             <key>icon</key>
-            <string>/Applications/Preferences.app/Twitter.png</string>
+            <string>Twitter.png</string>
 		</dict>
 		<dict>
 			<key>action</key>
@@ -120,7 +120,7 @@
 			<key>label</key>
 			<string>Weibo: r333d</string>
             <key>icon</key>
-            <string>/Applications/Preferences.app/Weibo.png</string>
+            <string>Weibo.png</string>
 		</dict>
 		<dict>
 			<key>action</key>
