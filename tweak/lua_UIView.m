@@ -120,8 +120,7 @@ static int l_uiview_setindex(lua_State *L)
 
             float alpha = lua_tonumber(L, 3);
 
-            if(alpha < 0 || alpha > 1)
-                return luaL_error(L, LUA_QL("alpha")" must be between 0 and 1");
+            CHECK_NAN(alpha, LUA_QL("alpha"));
 
             self.alpha = lua_tonumber(L, 3);
             self.wasModifiedByCylinder = true;

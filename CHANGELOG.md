@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+* Fix script breakage when combining multiple effects (and Radar)
+
 ## 1.0.4
 
 * iOS 9 compatibility
