@@ -31,6 +31,7 @@ static void insertion_sort(NSArray *subviews, UIView **arr, int max)
         arr[i + 1] = view;
         count++;
     }
+    //set the rest to NULL
     memset(&arr[count], (int)NULL, (max - count)*sizeof(UIView *));
 }
 

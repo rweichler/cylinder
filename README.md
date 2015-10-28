@@ -33,6 +33,8 @@ and it should appear in settings (no respring required).
 
 Compatible with iOS 4-9.
 
+# How to build/install this
+
 This is for people that would like to contribute to the core (C / Objective-C) framework.
 If you would like to create your own scripts, no extra setup is necessary. Just install Cylinder
 on Cydia and follow the instructions above.
