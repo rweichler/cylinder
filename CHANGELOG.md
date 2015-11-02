@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.6
+
+* Fix Qaanol's effects not animating properly 
+* Fix partial animation bugs on iOS 4-6
+
 ## 1.0.5
 
 * Fix script breakage when combining multiple effects (and Radar)
