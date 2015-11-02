@@ -425,15 +425,6 @@ BOOL manipulate(UIView *view, float offset, u_int32_t rand)
         set_perspective_distance = true;
     }
 
-    view.layer.transform = CATransform3DIdentity;
-    [view.layer restorePosition];
-    view.alpha = 1;
-    for(UIView *v in view.subviews)
-    {
-        v.layer.transform = CATransform3DIdentity;
-        [v.layer restorePosition];
-        view.alpha = 1;
-    }
     if(_randomize)
     {
         if(manipulate_step(view, offset, rand % _scripts.count))

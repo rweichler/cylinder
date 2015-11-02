@@ -22,4 +22,5 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 @interface UIView(Cylinder)
 @property (nonatomic, assign) BOOL wasModifiedByCylinder;
 @property (nonatomic, assign) BOOL hasDifferentSubviews;
+@property (nonatomic, assign, readonly) int cylinderLastSubviewCount;
 @end

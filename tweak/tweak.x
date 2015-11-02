@@ -47,6 +47,14 @@ static void page_swipe(UIScrollView *scrollView)
     {
         if(![view isKindOfClass:_listClass]) continue;
 
+
+        BOOL shouldSortIcons = true;
+        if (view.wasModifiedByCylinder)
+        {
+            shouldSortIcons = false;
+            reset_icon_layout(view);
+        }
+
         if(CGRectIntersectsRect(eye, view.frame))
         {
             CGSize size = scrollView.frame.size;
@@ -54,17 +62,13 @@ static void page_swipe(UIScrollView *scrollView)
 
             if(fabs(offset/size.width) < 1)
             {
-                if(!view.wasModifiedByCylinder)
+                if(view.cylinderLastSubviewCount != view.subviews.count || shouldSortIcons)
                 {
                     sort_icons_for_list(view);
                 }
                 _enabled = manipulate(view, offset, _randSeedForCurrentPage); //defined in luashit.m
                 view.wasModifiedByCylinder = true;
             }
-        }
-        else if (view.wasModifiedByCylinder)
-        {
-            reset_icon_layout(view);
         }
 
         i++;
@@ -292,29 +296,6 @@ static BOOL _justSetScrollViewSize;
     return frame;
 }
 %end
-
-//this is more for the Lua scripts. this ensures
-//that the icons are in the right order when you call
-//[page subviews].
-static void layout_icons(UIView *self)
-{
-    NSMutableArray *icons = self.subviews.mutableCopy;
-
-    NSComparisonResult (^block)(UIView *, UIView *) = ^NSComparisonResult(UIView *icon1, UIView *icon2)
-    {
-        if(fabs(icon1.frame.origin.y - icon2.frame.origin.y) > 0.01)
-            return [[NSNumber numberWithFloat:icon1.frame.origin.y] compare:[NSNumber numberWithFloat:icon2.frame.origin.y]];
-        else
-            return [[NSNumber numberWithFloat:icon1.frame.origin.x] compare:[NSNumber numberWithFloat:icon2.frame.origin.x]];
-    };
-
-    [icons sortUsingComparator:block];
-
-    for(UIView *icon in icons)
-    {
-        [icon.superview bringSubviewToFront:icon];
-    }
-}
 
 static void load_that_shit()
 {
