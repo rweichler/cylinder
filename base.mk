@@ -37,7 +37,7 @@ CFLAGS=-Wall -Wno-unused-function -Wno-unused-variable
 ARMV7=-arch armv7
 ARM64=-arch arm64
 ARCH=$(ARMV7) $(ARM64)
-INCLUDE=-I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback
+INCLUDE=-I../include -I../include/iphoneheaders -I../include/iphoneheaders/_fallback -I/usr/include
 IOS9_SHIT=-Wl,-segalign,4000
 LDFLAGS=$(IOS9_SHIT)
 

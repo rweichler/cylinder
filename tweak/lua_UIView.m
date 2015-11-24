@@ -25,7 +25,6 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #import "lua_UIView_index.h"
 
 static int l_set_transform(lua_State *L, CALayer *self); //-1 = transform
-static int l_get_transform(lua_State *L, CALayer *self); //pushes transform to top of stack
 
 static int l_nsobject_index(lua_State *L);
 static int l_nsobject_setindex(lua_State *L);
@@ -89,7 +88,7 @@ static int l_calayer_index(lua_State *L)
         }
         else if(!strcmp(key, "transform"))
         {
-            return l_get_transform(L, self);
+            return l_push_transform(L, self.transform);
         }
     }
 
@@ -208,48 +207,32 @@ static int l_nsobject_len(lua_State *L)
 }
 
 const static char *ERR_MALFORMED = "malformed transformation matrix";
-
-#define CALL_TRANSFORM_MACRO(F, ...) do {\
-    F(m11, ## __VA_ARGS__);\
-    F(m12, ## __VA_ARGS__);\
-    F(m13, ## __VA_ARGS__);\
-    F(m14, ## __VA_ARGS__);\
-    F(m21, ## __VA_ARGS__);\
-    F(m22, ## __VA_ARGS__);\
-    F(m23, ## __VA_ARGS__);\
-    F(m24, ## __VA_ARGS__);\
-    F(m31, ## __VA_ARGS__);\
-    F(m32, ## __VA_ARGS__);\
-    F(m33, ## __VA_ARGS__);\
-    F(m34, ## __VA_ARGS__);\
-    F(m41, ## __VA_ARGS__);\
-    F(m42, ## __VA_ARGS__);\
-    F(m43, ## __VA_ARGS__);\
-    F(m44, ## __VA_ARGS__);\
-} while(0)
-
-#define BASE_TRANSFORM_STEP(M, LUASTATE, I, TRANSFORM) do{\
-    lua_pushnumber(LUASTATE, ++I);\
-    lua_pushnumber(LUASTATE, TRANSFORM.M);\
-    lua_settable(LUASTATE, -3);\
-} while(0)
-
-int l_push_base_transform(lua_State *L)
+const static unsigned int MATRIX_SIZE = 16;
+inline CGFloat * get_matrix(CATransform3D *transform, unsigned int i)
 {
-    int i = 0;
-    CALL_TRANSFORM_MACRO(BASE_TRANSFORM_STEP, L, i, CATransform3DIdentity);
-    return 1;
-}
+    switch(i) {
+    case 0:  return &transform->m11;
+    case 1:  return &transform->m12;
+    case 2:  return &transform->m13;
+    case 3:  return &transform->m21;
 
-#define FILL_TRANSFORM(M, LUASTATE, I, TRANSFORM) do{\
-    lua_pushnumber(LUASTATE, ++I);\
-    lua_gettable(LUASTATE, -3);\
-    if(!lua_isnumber(LUASTATE, -1))\
-        return luaL_error(LUASTATE, ERR_MALFORMED);\
-    TRANSFORM.M = lua_tonumber(LUASTATE, -1);\
-    CHECK_NAN(TRANSFORM.M, "the "#M" of the transform");\
-    lua_pop(LUASTATE, 1);\
-} while(0)
+    case 4:  return &transform->m21;
+    case 5:  return &transform->m22;
+    case 6:  return &transform->m23;
+    case 7:  return &transform->m34;
+
+    case 8:  return &transform->m31;
+    case 9:  return &transform->m32;
+    case 10: return &transform->m33;
+    case 11: return &transform->m34;
+
+    case 12: return &transform->m41;
+    case 13: return &transform->m42;
+    case 14: return &transform->m43;
+    case 15: return &transform->m44;
+    }
+    return NULL;
+}
 
 static int l_set_transform(lua_State *L, CALayer *self) //-1 = transform
 {
@@ -261,23 +244,33 @@ static int l_set_transform(lua_State *L, CALayer *self) //-1 = transform
     lua_pop(L, 1);
 
     CATransform3D transform;
-    int i = 0;
-    CALL_TRANSFORM_MACRO(FILL_TRANSFORM, L, i, transform);
+    for(unsigned int i = 0; i < MATRIX_SIZE; i++) {
+        CGFloat *val = get_matrix(&transform, i);
+
+        lua_pushnumber(L, i + 1);
+        lua_gettable(L, -3);
+        if(!lua_isnumber(L, -1)) {
+            return luaL_error(L, ERR_MALFORMED);
+        }
+        *val = lua_tonumber(L, -1);
+        CHECK_NAN(*val, "transform[%d]", i);
+        lua_pop(L, 1);
+    }
     self.transform = transform;
 
     return 0;
 }
 
-#define PUSH_TRANSFORM(M, LUASTATE, I, TRANSFORM)\
-    lua_pushnumber(LUASTATE, ++I);\
-    lua_pushnumber(LUASTATE, TRANSFORM.M);\
-    lua_settable(LUASTATE, -3)
-
-static int l_get_transform(lua_State *L, CALayer *self) //pushes transform to top of stack
+int l_push_transform(lua_State *L, CATransform3D transform) //pushes transform to top of stack
 {
     lua_newtable(L);
-    int i = 0;
-    CALL_TRANSFORM_MACRO(PUSH_TRANSFORM, L, i, self.transform);
+    for(unsigned int i = 0; i < MATRIX_SIZE; i++) {
+        CGFloat *val = get_matrix(&transform, i);
+
+        lua_pushnumber(L, i + 1);
+        lua_pushnumber(L, *val);
+        lua_settable(L, -3);
+    }
     return 1;
 }
 

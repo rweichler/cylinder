@@ -132,8 +132,7 @@ static void create_state()
     lua_setglobal(L, "print");
 
     //set globals
-    lua_newtable(L);
-    l_push_base_transform(L);
+    l_push_transform(L, CATransform3DIdentity);
     lua_setglobal(L, "BASE_TRANSFORM");
 
     lua_pushcfunction(L, l_subviews);

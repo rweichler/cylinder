@@ -33,5 +33,5 @@ along with Cylinder.  If not, see <http://www.gnu.org/licenses/>.
 #define PERSPECTIVE_DISTANCE ((SCREEN_SIZE.width +  SCREEN_SIZE.height)/2) 
 
 int l_create_uiview_metatable(lua_State *L);
-int l_push_base_transform(lua_State *L);
 int l_push_view(lua_State *L, id view);
+int l_push_transform(lua_State *L, CATransform3D transform);
