@@ -1,7 +1,12 @@
 --[[
+    Need Mac OSX and LuaJIT.
+    LuaJIT can be installed from homebrew.
+
     download aite: https://github.com/rweichler/aite
     cd into this directory and run this command:
     /PATH/TO/AITE/main.lua
+
+    if this errored at you in any way, email me at rweichler@gmail.com so i can fix it.
 
     OPTIONAL:
         install aite by running this command:
