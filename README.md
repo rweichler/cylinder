@@ -91,4 +91,4 @@ to include by default, I'll PM you.
 
 ## License
 
-[GPLv3](https://github.com/rweichler/cylinder/blob/master/LICENSE), unless otherwise stated in the files themselves.
+[MIT](https://github.com/rweichler/cylinder/blob/master/LICENSE)
