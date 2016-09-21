@@ -2,8 +2,8 @@
 
 ## Build dependencies
 
-* LuaJIT
 * Mac OS X
+* LuaJIT (`brew install luajit`)
 
 ## How to build
 
