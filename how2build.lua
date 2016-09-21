@@ -9,7 +9,7 @@
     if this errored at you in any way, email me at rweichler@gmail.com so i can fix it.
 
     OPTIONAL:
-        install aite by running this command:
+        install aite permanently by running this command:
         ln -s /PATH/TO/AITE/main.lua /usr/local/bin/aite
 
         now, instead of all those annoying steps, you'd just run this command:
