@@ -1,13 +1,3 @@
-UNSTABLE.deb
-Cylinder.dylib
-tweak/tmp
-settings/CylinderSettings.bundle
-settings/CylinderSettings.dylib
-*.o
-*.a
-*.x.o.m
-Packages
-Packages.bz2
-config.mk
-*.db
-.last_ip
+build
+layout
+cylinder.deb
