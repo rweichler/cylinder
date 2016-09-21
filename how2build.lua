@@ -1,9 +1,10 @@
 --[[
     download aite: https://github.com/rweichler/aite
-    cd into this directory and run /PATH/TO/AITE/main.lua
+    cd into this directory and run this command:
+    /PATH/TO/AITE/main.lua
 
     OPTIONAL:
-        install aite by doing this:
+        install aite by running this command:
         ln -s /PATH/TO/AITE/main.lua /usr/local/bin/aite
 ]]
 
