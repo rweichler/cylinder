@@ -3,7 +3,7 @@
 ## Build dependencies
 
 * LuaJIT
-# Mac OS X
+* Mac OS X
 
 ## How to build
 
@@ -16,13 +16,13 @@ git clone https://github.com/rweichler/aite.git
 2: Clone this and put it somewhere
 
 ```
-git clone https://github.com/rweichler/bullet_luajit.git
+git clone https://github.com/rweichler/cylinder.git
 ```
 
 3: cd into this repo and run aite
 
 ```
-cd bullet_luajit
+cd cylinder
 /PATH/TO/AITE/main.lua
 ```
 

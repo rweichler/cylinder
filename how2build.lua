@@ -1,3 +1,12 @@
+--[[
+    download aite: https://github.com/rweichler/aite
+    cd into this directory and run /PATH/TO/AITE/main.lua
+
+    OPTIONAL:
+        install aite by doing this:
+        ln -s /PATH/TO/AITE/main.lua /usr/local/bin/aite
+]]
+
 debber.packageinfo = {
     Package = 'com.r333d.cylinder',
     Name = 'Cylinder',
