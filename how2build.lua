@@ -11,6 +11,9 @@
     OPTIONAL:
         install aite by running this command:
         ln -s /PATH/TO/AITE/main.lua /usr/local/bin/aite
+
+        now, instead of all those annoying steps, you'd just run this command:
+        aite
 ]]
 
 debber.packageinfo = {
