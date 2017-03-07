@@ -138,7 +138,7 @@ function objc.settings()
         'QuartzCore',
         'CoreGraphics',
         'AVFoundation',
-        --'Preferences',
+--      'Preferences',
     }
     b.bin = 'CylinderSettings.dylib'
     -- this is bad practice but meh
