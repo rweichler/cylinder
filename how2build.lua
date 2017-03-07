@@ -61,7 +61,7 @@ function default(flag)
 end
 
 function clean()
-    os.pexecute('rm -rf '..builder.build_dir)
+    os.pexecute('rm -rf src/tweak/tweak.x.o.m '..builder.build_dir..' '..debber.input..' '..debber.output)
 end
 
 function finish()
@@ -91,7 +91,7 @@ function cydia()
     local prefsdir = 'layout/Library/PreferenceBundles/CylinderSettings.bundle'
     fs.mkdir(prefsdir)
     os.pexecute('cp -r res/settings/* '..prefsdir)
-    os.pexecute('build/CylinderSettings.dylib '..prefsdir..'/CylinderSettings')
+    os.pexecute('cp build/CylinderSettings.dylib '..prefsdir..'/CylinderSettings')
     local prefloaderdir = 'layout/Library/PreferenceLoader/Preferences'
     fs.mkdir(prefloaderdir)
     os.pexecute('cp res/CylinderSettingsLoader.plist '..prefloaderdir)
@@ -110,7 +110,8 @@ end
 _G['lua5.2'] = lua52
 
 function objc.tweak()
-    os.pexecute('aite/bin/logos.pl src/tweak/tweak.x > src/tweak/tweak.om')
+    -- todo: get rid of logos. using it was a bad idea
+    os.pexecute('aite/bin/logos.pl src/tweak/tweak.x > src/tweak/tweak.x.o.m')
 
     local b = builder()
     b.src = fs.scandir('src/tweak/*.m')
@@ -137,9 +138,11 @@ function objc.settings()
         'QuartzCore',
         'CoreGraphics',
         'AVFoundation',
-        'Preferences',
+        --'Preferences',
     }
     b.bin = 'CylinderSettings.dylib'
+    -- this is bad practice but meh
+    b.ldflags = '-flat_namespace -undefined suppress'
     b:link(b:compile())
 end
 
