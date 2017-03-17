@@ -1,41 +1,34 @@
 jit.off()
+local USE_C = true -- change this
 
-local PATH = '/var/lua/jjjj.app'
+PATH = '/var/root/test'
 package.path = PATH..'/?.lua;'..
                PATH..'/?/init.lua;'..
                package.path
+package.cpath = PATH..'/?.so;'..
+                package.cpath
 
 objc = require 'objc'
 ffi = require 'ffi'
 C = ffi.C
 
 ffi.cdef[[
-void MSHookMessageEx(Class class, SEL message, void *hook, void *old);
-void lucy_syslog(const char *);
+void MSHookMessageEx(Class class, SEL message, void *hook, void *orig);
 ]]
 
-local lib  = ffi.load('/var/root/syslog.dylib', true)
-function print(s)
-    lib.lucy_syslog(tostring(s))
-end
-
-local function hook(class, sel, ct, f)
-    local orig = ffi.new(ct)
-    local k = ffi.new(ct, function(...)
-        return f(orig[0], ...)
-    end)
-    C.MSHookMessageEx(class, sel, k[0], orig)
-end
-
-hook(objc.SBRootFolderView, objc.SEL('scrollViewDidScroll:'), 'void (*[1])(id, SEL, id)', function(orig, self, _cmd, scrollView)
-    orig(self, _cmd, scrollView)
-    if not FAILED then
-        local success, err = pcall(scrol, scrollView)
-        if not success then
-            FAILED = true
-            print(err)
-        end
+if USE_C then
+    function LMFAO(scrollView) -- this is called from the c lib
+        scrol(scrollView)
     end
-end)
+    require 'hook' -- c lib that calls MSHookMessageEx
+else
+    local orig = ffi.new('void (*[1])(id, SEL, id)')
+    -- this is the function that corrupts the memory somehow
+    local hook = function(self, _cmd, scrollView)
+        orig[0](self, _cmd, scrollView)
+        scrol(scrollView)
+    end
+    C.MSHookMessageEx(objc.SBRootFolderView, objc.SEL('scrollViewDidScroll:'), ffi.cast('void (*)(id, SEL, id)', hook), orig)
+end
 
-dofile('/var/root/tmp/cylinder.lua')
+require 'cylinder'
