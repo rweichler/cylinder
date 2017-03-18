@@ -131,9 +131,10 @@ end
 
 -- Lua
 
+local uintptr_t = ffi.typeof('uintptr_t')
 local hash = {}
 LEGACY = function(m) -- m is the objective-c object
-    local key = tostring(m)
+    local key = tonumber(ffi.cast(uintptr_t, m) % 2^32)
     if hash[key] then
         return hash[key]
     end

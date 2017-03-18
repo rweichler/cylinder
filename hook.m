@@ -29,7 +29,7 @@ int luaopen_hook(lua_State *L)
     state = L;
     lua_getglobal(L, "LMFAO");
     func = luaL_ref(L, LUA_REGISTRYINDEX);
-    MSHookMessageEx(objc_getClass("SBRootFolderView"), sel_registerName("scrollViewDidScroll:"), (IMP)hook, (IMP *)&orig);
+    MSHookMessageEx(objc_getClass("SBRootFolderView") ?: objc_getClass("SBIconController"), sel_registerName("scrollViewDidScroll:"), (IMP)hook, (IMP *)&orig);
     return 0;
 }
 

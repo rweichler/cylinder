@@ -24,10 +24,11 @@ local function reset(view)
     end
 end
 
-local id = ffi.typeof('id')
 function scrol(self)
-    self = id(self)
-    for _,page in ipairs(objc.tolua(self:subviews())) do
+    local views = self:subviews()
+    local count = tonumber(views:count())
+    for i=0,count-1 do
+        local page = views:objectAtIndex(i)
         if page:isKindOfClass(objc.SBIconListView) then
             local page = LEGACY(page)
 

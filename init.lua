@@ -17,8 +17,9 @@ void MSHookMessageEx(Class class, SEL message, void *hook, void *orig);
 ]]
 
 if USE_C then
+    local id = ffi.typeof('id')
     function LMFAO(scrollView) -- this is called from the c lib
-        scrol(scrollView)
+        scrol(id(scrollView))
     end
     require 'hook' -- c lib that calls MSHookMessageEx
 else
@@ -28,7 +29,7 @@ else
         orig[0](self, _cmd, scrollView)
         scrol(scrollView)
     end
-    C.MSHookMessageEx(objc.SBRootFolderView, objc.SEL('scrollViewDidScroll:'), ffi.cast('void (*)(id, SEL, id)', hook), orig)
+    C.MSHookMessageEx(objc.SBRootFolderView or objc.SBIconController, objc.SEL('scrollViewDidScroll:'), ffi.cast('void (*)(id, SEL, id)', hook), orig)
 end
 
 require 'cylinder'
