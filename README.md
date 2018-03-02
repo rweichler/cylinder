@@ -1,5 +1,7 @@
 # Cylinder
 
+https://youtube.com/watch?v=Y-Pk-XDVj-o
+
 ## Build dependencies
 
 * Mac OS X
@@ -7,24 +9,11 @@
 
 ## How to build
 
-1: Clone [aite](https://github.com/rweichler/aite) and put it somewhere
-
 ```
-git clone https://github.com/rweichler/aite.git
-```
-
-2: Clone this and put it somewhere
-
-```
-git clone https://github.com/rweichler/cylinder.git
-```
-
-3: cd into this repo and run aite
-
-```
+git clone https://github.com/rweichler/aite
+git clone https://github.com/rweichler/cylinder
 cd cylinder
-/PATH/TO/AITE/main.lua
+luajit ../aite/main.lua
 ```
 
 This will create a file cylinder.deb that you can install.
-
