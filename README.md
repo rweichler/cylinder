@@ -6,6 +6,7 @@ https://youtube.com/watch?v=Y-Pk-XDVj-o
 
 * Mac OS X
 * LuaJIT (`brew install luajit`)
+* dpkg (`brew install dpkg`)
 
 ## How to build
 
