@@ -108,24 +108,10 @@ static void create_state()
     //load libraries
     luaL_openlibs(L);
 
-    //disable dangerous libraries
-    lua_pushnil(L);
-    lua_setglobal(L, LUA_LOADLIBNAME);
-    lua_pushnil(L);
-    lua_setglobal(L, LUA_IOLIBNAME);
-    lua_pushnil(L);
-    lua_setglobal(L, "require");
-
-    //disable dangerous functions
-
-    lua_getglobal(L, LUA_OSLIBNAME);
-    for(int i = 0; OS_DANGER[i] != NULL; i++)
-    {
-        lua_pushstring(L, OS_DANGER[i]);
-        lua_pushnil(L);
-        lua_settable(L, -3);
-    }
-    lua_pop(L, 1);
+    // LuaJIT and 64-bit OS X don't play well together http://luajit.org/install.html#embed
+    // since we're embedding in SpringBoard we don't have the luxury of using linker flags
+    // turning off the JIT fixes all the issues, unfortunately this mean C callbacks cannot be used
+    //luaL_dostring(L, "if jit and jit.arch == 'arm64' then jit.off() end");
 
     //override certain functions
     lua_pushcfunction(L, l_print);
@@ -192,11 +178,11 @@ static int open_script(const char *script)
     const char *path = [NSString stringWithFormat:@CYLINDER_DIR"%s.lua", script].UTF8String;
 
     //load our file and save the function we want to call
-    BOOL loaded = luaL_loadfile(L, path) == LUA_OK;
+    BOOL loaded = luaL_loadfile(L, path) == 0;
     if(loaded)
     {
         set_environment(script);
-        loaded = lua_pcall(L, 0, 1, 0) == LUA_OK;
+        loaded = lua_pcall(L, 0, 1, 0) == 0;
     }
 
     if(!loaded)
@@ -277,7 +263,7 @@ static int l_loadfile_override(lua_State *L)
         lua_remove(L, 2);
         lua_insert(L, 2);
     }
-    BOOL success = lua_pcall(L, top, 1, 0) == LUA_OK;
+    BOOL success = lua_pcall(L, top, 1, 0) == 0;
     if(!success)
     {
         return luaL_error(L, lua_tostring(L, -1));

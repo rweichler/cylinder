@@ -255,7 +255,11 @@ static int l_set_transform(lua_State *L, CALayer *self) //-1 = transform
 {
     if(!lua_istable(L, -1))
         return luaL_error(L, "transform must be a table");
+#ifdef LUA_OK
     lua_len(L, -1);
+#else
+    lua_objlen(L, -1);
+#endif
     if(lua_tonumber(L, -1) != 16)
         return luaL_error(L, ERR_MALFORMED);
     lua_pop(L, 1);
