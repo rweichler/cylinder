@@ -22,7 +22,7 @@ local function builder()
     local b = _G.builder('apple')
     b.compiler = 'clang'
     b.build_dir = '.aite_build'
-    b.sdk = 'iphoneos'
+    b.sdk_path = 'iPhoneOS9.3.sdk'
     b.archs = {
         'armv7',
         'arm64',
