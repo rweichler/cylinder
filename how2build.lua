@@ -26,6 +26,7 @@ local function builder()
     b.archs = {
         'armv7',
         'arm64',
+        'arm64e',
     }
     b.include_dirs = {
         'deps/src',
