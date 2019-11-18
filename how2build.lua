@@ -17,7 +17,7 @@
 ]]
 
 local use_luajit = false -- this doesn't work (yet)
-local is_beta = true
+local is_beta = false
 
 local function builder()
     local b = _G.builder('apple')
