@@ -17,6 +17,7 @@
 ]]
 
 local use_luajit = false -- this doesn't work (yet)
+local is_beta = true
 
 local function builder()
     local b = _G.builder('apple')
@@ -47,7 +48,7 @@ local deb = debber()
 deb.packageinfo = {
     Package = 'com.r333d.cylinder',
     Name = 'Cylinder',
-    Version = '1.0.7~beta',
+    Version = '1.1',
     Architecture = 'iphoneos-arm',
     Depends = 'firmware (>= 3.0), mobilesubstrate (>= 0.9.6011), preferenceloader',
     Icon = 'file:///Library/PreferenceBundles/CylinderSettings.bundle/Icon@2x.png',
@@ -60,6 +61,20 @@ deb.packageinfo = {
 }
 deb.input = builder().build_dir..'/layout'
 deb.output = 'cylinder.deb'
+
+do -- Append git commit hash for beta builds
+    local vtail = {}
+    if is_beta then
+        table.insert(vtail, 'beta')
+    end
+    if #os.capture('git status -s') > 0 then
+        table.insert(vtail, 'dirty')
+    end
+    if #vtail > 0 then
+        table.insert(vtail, string.sub(os.capture('git rev-parse HEAD'), 1, 6))
+        deb.packageinfo.Version = deb.packageinfo.Version..'~'..table.concat(vtail, '-')
+    end
+end
 
 local function logos_workaround(flag)
     if flag == 'clean' then
