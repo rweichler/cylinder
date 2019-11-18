@@ -274,11 +274,11 @@ static BOOL _justSetScrollViewSize;
     end_scroll(scrollView);
 }
 
-//in iOS 6-, the dock is actually *BEHIND* the icon scroll view, so this fixes that
+//in iOS 6- (and iOS 13, perhaps lower versions as well), the dock is actually *BEHIND* the icon scroll view, so this fixes that
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
     %orig;
-    if(IOS_VERSION < 7)
+    if(IOS_VERSION < 7 || (IOS_VERSION >= 13 && [self isKindOfClass:%c(SBRootFolderView)]))
         [scrollView.superview sendSubviewToBack:scrollView];
     page_swipe(scrollView);
 }
