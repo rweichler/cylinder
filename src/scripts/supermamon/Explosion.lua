@@ -22,7 +22,7 @@ return function(pg, of, sw, sh)
 		-- get icon offset from page center
 		local ox, oy = math.abs(cx-icx), math.abs(cy-icy)
 		-- get angle of icon position
-		local ang = math.atan(oy/ox)
+		local ang = math.atan2(oy, ox)
 		-- get hypotenuse
 		local h = math.sqrt( ox^2+oy^2)
 		-- get hypotenuse extension
