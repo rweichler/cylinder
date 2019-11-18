@@ -282,6 +282,15 @@ static BOOL _justSetScrollViewSize;
         [scrollView.superview sendSubviewToBack:scrollView];
     page_swipe(scrollView);
 }
+
+// For iOS 13. SpringBoard "optimizes" the icon visibility by only showing the bare
+// minimum. I have no idea why this works, but it does. An interesting stack trace can
+// be found by forcing a crash in -[SBRecycledViewsContainer addSubview:]. Probably best to decompile this function in IDA or something.
+-(void)updateVisibleColumnRangeWithTotalLists:(unsigned long long)arg1 columnsPerList:(unsigned long long)arg2 iconVisibilityHandling:(long long)arg3
+{
+    return %orig(arg1, arg2, 0);
+}
+
 %end
 
 //iOS 7 folder blur glitch hotfix for 3D effects.
