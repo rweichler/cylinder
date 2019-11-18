@@ -26,6 +26,7 @@ local function builder()
     b.archs = {
         'armv7',
         'arm64',
+        ffi.os == 'OSX' and 'arm64e' or nil,
     }
     b.include_dirs = {
         'deps/src',
@@ -46,7 +47,7 @@ local deb = debber()
 deb.packageinfo = {
     Package = 'com.r333d.cylinder',
     Name = 'Cylinder',
-    Version = '1.0.7~beta1',
+    Version = '1.0.7~beta',
     Architecture = 'iphoneos-arm',
     Depends = 'firmware (>= 3.0), mobilesubstrate (>= 0.9.6011), preferenceloader',
     Icon = 'file:///Library/PreferenceBundles/CylinderSettings.bundle/Icon@2x.png',

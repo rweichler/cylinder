@@ -146,10 +146,18 @@ static int l_uiview_index_height(lua_State *L)
 static int l_uiview_index_max_icons(lua_State *L)
 {
     UIView *self = (UIView *)lua_touserdata(L, 1);
-    SEL selector = @selector(maxIcons);
-    if([self.class respondsToSelector:selector])
+    id obj;
+    SEL selector;
+    if(IOS_VERSION >= 13) {
+        obj = self;
+        selector = @selector(maximumIconCount);
+    } else {
+        obj = self.class;
+        selector = @selector(maxIcons);
+    }
+    if([obj respondsToSelector:selector])
     {
-        lua_pushnumber(L, invoke_int(self.class, selector, false));
+        lua_pushnumber(L, invoke_int(obj, selector, false));
         return 1;
     }
 
