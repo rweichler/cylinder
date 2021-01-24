@@ -267,7 +267,7 @@ static int l_concat_args(lua_State *L, const char *func_name, const char *separa
         s = lua_tolstring(L, -1, NULL);  /* get result */
         if (s == NULL)
             return luaL_error(L,
-                    [NSString stringWithFormat:@LUA_QL("tostring") " must return a string to " LUA_QL("%s"), func_name].UTF8String);
+                    [NSString stringWithFormat:@"'tostring' must return a string to '%s'", func_name].UTF8String);
         if (i>1) [result appendFormat:@"%s", separator];//luai_writestring("\t", 1);
         [result appendFormat:@"%s", s];//luai_writestring(s, l);
         lua_pop(L, 1);  /* pop result */
@@ -298,7 +298,7 @@ static int l_popup(lua_State *L)
 static int l_subviewsaux(lua_State *L)
 {
     CHECK_UIVIEW(L, 1);
-    int i = luaL_checkint(L, 2);
+    int i = luaL_checkinteger(L, 2);
     i++;
     lua_pushinteger(L, i);
     lua_pushvalue(L, -1);

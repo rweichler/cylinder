@@ -97,11 +97,11 @@ static int l_uiview_setindex(lua_State *L)
         if(!strcmp(key, "alpha"))
         {
             if(!lua_isnumber(L, 3))
-                return luaL_error(L, LUA_QL("alpha")" must be a number");
+                return luaL_error(L, "'alpha' must be a number");
 
             float alpha = lua_tonumber(L, 3);
 
-            CHECK_NAN(alpha, LUA_QL("alpha"));
+            CHECK_NAN(alpha, "]alpha'");
 
             self.alpha = lua_tonumber(L, 3);
             self.wasModifiedByCylinder = true;
@@ -125,10 +125,10 @@ static int l_calayer_setindex(lua_State *L)
 
         if(!strcmp(key, "x"))
         {
-            if(!lua_isnumber(L, 3)) return luaL_error(L, LUA_QL("x") " must be a number");
+            if(!lua_isnumber(L, 3)) return luaL_error(L, "'x' must be a number");
 
             float x = lua_tonumber(L, 3);
-            CHECK_NAN(x, LUA_QL("x"));
+            CHECK_NAN(x, "'x'");
 
             [self savePosition];
             CGPoint pos = self.position;
@@ -138,10 +138,10 @@ static int l_calayer_setindex(lua_State *L)
         }
         else if(!strcmp(key, "y"))
         {
-            if(!lua_isnumber(L, 3)) return luaL_error(L, LUA_QL("y") " must be a number");
+            if(!lua_isnumber(L, 3)) return luaL_error(L, "'y' must be a number");
 
             float y = lua_tonumber(L, 3);
-            CHECK_NAN(y, LUA_QL("y"));
+            CHECK_NAN(y, "'y'");
 
             [self savePosition]; //TODO implement this and resetPosition.... prolly needa refactor some shit
             CGPoint pos = self.position;
