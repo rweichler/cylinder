@@ -101,7 +101,7 @@ static int l_uiview_setindex(lua_State *L)
 
             float alpha = lua_tonumber(L, 3);
 
-            CHECK_NAN(alpha, "]alpha'");
+            CHECK_NAN(alpha, "'alpha'");
 
             self.alpha = lua_tonumber(L, 3);
             self.wasModifiedByCylinder = true;
