@@ -24,7 +24,7 @@ local side = -1
                 -- get icon offset from page center
                 local ox, oy = cx-icx, cy-icy
                 -- get angle of icon position
-                local ang = math.atan2(oy,ox)
+                local ang = math.atan(oy,ox)
                 -- get hypotenuse
                 local h = math.sqrt( ox^2+oy^2)
                 
