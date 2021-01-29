@@ -98,10 +98,61 @@
 
 -(void)showAlertWithText:(NSString *)text
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:text delegate:self cancelButtonTitle:LOCALIZE(@"CANCEL", @"Cancel") otherButtonTitles:LOCALIZE(@"CREATE_FORMULA", @"Create Formula"), nil];
-    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [alert textFieldAtIndex:0].placeholder = LOCALIZE(@"FORMULA_NAME", @"Formula name");
-    [alert show];
+    if ([[UIDevice currentDevice] iOSVersionIsAtLeast: @"8.0"]) {
+	    
+	    UIAlertController *alert = [UIAlertController alertControllerWithTitle: nil message: text preferredStyle:UIAlertControllerStyleAlert];
+	    UIAlertAction *create = [UIAlertAction actionWithTitle: LOCALIZE(@"CREATE_FORMULA", @"Create Formula") style: UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+		    
+	 	NSString *name = alert.textFields.firstObject.text;
+
+		if(name.length == 0)
+		{
+		    [self showAlertWithText:@"You didn't type anything."];
+		}
+		else if([self.formulas objectForKey:name])
+		{
+		    UIAlertController *sameNameAlert = [UIAlertController alertControllerWithTitle:nil message:LOCALIZE(@"FORMULA_ALREADY_EXISTS", @"A formula with that name already exists.") preferredStyle:UIAlertControllerStyleAlert];
+		    UIAlertAction *overWrite = [UIAlertAction actionWithTitle: LOCALIZE(@"OVERWRITE_IT", @"Overwrite it") style: UIAlertActionStyleDestructive handler:^(UIAlertAction *action){
+			NSString *_theFormulaName = alert.textFields.firstObject.text;
+			if(name.length == 0)
+			{
+			    [self showAlertWithText:@"You didn't type anything."];
+			}
+			else {
+			    [self createFormulaWithName:_theFormulaName];
+			    _theFormulaName = nil;
+			}
+		    }];
+
+		    UIAlertAction *cancelOverwrite = [UIAlertAction actionWithTitle:LOCALIZE(@"CANCEL", @"Cancel") style:UIAlertActionStyleCancel handler: nil];
+
+		    [sameNameAlert addAction:cancelOverwrite];
+		    [sameNameAlert addAction:overWrite];
+		    [self presentViewController:sameNameAlert animated:YES completion:nil];
+		}
+		else
+		{
+		    [self createFormulaWithName:name];
+		}
+	    }];
+
+	    UIAlertAction *cancel = [UIAlertAction actionWithTitle:LOCALIZE(@"CANCEL", @"Cancel") style:UIAlertActionStyleCancel handler: nil];
+
+	    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+		textField.placeholder = LOCALIZE(@"FORMULA_NAME", @"Formula name");
+	    }];
+
+	    [alert addAction:create];
+	    [alert addAction:cancel];
+
+	    [self presentViewController:alert animated:YES completion:nil];
+    }
+    else {
+	    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:text delegate:self cancelButtonTitle:LOCALIZE(@"CANCEL", @"Cancel") otherButtonTitles:LOCALIZE(@"CREATE_FORMULA", @"Create Formula"), nil];
+	    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+	    [alert textFieldAtIndex:0].placeholder = LOCALIZE(@"FORMULA_NAME", @"Formula name");
+	    [alert show];
+    }
 
 }
 
@@ -309,7 +360,15 @@ static NSString *_theFormulaName;
 
         if(effects.count == 0)
         {
-            [[UIAlertView.alloc initWithTitle:LOCALIZE(@"NO_EFFECTS_ENABLED_TITLE", @"You have no effects enabled!") message:LOCALIZE(@"NO_EFFECTS_ENABLED_DESC", @"Go back to the effects list, enable some effects, then come back here and create a new formula.") delegate:self cancelButtonTitle:LOCALIZE(@"NO_EFFECTS_ENABLED_OK", @"Aight cool") otherButtonTitles:nil] show];
+	    if ([[UIDevice currentDevice] iOSVersionIsAtLeast: @"8.0"]) {
+	    	UIAlertController *alert = [UIAlertController alertControllerWithTitle:LOCALIZE(@"NO_EFFECTS_ENABLED_TITLE", @"You have no effects enabled!") message:LOCALIZE(@"NO_EFFECTS_ENABLED_DESC", @"Go back to the effects list, enable some effects, then come back here and create a new formula.") preferredStyle:UIAlertControllerStyleAlert];
+            	UIAlertAction* cancelButton = [UIAlertAction actionWithTitle:LOCALIZE(@"NO_EFFECTS_ENABLED_OK", @"Aight cool") style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {}];
+            	[alert addAction:cancelButton];
+            	[self presentViewController:alert animated:YES completion:nil];
+	    }
+	    else {
+            	[[UIAlertView.alloc initWithTitle:LOCALIZE(@"NO_EFFECTS_ENABLED_TITLE", @"You have no effects enabled!") message:LOCALIZE(@"NO_EFFECTS_ENABLED_DESC", @"Go back to the effects list, enable some effects, then come back here and create a new formula.") delegate:self cancelButtonTitle:LOCALIZE(@"NO_EFFECTS_ENABLED_OK", @"Aight cool") otherButtonTitles:nil] show];
+	    }
         }
         else
         {
