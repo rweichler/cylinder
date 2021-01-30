@@ -204,8 +204,10 @@ static int biggestTo = 0;
 
 static void end_scroll(UIScrollView *self)
 {
-    for(UIView *view in [self subviews])
-        reset_icon_layout(view);
+    for(UIView *view in [self subviews]) {
+        if([view isKindOfClass:_listClass]) reset_icon_layout(view);
+    }
+        
     _randSeedForCurrentPage = arc4random();
 }
 
