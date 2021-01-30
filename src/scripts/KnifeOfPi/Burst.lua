@@ -19,7 +19,7 @@ return function(pg, of, sw, sh)
         local ax, ay = math.abs(ox), math.abs(oy)
         -- get angle of icon position
         local ang = math.atan(oy,ox)
-        local ang2 = math.atan(ay/ax)
+        local ang2 = math.atan(ay,ax)
         -- get hypotenuse
         local h = math.sqrt( ox^2+oy^2)
         -- get hypotenuse extension
@@ -36,7 +36,7 @@ return function(pg, of, sw, sh)
         local ny = oh * math.sin(ang2) * dy
 
         -- move!
-        ic:translate(nx, ny, 0)
+        ic:translate(nx, ny)
         if oy >= 0 then
             ic:rotate(fx*(ang-.5*math.pi), 0, 0, 1)
         else

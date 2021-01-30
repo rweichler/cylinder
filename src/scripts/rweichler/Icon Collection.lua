@@ -1,7 +1,7 @@
 --CRAAAZY trig stuff!!!
 
 local function distance(x1, y1, x2, y2)
-    return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
+    return math.sqrt((x1 - x2)^2 + (y1 - y2)^2)
 end
 
 return function(page, offset, screen_width, screen_height)

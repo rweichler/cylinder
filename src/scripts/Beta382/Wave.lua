@@ -14,7 +14,7 @@ return function(page, offset, screen_width, screen_height)
         local curIconPercent = percent-((0.525/numIcons)*iconIndex)
         
         if (curIconPercent > 0) then
-            dx = direction*math.pow(curIconPercent*3.5, 2)*page.width
+            dx = direction*(curIconPercent*3.5^2)*page.width
             
             icon:translate(dx, 0, 0)
         end
